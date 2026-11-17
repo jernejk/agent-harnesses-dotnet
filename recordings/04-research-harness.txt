@@ -1,0 +1,39 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ mode_get()
+→ todos_add(todos: [{"title":"Review .NET 11 and C# 15 docs","description":"Identify agen…)
+I’ve split the work into three parts and will store the plan in memory next.
+→ file_memory_write(fileName: plan.md, content: 1. Review .NET 11 and C# 15 docs 2. Review Agent Framework overview an…, description: Plan for comparing .NET 11, C# 15, and Agent Framework changes for age…)
+Plan:
+1. Review .NET 11 and C# 15 docs
+2. Review Agent Framework overview and release notes
+3. Write the report
+  ☐ Review .NET 11 and C# 15 docs
+  ☐ Review Agent Framework overview and release notes
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+I’ll review the Microsoft sources first, then extract only agent-relevant changes and note them in memory.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+  ← 45 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 74 lines · [2] What's new in C# 15 | Microsoft Learn
+I have the first two sources; next I’ll pull the Agent Framework overview and release note to compare what changed for C# agent builders.
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+  ← 114 lines · [3] Microsoft Agent Framework Overview | Microsoft Learn
+  ← 32 lines · [4] Release dotnet-1.28.0 · microsoft/agent-framework · GitHub
+I have the framework overview and release notes; I’ll jot the key agent-relevant points into notes and then compile the answer.
+→ file_memory_write(fileName: notes.md, content: - .NET 11 adds runtime async, lower-overhead async with cleaner stack …, description: Short source-backed notes on .NET 11, C# 15, and Agent Framework chang…)
+I’ll mark the research items complete and write a concise report focused on what actually affects C# agent builders.
+→ todos_complete(items: [{"id":1,"reason":"Reviewed .NET 11 and C# 15 sources and extracted ag…)
+→ write_report(title: What changed for C# agent builders in .NET 11 and Agent Framework, markdown: ## .NET 11 and C# 15 .NET 11 is generally available, and its runtime a…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 4 of 4 fetched sources.
+→ todos_complete(items: [{"id":3,"reason":"Wrote the final report with source-backed citations…)
+Done — I reviewed the .NET 11, C# 15, and Agent Framework sources, captured the key agent-relevant changes, and wrote the report.
+  ✔ Review .NET 11 and C# 15 docs
+  ✔ Review Agent Framework overview and release notes
+  ✔ Write the report
+── usage: gpt-5.4-mini · 11 model calls · 64,510 in / 1,592 out tokens · ≈ $0.056 · 11 tool calls · 16.2 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 17s

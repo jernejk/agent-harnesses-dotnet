@@ -1,0 +1,13 @@
+.envrc.*
+*.local.*
+.DS_Store
+
+bin/
+obj/
+
+.run/
+.sessions/
+.cache/
+target/
+proposals/
+reports/*.trace.jsonl

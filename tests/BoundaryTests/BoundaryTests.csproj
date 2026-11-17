@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <Features>$(Features);FileBasedProgram</Features>
+    <NoWarn>$(NoWarn);MAAI001;OPENAI001;MEAI001</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);CS8509</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Agents.AI.Harness" Version="1.28.0" />
+    <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.28.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="../../demos/shared/Approvals.cs" Link="Demos/Approvals.cs" />
+    <Compile Include="../../demos/shared/Model.cs" Link="Demos/Model.cs" />
+    <Compile Include="../../demos/shared/Outcomes.cs" Link="Demos/Outcomes.cs" />
+    <Compile Include="../../demos/shared/Runner.cs" Link="Demos/Runner.cs" />
+    <Compile Include="../../demos/shared/Subprocess.cs" Link="Demos/Subprocess.cs" />
+    <Compile Include="../../demos/shared/Trace.cs" Link="Demos/Trace.cs" />
+    <Compile Include="../../demos/shared/Ui.cs" Link="Demos/Ui.cs" />
+    <Compile Include="../../demos/04-research-harness/AllowList.cs" Link="Demos/AllowList.cs" />
+    <Compile Include="../../demos/04-research-harness/Citations.cs" Link="Demos/Citations.cs" />
+    <Compile Include="../../demos/04-research-harness/Sources.cs" Link="Demos/Sources.cs" />
+    <Compile Include="../../demos/05-diagnose-harness/CommandPolicy.cs" Link="Demos/CommandPolicy.cs" />
+    <Compile Include="../../demos/06-cli-first/Bisect.cs" Link="Demos/Bisect.cs" />
+    <Compile Include="../../demos/05-diagnose-harness/GitGrammar.cs" Link="Demos/GitGrammar.cs" />
+    <Compile Include="../../demos/05-diagnose-harness/OrdersApi.cs" Link="Demos/OrdersApi.cs" />
+    <Compile Include="../../demos/05-diagnose-harness/Proposals.cs" Link="Demos/Proposals.cs" />
+    <Compile Include="../../demos/05-diagnose-harness/RepoPath.cs" Link="Demos/RepoPath.cs" />
+  </ItemGroup>
+
+</Project>

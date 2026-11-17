@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <!-- File-based apps default to AOT analysis; reflection-based tools would warn. -->
+    <PublishAot>false</PublishAot>
+    <NoWarn>$(NoWarn);MAAI001;OPENAI001;MEAI001</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);CS8509</WarningsAsErrors>
+  </PropertyGroup>
+</Project>

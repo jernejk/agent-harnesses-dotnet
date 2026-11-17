@@ -1,0 +1,8 @@
+01-initial|2026-11-02T09:14:00+10:00|Sam Rivera|sam@example.com|Initial Orders API with in-memory store|
+02-totals|2026-11-03T11:02:00+10:00|Priya Nair|priya@example.com|Add order totals with GST|
+03-tests|2026-11-04T15:40:00+10:00|Sam Rivera|sam@example.com|Add pricing and API tests|
+04-gold-discount|2026-11-06T10:25:00+10:00|Priya Nair|priya@example.com|Give gold customers 5% off|
+05-log-lookups|2026-11-09T14:51:00+10:00|Sam Rivera|sam@example.com|Log order total lookups|v1.3.0
+06-tier-table|2026-11-13T16:37:00+10:00|Priya Nair|priya@example.com|Move tier discounts into a lookup table and add silver tier|
+07-problem-details|2026-11-14T09:58:00+10:00|Sam Rivera|sam@example.com|Return problem details for unknown orders|
+08-release|2026-11-16T08:30:00+10:00|Priya Nair|priya@example.com|Release 1.4.0|v1.4.0
