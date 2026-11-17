@@ -59,6 +59,7 @@ dotnet run demos/02-tools-and-approval/tools.cs
 dotnet run demos/03-sessions-and-context/sessions.cs      # run it twice
 dotnet run demos/04-research-harness/research.cs          # add -- --offline at a venue
 dotnet run demos/05-diagnose-harness/diagnose.cs
+dotnet run demos/05-diagnose-harness/diagnose.cs -- --policy   # type commands, see allow/ask/deny, no model
 demos/06-cli-first/bisect.sh
 dotnet run demos/06-cli-first/cli-first.cs
 
