@@ -42,17 +42,26 @@ AIAgent agent = meter.AsHarnessAgent(new HarnessAgentOptions
 
 var session = await agent.CreateSessionAsync();
 var approver = Approver.FromArgs(args, trace);
-using var deadline = new CancellationTokenSource(budget.WallClock);
+using var deadline = new Deadline(budget.WallClock);
 Ui.Line(Tone.Muted, $"> {question}");
 
-await Runner.RunAsync(agent, session, question, approver, deadline.Token);
-await ShowTodosAsync();
-if (!approver.Confirm("Run this plan?")) return;
+try
+{
+    await Runner.RunAsync(agent, session, question, approver, deadline.Token);
+    await ShowTodosAsync();
+    if (!approver.Confirm("Run this plan?")) return;
 
-library.Unlock();
-await agent.GetService<AgentModeProvider>()!.SetModeAsync(session, "execute");
-await Runner.RunAsync(agent, session, "Plan approved, go.", approver, deadline.Token);
-await ShowTodosAsync();
+    library.Unlock();
+    await agent.GetService<AgentModeProvider>()!.SetModeAsync(session, "execute");
+    await Runner.RunAsync(agent, session, "Plan approved, go.", approver, deadline.Token);
+    await ShowTodosAsync();
+}
+catch (Exception e) when (e is BudgetExceededException or OperationCanceledException)
+{
+    var why = e is BudgetExceededException ? e.Message : $"{budget.WallClock} wall clock";
+    Ui.Line(Tone.Deny, $"⛔ budget used up ({why}): the harness stopped the run.");
+    Environment.ExitCode = 3;
+}
 meter.PrintSummary();
 Ui.Line(Tone.Muted, $"report: reports/{slug}.md, trace: reports/{slug}.trace.jsonl");
 

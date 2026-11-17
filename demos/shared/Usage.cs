@@ -36,7 +36,7 @@ public sealed class UsageMeter(
     public int ToolCalls { get; private set; }
     public long InputTokens { get; private set; }
     public long OutputTokens { get; private set; }
-    public TimeSpan Elapsed => _wall.Elapsed;
+    public TimeSpan Elapsed => _wall.Elapsed - Deadline.HumanTime;
 
     public decimal Cost => PricePerMillion.TryGetValue(Model.Name, out var price)
         ? (InputTokens * price.In + OutputTokens * price.Out) / 1_000_000m

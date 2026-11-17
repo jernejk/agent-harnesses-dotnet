@@ -8,7 +8,7 @@ public sealed partial class OrdersApi(string baseUrl)
         Timeout = TimeSpan.FromSeconds(5),
     };
 
-    [Description("GET the local Orders API: /health, /orders/{id}, /orders/{id}/total.")]
+    [Description("GET the local Orders API: /health, /orders/{id}, /orders/{id}/total. Order ids start at 1001.")]
     public async Task<string> GetAsync(
         [Description("Path, e.g. /orders/1001/total")] string path,
         CancellationToken cancellationToken = default)

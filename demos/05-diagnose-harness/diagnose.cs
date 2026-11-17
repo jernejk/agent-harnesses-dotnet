@@ -8,6 +8,14 @@
 #:include RepoPath.cs
 
 var target = Repo.PathTo("target");
+if (args.Contains("--policy"))
+{
+    var check = new CommandPolicy(target, TimeSpan.FromSeconds(60));
+    Ui.Line(Tone.Muted, "policy check, no model involved. Type a command, Enter to stop.");
+    while (Ui.Ask("❯ ") is { Length: > 0 } command) check.PrintVerdict(command);
+    return;
+}
+
 var budget = new Budget(MaxModelCalls: 30, MaxToolCalls: 40, TimeSpan.FromSeconds(150));
 await using var trace = new TraceLog(Repo.PathTo(".run", "05-trace.jsonl"));
 using var tracing = Telemetry.Start("diagnose-harness", "Harness.Diagnose", args);
@@ -62,7 +70,7 @@ var task = args.FirstOrDefault(a => !a.StartsWith("--")) ?? """
     """;
 Ui.Line(Tone.Muted, $"> {task.ReplaceLineEndings(" ")}");
 
-using var deadline = new CancellationTokenSource(budget.WallClock);
+using var deadline = new Deadline(budget.WallClock);
 try
 {
     var session = await agent.CreateSessionAsync();

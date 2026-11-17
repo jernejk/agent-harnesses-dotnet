@@ -38,7 +38,7 @@ public sealed class Approver
 
     string? Ask(string prompt)
     {
-        if (!_autoApprove) return Ui.Ask(prompt);
+        if (!_autoApprove) return Deadline.WhileHumanDecides(() => Ui.Ask(prompt));
         Ui.Line(Tone.Muted, $"{prompt}y (rehearsal auto-approve)");
         return "y";
     }

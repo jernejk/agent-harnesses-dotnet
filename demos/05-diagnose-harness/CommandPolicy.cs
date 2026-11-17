@@ -48,16 +48,18 @@ public sealed class CommandPolicy(string folder, TimeSpan timeout, TraceLog? tra
     public void PrintTable(params string[] commands)
     {
         Ui.Line(Tone.Muted, "policy check, no model involved:");
-        foreach (var command in commands)
+        foreach (var command in commands) PrintVerdict(command);
+    }
+
+    public void PrintVerdict(string command)
+    {
+        var (tone, text) = Evaluate(command) switch
         {
-            var (tone, text) = Evaluate(command) switch
-            {
-                Decision.Allowed => (Tone.Ok, $"✔ allow  {command}"),
-                Decision.NeedsApproval a => (Tone.Warn, $"⚠ ask    {command}: {a.Why}"),
-                Decision.Denied d => (Tone.Deny, $"✖ deny   {command}: {d.Why}"),
-            };
-            Ui.Line(tone, $"  {text}");
-        }
+            Decision.Allowed => (Tone.Ok, $"✔ allow  {command}"),
+            Decision.NeedsApproval a => (Tone.Warn, $"⚠ ask    {command}: {a.Why}"),
+            Decision.Denied d => (Tone.Deny, $"✖ deny   {command}: {d.Why}"),
+        };
+        Ui.Line(tone, $"  {text}");
     }
 
     async Task<string> ExecuteAsync(string program, string[] args,

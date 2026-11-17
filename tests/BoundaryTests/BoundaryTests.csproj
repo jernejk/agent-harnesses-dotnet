@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Compile Include="../../demos/shared/Approvals.cs" Link="Demos/Approvals.cs" />
+    <Compile Include="../../demos/shared/Deadline.cs" Link="Demos/Deadline.cs" />
     <Compile Include="../../demos/shared/Model.cs" Link="Demos/Model.cs" />
     <Compile Include="../../demos/shared/Outcomes.cs" Link="Demos/Outcomes.cs" />
     <Compile Include="../../demos/shared/Runner.cs" Link="Demos/Runner.cs" />
