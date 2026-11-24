@@ -1,0 +1,59 @@
+# Demo 05 on gpt-6-luna, held at the 🔐 for 300 s before "y". Recorded 24 Nov 2026 at 23:17.
+# Each line starts with the seconds since launch. A small script typed "y" 300 s after the
+# prompt appeared. Otherwise this is `dotnet run demos/05-diagnose-harness/diagnose.cs` as on
+# stage (OpenAI Responses API, reasoning low), with NO_COLOR set and Orders on a spare port.
+# 🔐 at 12.7 s · "y" at 312.8 s · 8/8 green at 314.0 s · usage line at 321.3 s, reporting 20.6 s:
+# the time at the gate is left out of the usage line, and the 150 s budget clock paused meanwhile.
+[    0.6] policy check, no model involved:
+[    0.6]   ✔ allow  dotnet test
+[    0.6]   ✔ allow  git log --oneline v1.3.0..HEAD
+[    0.6]   ⚠ ask    git revert HEAD: It changes files.
+[    0.6]   ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+[    0.6]   ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+[    0.6]   ✖ deny   rm -rf src: 'rm' is not allow-listed.
+[    0.6] > Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+[    2.8] I’ll check the incident status first, reproduce with tests, then trace the 1.3.0-to-1.4.0 change and propose the smallest fix.
+[    2.8] → todos_add(todos: [{"title":"Check incident status and reproduce the failure with tests"…)
+[    4.7] The available HTTP tool only reaches the local Orders API, so I can’t fetch the external status page; I’ll proceed with tests and the release diff.
+[    4.7] → run_command(command: dotnet test)
+[    4.7] → run_command(command: git log --oneline v1.3.0..HEAD)
+[    5.9]   ← exit 1 · [xUnit.net 00:00:00.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+[    5.9]   ← exit 0 · 9bfbf7d Move tier discounts into a lookup table and add silver tier
+[    8.1] Tests reproduce three failures, with `Pricing.Total` throwing for the `standard` tier; I’m checking the commit and exact lookup code before choosing the minimal change.
+[    8.1] → run_command(command: git show --stat --oneline 9bfbf7d)
+[    8.1] → run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+[    8.1] → file_access_read(fileName: src/Orders.Api/Pricing.cs)
+[    8.2]   ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+[    8.2]   ← exit 0 · }
+[   11.2] Commit `9bfbf7d` introduced a direct dictionary index at `Pricing.cs:16`, but standard-tier customers have no entry; I’ll restore the previous zero-discount default for unlisted tiers.
+[   11.2] → write_proposal(name: default-unknown-tier-discount, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = TierDiscounts.GetValueOrDefault(customer.Tier);, rationale: Commit 9bfbf7d replaced the prior non-gold zero-discount behavior with…)
+[   11.2]     diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+[   11.2]     index 5ee439e..c304cd9 100644
+[   11.2]     --- a/src/Orders.Api/Pricing.cs
+[   11.2]     +++ b/src/Orders.Api/Pricing.cs
+[   11.2]     @@ -13,7 +13,7 @@ public static class Pricing
+[   11.2]          public static decimal Total(Order order, Customer customer)
+[   11.2]          {
+[   11.2]              var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+[   11.2]     -        var discount = TierDiscounts[customer.Tier];
+[   11.2]     +        var discount = TierDiscounts.GetValueOrDefault(customer.Tier);
+[   11.2]              var total = subtotal * (1 - discount) * (1 + GstRate);
+[   11.2]              return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+[   11.2]          }
+[   11.2]   ← 15 lines · Wrote proposals/default-unknown-tier-discount.patch:
+[   12.7] 🔐 approval needed: apply_proposal(name: default-unknown-tier-discount)
+[   12.7]    approve? [y/N]    <prompt>
+[  312.8] <<< sent 'y' after a 300 s wait at the gate >>>
+[  312.8] y
+[  312.8]    ✔ approved
+[  312.8]   ✔ applied default-unknown-tier-discount.patch, running the tests…
+[  314.0]   ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 70 ms - Orders.Test…
+[  314.0]   ← 8 lines · Applied. exit code 0
+[  318.0] The fix is applied and all 8 tests pass; the external status URL remains inaccessible through the available tools.
+[  318.0] → todos_complete(items: [{"id":1,"reason":"Ran dotnet test and reproduced 3 failures; external…)
+[  320.4] - **Root cause:** `Pricing.Total` in `src/Orders.Api/Pricing.cs:16` indexed the tier-discount dictionary directly. The `standard` tier has no entry, so requests for its total threw `KeyNotFoundException` and returned HTTP 500.
+[  320.6] - **Introducing commit:** `9bfbf7d` (“Move tier discounts into a lookup table and add silver tier”).
+[  320.9] - **Fix:** Applied the proposed change to use `TierDiscounts.GetValueOrDefault(customer.Tier)`, preserving configured discounts and defaulting unlisted tiers to zero.
+[  321.3] - **Test result:** Before the fix, 3 tests failed; after it, all 8 tests passed. I couldn’t check the external incident page because the available HTTP tool only accesses the local Orders API.
+[  321.3] ── usage: gpt-6-luna · 7 model calls · 30,514 in / 1,005 out tokens · ≈ $0.004 · 9 tool calls · 20.6 s
+[  321.3] trace: .run/05-trace.jsonl
