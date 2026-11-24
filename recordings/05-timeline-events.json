@@ -1,0 +1,447 @@
+{
+ "schema": 2,
+ "updated": "2026-11-25T09:19:29.283+10:00",
+ "run": {
+  "title": "Diagnose the Orders 500",
+  "owner": "Presenter",
+  "tz": "Australia/Brisbane",
+  "start": "2026-11-25T09:14:09.927+10:00",
+  "staleAfterMin": 1,
+  "footer": "From .run/05-trace.jsonl, the trace the harness writes as it runs. Times, tools, commands, policy decisions, approvals, exit codes and tokens are real. Chapters, titles and grouping are this page's reading of them; spend is tokens × list price.",
+  "done": true,
+  "end": "2026-11-25T09:19:29.174+10:00"
+ },
+ "headline": {
+  "status": {
+   "tone": "done",
+   "text": "Finished: diagnosed, fixed, tests green",
+   "note": "19.2 s · 8 calls · US$0.005"
+  },
+  "progress": {
+   "value": 5,
+   "of": 5,
+   "label": "steps"
+  },
+  "spend": {
+   "usd": 0.5,
+   "currency": "US¢",
+   "byLane": {
+    "agent": 0.5
+   },
+   "asOf": "2026-11-25T09:19:29.174+10:00",
+   "note": "US$0.005 at list price for gpt-6-luna"
+  },
+  "best": {
+   "text": "8/8 tests pass after the fix",
+   "note": "dotnet test exits 0 after the approved patch",
+   "eventId": "e17-hoh1tghksf"
+  }
+ },
+ "lanes": [
+  {
+   "id": "agent",
+   "name": "Agent",
+   "short": "Agent",
+   "status": "done"
+  },
+  {
+   "id": "policy",
+   "name": "Policy",
+   "short": "Policy",
+   "status": "done"
+  },
+  {
+   "id": "presenter",
+   "name": "Presenter",
+   "short": "Human",
+   "status": "done",
+   "human": true
+  }
+ ],
+ "chapters": [
+  {
+   "id": "c1-hoh1tghksf",
+   "title": "Reproduce the failure",
+   "start": "2026-11-25T09:14:09.927+10:00",
+   "summary": "Run the tests and probe the API to see the 500 first-hand."
+  },
+  {
+   "id": "c2-hoh1tghksf",
+   "title": "Find what changed",
+   "start": "2026-11-25T09:14:15.731+10:00",
+   "summary": "Compare the code with v1.3.0, the last good release, using git."
+  },
+  {
+   "id": "c3-hoh1tghksf",
+   "title": "Name the root cause",
+   "start": "2026-11-25T09:14:17.423+10:00",
+   "summary": "Read the code involved and name the file and line."
+  },
+  {
+   "id": "c4-hoh1tghksf",
+   "title": "Fix and approve",
+   "start": "2026-11-25T09:14:22.061+10:00",
+   "summary": "Write the smallest patch; a human approves it before it touches the repo."
+  },
+  {
+   "id": "c5-hoh1tghksf",
+   "title": "Verify the fix",
+   "start": "2026-11-25T09:19:24.054+10:00",
+   "summary": "Rerun the tests and report root cause, commit, fix and result."
+  }
+ ],
+ "events": [
+  {
+   "id": "e01-hoh1tghksf",
+   "time": "2026-11-25T09:14:09.927+10:00",
+   "lane": "agent",
+   "kind": "start",
+   "importance": 2,
+   "title": "Agent starts on the Orders 500",
+   "summary": "Task: GET /orders/{id}/total returns HTTP 500 since the 1.4.0 deploy; 1.3.0 was fine.",
+   "chapter": "c1-hoh1tghksf",
+   "state": "done",
+   "numbers": [
+    {
+     "label": "Budget",
+     "value": "150 s"
+    },
+    {
+     "label": "Model calls",
+     "value": "≤ 30"
+    }
+   ],
+   "updated": "2026-11-25T09:19:29.174+10:00"
+  },
+  {
+   "id": "e02-hoh1tghksf",
+   "time": "2026-11-25T09:14:09.927+10:00",
+   "lane": "policy",
+   "kind": "start",
+   "importance": 1,
+   "title": "Policy checks every command",
+   "summary": "Allowed 7 commands, asked a human about 0, denied 0.",
+   "chapter": "c1-hoh1tghksf",
+   "state": "done",
+   "updated": "2026-11-25T09:19:29.174+10:00"
+  },
+  {
+   "id": "e03-hoh1tghksf",
+   "time": "2026-11-25T09:14:12.541+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 1,
+   "title": "Plans 3 steps",
+   "summary": "Check status page and reproduce the failure with tests; Compare changes since v1.3.0 and identify the regression; Write and apply the smallest fix, then report test result",
+   "chapter": "c1-hoh1tghksf",
+   "detail": "- Check status page and reproduce the failure with tests\n- Compare changes since v1.3.0 and identify the regression\n- Write and apply the smallest fix, then report test result"
+  },
+  {
+   "id": "e04-hoh1tghksf",
+   "time": "2026-11-25T09:14:14.387+10:00",
+   "lane": "agent",
+   "kind": "start",
+   "importance": 1,
+   "title": "Runs the test suite",
+   "summary": "dotnet test: the policy pins it to Orders.slnx --nologo.",
+   "chapter": "c1-hoh1tghksf",
+   "state": "done",
+   "updated": "2026-11-25T09:14:15.731+10:00"
+  },
+  {
+   "id": "e05-hoh1tghksf",
+   "time": "2026-11-25T09:14:15.731+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 2,
+   "title": "Tests fail, so the bug is real",
+   "summary": "dotnet test exits 1 before any change: the failure reproduces.",
+   "chapter": "c1-hoh1tghksf",
+   "causedBy": [
+    "e04-hoh1tghksf"
+   ],
+   "numbers": [
+    {
+     "label": "Exit code",
+     "value": 1
+    },
+    {
+     "label": "At",
+     "value": 5.8,
+     "unit": "s"
+    }
+   ]
+  },
+  {
+   "id": "e06-hoh1tghksf",
+   "time": "2026-11-25T09:14:15.731+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 1,
+   "title": "Reads the git log",
+   "summary": "git log --oneline --decorate --all --max-co…",
+   "chapter": "c2-hoh1tghksf",
+   "detail": "- `git log --oneline --decorate --all --max-count=20`"
+  },
+  {
+   "id": "e07-hoh1tghksf",
+   "time": "2026-11-25T09:14:15.731+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 1,
+   "title": "Probes /health: 200",
+   "summary": "/health → 200",
+   "chapter": "c1-hoh1tghksf",
+   "detail": "- `GET /health` → 200"
+  },
+  {
+   "id": "e08-hoh1tghksf",
+   "time": "2026-11-25T09:14:17.423+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 1,
+   "title": "Reads the history: 2 git calls",
+   "summary": "git show --stat --oneline 9bfbf7d, git diff v1.3.0..v1.4.0",
+   "chapter": "c2-hoh1tghksf",
+   "detail": "- `git show --stat --oneline 9bfbf7d`\n- `git diff v1.3.0..v1.4.0`",
+   "updated": "2026-11-25T09:14:17.423+10:00"
+  },
+  {
+   "id": "e09-hoh1tghksf",
+   "time": "2026-11-25T09:14:17.423+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 1,
+   "title": "Reads Pricing.cs",
+   "summary": "Pricing.cs",
+   "chapter": "c3-hoh1tghksf",
+   "detail": "- `file src/Orders.Api/Pricing.cs`"
+  },
+  {
+   "id": "e10-hoh1tghksf",
+   "time": "2026-11-25T09:14:17.423+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 2,
+   "title": "Live API returns 500",
+   "summary": "/orders/1001/total → 500: the incident, first-hand.",
+   "chapter": "c2-hoh1tghksf",
+   "detail": "- `GET /orders/1001/total` → 500",
+   "numbers": [
+    {
+     "label": "At",
+     "value": 7.5,
+     "unit": "s"
+    }
+   ]
+  },
+  {
+   "id": "e11-hoh1tghksf",
+   "time": "2026-11-25T09:14:19.600+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 1,
+   "title": "Reads code and history: 3 calls",
+   "summary": "OrderStore.cs · git show 9bfbf7d -- src/Orders.Api/Pricing.…, git show fcded06:src/Orders.Api/Pricing.cs",
+   "chapter": "c3-hoh1tghksf",
+   "detail": "- `git show 9bfbf7d -- src/Orders.Api/Pricing.cs src/Orders.Api/OrderStore.cs`\n- `file src/Orders.Api/OrderStore.cs`\n- `git show fcded06:src/Orders.Api/Pricing.cs`",
+   "updated": "2026-11-25T09:14:19.600+10:00"
+  },
+  {
+   "id": "e12-hoh1tghksf",
+   "time": "2026-11-25T09:14:22.061+10:00",
+   "lane": "agent",
+   "kind": "success",
+   "importance": 3,
+   "title": "Root cause: Pricing.cs line 16",
+   "summary": "The tier discount table added in 9bfbf7d omits the existing standard tier, so direct indexing throws KeyNotFoundException for standard customers.",
+   "chapter": "c3-hoh1tghksf",
+   "why": "Names the line the patch must change; the tests will check the claim.",
+   "numbers": [
+    {
+     "label": "At",
+     "value": 12.1,
+     "unit": "s"
+    }
+   ],
+   "causedBy": [
+    "e11-hoh1tghksf"
+   ],
+   "detail": "The agent's diagnosis, from the rationale it gave write_proposal:\n\nThe tier discount table added in 9bfbf7d omits the existing standard tier, so direct indexing throws KeyNotFoundException for standard customers. Using the dictionary's zero default preserves the established no-discount behavior for standard (and other unlisted) tiers while retaining configured gold and silver discounts.\n\n- **File:** `src/Orders.Api/Pricing.cs:16`"
+  },
+  {
+   "id": "e13-hoh1tghksf",
+   "time": "2026-11-25T09:14:22.061+10:00",
+   "lane": "agent",
+   "kind": "success",
+   "importance": 2,
+   "title": "Patch proposed: 1 line in Pricing.cs",
+   "summary": "proposals/standard-tier-default-discount.patch replaces 1 line with 1; the repo is untouched until someone approves it.",
+   "chapter": "c4-hoh1tghksf",
+   "causedBy": [
+    "e12-hoh1tghksf"
+   ],
+   "numbers": [
+    {
+     "label": "Change",
+     "value": "−1 +1 lines"
+    },
+    {
+     "label": "At",
+     "value": 12.1,
+     "unit": "s"
+    }
+   ],
+   "detail": "The change, as `write_proposal` wrote it:\n- `- var discount = TierDiscounts[customer.Tier];`\n- `+ var discount = TierDiscounts.GetValueOrDefault(customer.Tier);`",
+   "links": [
+    {
+     "label": "standard-tier-default-discount.patch",
+     "path": "live/evidence/hoh1tghksf-standard-tier-default-discount.patch.txt"
+    }
+   ]
+  },
+  {
+   "id": "e14-hoh1tghksf",
+   "time": "2026-11-25T09:14:23.867+10:00",
+   "lane": "agent",
+   "kind": "blocked",
+   "importance": 3,
+   "title": "Patch waits for your approval",
+   "summary": "apply_proposal(standard-tier-default-discount) needs a human yes; the agent's budget clock pauses while you decide.",
+   "chapter": "c4-hoh1tghksf",
+   "ask": "Approve the patch: type y in the terminal",
+   "causedBy": [
+    "e13-hoh1tghksf"
+   ],
+   "numbers": [
+    {
+     "label": "At",
+     "value": 13.9,
+     "unit": "s"
+    }
+   ],
+   "state": "cleared",
+   "updated": "2026-11-25T09:19:24.019+10:00"
+  },
+  {
+   "id": "e15-hoh1tghksf",
+   "time": "2026-11-25T09:19:24.019+10:00",
+   "lane": "presenter",
+   "kind": "nudge",
+   "importance": 2,
+   "title": "Presenter approves the patch",
+   "summary": "Approved after 300.2 s; the agent's budget clock paused meanwhile.",
+   "chapter": "c4-hoh1tghksf",
+   "causedBy": [
+    "e14-hoh1tghksf"
+   ],
+   "numbers": [
+    {
+     "label": "Wait",
+     "value": 300.2,
+     "unit": "s"
+    },
+    {
+     "label": "At",
+     "value": 314.1,
+     "unit": "s"
+    }
+   ]
+  },
+  {
+   "id": "e16-hoh1tghksf",
+   "time": "2026-11-25T09:19:24.054+10:00",
+   "lane": "agent",
+   "kind": "start",
+   "importance": 1,
+   "title": "Patch applied, tests rerun",
+   "summary": "apply_proposal ran git apply, then dotnet test on the patched repo.",
+   "chapter": "c5-hoh1tghksf",
+   "state": "done",
+   "causedBy": [
+    "e15-hoh1tghksf"
+   ],
+   "updated": "2026-11-25T09:19:25.314+10:00"
+  },
+  {
+   "id": "e17-hoh1tghksf",
+   "time": "2026-11-25T09:19:25.314+10:00",
+   "lane": "agent",
+   "kind": "breakthrough",
+   "importance": 3,
+   "title": "All 8 tests pass after the fix",
+   "summary": "apply_proposal applied standard-tier-default-discount.patch and reran dotnet test: exit 0.",
+   "chapter": "c5-hoh1tghksf",
+   "causedBy": [
+    "e16-hoh1tghksf",
+    "e15-hoh1tghksf"
+   ],
+   "why": "The approved patch turns the failing tests green: proof from the tests, not the agent's word.",
+   "numbers": [
+    {
+     "label": "Tests",
+     "value": "8/8"
+    },
+    {
+     "label": "Exit code",
+     "value": 0
+    },
+    {
+     "label": "At",
+     "value": 315.4,
+     "unit": "s"
+    }
+   ],
+   "detail": "The trace keeps the first 300 characters of each tool result: the exit code, not dotnet test's summary line.\n- **8 tests:** the [Fact] and [InlineData] cases in `target/tests`.\n- **Exit code 0:** every test that ran passed."
+  },
+  {
+   "id": "e18-hoh1tghksf",
+   "time": "2026-11-25T09:19:27.490+10:00",
+   "lane": "agent",
+   "kind": "update",
+   "importance": 1,
+   "title": "Ticks off 3 steps",
+   "summary": "Ran dotnet test and reproduced three failures including HTTP 500; external status.example.com could not be accessed with available tools.",
+   "chapter": "c5-hoh1tghksf",
+   "detail": "- Ran dotnet test and reproduced three failures including HTTP 500; external status.example.com could not be accessed with available tools.\n- Compared v1.3.0 to v1.4.0 and identified commit 9bfbf7d with omitted standard-tier lookup.\n- Wrote and applied the minimal fallback fix; post-apply test suite passed all 8 tests."
+  },
+  {
+   "id": "e19-hoh1tghksf",
+   "time": "2026-11-25T09:19:29.174+10:00",
+   "lane": "agent",
+   "kind": "success",
+   "importance": 2,
+   "title": "Agent reports root cause and fix",
+   "summary": "8 model calls, 14 tool calls, 45,265 tokens and US$0.005 in 19.2 s of agent time.",
+   "chapter": "c5-hoh1tghksf",
+   "causedBy": [
+    "e17-hoh1tghksf"
+   ],
+   "numbers": [
+    {
+     "label": "Spend",
+     "value": 0.005,
+     "unit": "US$"
+    },
+    {
+     "label": "Agent time",
+     "value": 19.2,
+     "unit": "s"
+    },
+    {
+     "label": "Model calls",
+     "value": 8
+    },
+    {
+     "label": "Tool calls",
+     "value": 14
+    },
+    {
+     "label": "Tokens",
+     "value": "45,265"
+    }
+   ]
+  }
+ ],
+ "metrics": []
+}

@@ -1,0 +1,68 @@
+# Demo 05 on gpt-6-luna with the live timeline following it: the terminal side of the run in
+# recordings/05-timeline-events.json and recordings/05-timeline-trace.jsonl. Recorded 25 Nov 2026 at 09:14.
+# Each line starts with the seconds since launch. A small script typed "y" 300 s after the
+# prompt appeared. Otherwise this is `dotnet run demos/05-diagnose-harness/diagnose.cs` as on
+# stage (OpenAI Responses API, reasoning low), with NO_COLOR set.
+# 🔐 at 15.0 s · "y" at 315.2 s · 8/8 green at 316.5 s · usage line at 320.3 s, reporting 19.2 s.
+[    1.0] policy check, no model involved:
+[    1.0]   ✔ allow  dotnet test
+[    1.0]   ✔ allow  git log --oneline v1.3.0..HEAD
+[    1.0]   ⚠ ask    git revert HEAD: It changes files.
+[    1.0]   ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+[    1.0]   ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+[    1.0]   ✖ deny   rm -rf src: 'rm' is not allow-listed.
+[    1.0] > Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+[    3.7] I’ll check the incident source if accessible, reproduce via the test suite, compare v1.3.0 to current, then prepare the smallest fix for approval.
+[    3.7] → todos_add(todos: [{"title":"Check status page and reproduce the failure with tests"},{"…)
+[    5.5] The available HTTP tool only targets the local Orders API, not the external status page; I’ll proceed with local reproduction and git history.
+[    5.5] → run_command(command: dotnet test)
+[    5.5] → run_command(command: git log --oneline --decorate --all --max-count=20)
+[    5.5] → http_get(path: /health)
+[    6.9]   ← exit 1 · [xUnit.net 00:00:00.15]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+[    6.9]   ← exit 0 · 2518c83 Initial Orders API with in-memory store
+[    6.9]   ← 2 lines · GET /health -> 200
+[    8.6] Tests reproduce HTTP 500 from a missing `standard` pricing key; the likely regression is the tier-table commit, which I’ll inspect alongside the status endpoint result.
+[    8.6] → run_command(command: git show --stat --oneline 9bfbf7d)
+[    8.6] → run_command(command: git diff v1.3.0..v1.4.0)
+[    8.6] → file_access_read(fileName: src/Orders.Api/Pricing.cs)
+[    8.6] → http_get(path: /orders/1001/total)
+[    8.6]   ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+[    8.6]   ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+[    8.6]   ← GET /orders/1001/total -> 500 
+[   10.7] Local `/orders/1001/total` returns 500; `Pricing.Total` indexes a lookup table without a standard-tier entry, introduced in commit `9bfbf7d`; I’m confirming the changed lines and store’s tier values before proposing.
+[   10.7] → run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs src/Orders.Api/OrderStor…)
+[   10.7] → file_access_read(fileName: src/Orders.Api/OrderStore.cs)
+[   10.7] → run_command(command: git show fcded06:src/Orders.Api/Pricing.cs)
+[   10.7]   ← exit 0 · }
+[   10.8]   ← exit 0 · }
+[   13.2] → write_proposal(name: standard-tier-default-discount, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = TierDiscounts.GetValueOrDefault(customer.Tier);, rationale: The tier discount table added in 9bfbf7d omits the existing standard t…)
+[   13.2]     diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+[   13.2]     index 5ee439e..c304cd9 100644
+[   13.2]     --- a/src/Orders.Api/Pricing.cs
+[   13.2]     +++ b/src/Orders.Api/Pricing.cs
+[   13.2]     @@ -13,7 +13,7 @@ public static class Pricing
+[   13.2]          public static decimal Total(Order order, Customer customer)
+[   13.2]          {
+[   13.2]              var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+[   13.2]     -        var discount = TierDiscounts[customer.Tier];
+[   13.2]     +        var discount = TierDiscounts.GetValueOrDefault(customer.Tier);
+[   13.2]              var total = subtotal * (1 - discount) * (1 + GstRate);
+[   13.2]              return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+[   13.2]          }
+[   13.2]   ← 15 lines · Wrote proposals/standard-tier-default-discount.patch:
+[   15.0] The minimal proposal restores the previous zero-discount behavior for unlisted tiers; I’m submitting it through the approval-gated apply step, which should run tests if approved.
+[   15.0] 🔐 approval needed: apply_proposal(name: standard-tier-default-discount)
+[   15.0]    approve? [y/N]    <prompt>
+[  315.2] <<< sent 'y' after a 300 s wait at the gate >>>
+[  315.2] y
+[  315.2]    ✔ approved
+[  315.2]   ✔ applied standard-tier-default-discount.patch, running the tests…
+[  316.5]   ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 70 ms - Orders.Test…
+[  316.5]   ← 8 lines · Applied. exit code 0
+[  318.6] → todos_complete(items: [{"id":1,"reason":"Ran dotnet test and reproduced three failures inclu…)
+[  319.8] - **Root cause:** `Pricing.Total` in `src/Orders.Api/Pricing.cs:16` directly indexed the tier-discount table, which lacked an entry for the existing `standard` tier. That raised `KeyNotFoundException` and caused HTTP 500s.
+[  319.9] - **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+[  320.2] - **Fix:** Applied the proposed change to use `TierDiscounts.GetValueOrDefault(customer.Tier)`, preserving zero discount for unlisted tiers. The external status page could not be checked with the available tools.
+[  320.3] - **Test result:** Before the fix, 3 tests failed; after applying it, all 8 tests passed.
+[  320.3] ── usage: gpt-6-luna · 8 model calls · 44,074 in / 1,191 out tokens · ≈ $0.005 · 14 tool calls · 19.2 s
+[  320.3] trace: .run/05-trace.jsonl

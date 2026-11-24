@@ -147,6 +147,97 @@ Not demoed: Docker Sandboxes (`sbx`), installed on this Mac, puts the whole agen
 own microVM. That is the better fit when you want to isolate the agent and all its tools,
 including Git. The demo puts only its test runs in ordinary Docker containers.
 
+## Extra: the live timeline
+
+An optional browser page beside the terminal tells demo 05 as a story while it runs. A
+bridge follows `.run/05-trace.jsonl`, the trace the harness already writes, and changes
+nothing in the demo.
+
+```bash
+scripts/timeline.sh start      # at T-30, after the rehearsal: bridge and page server
+scripts/timeline.sh status     # both running? prints the URL again
+scripts/timeline.sh stop       # after the talk
+```
+
+Open <http://127.0.0.1:8470/?refresh=2> in a tab next to terminal A. It says "Waiting for the
+run" until the first trace line, and starts a fresh story whenever a run recreates the trace,
+so `scripts/reset-target.sh` before demo 5 also clears the page. Keep the tab open from the
+rehearsal: each run's events get their own ids, so the new run still animates in.
+
+What the audience sees, from a gpt-6-luna run on 25 Nov in which a script typed `y` after 5
+minutes, standing in for you (times are seconds into the run; each beat reaches the page
+within about 2 s):
+
+| When | On the page |
+| --- | --- |
+| 0–3 s | Chapter I: the agent starts and lists its plan (a quiet dot) |
+| 4–8 s | "Tests fail, so the bug is real"; chapter II, "Live API returns 500" and the history it reads |
+| 10–12 s | Chapter III, "Root cause: Pricing.cs line 16", and the patch; the strip's best result becomes the root cause |
+| at 🔐, 14 s | An orange **Needs you**: "Approve the patch: type y in the terminal". The status says "Waiting for you" |
+| type `y` | "Presenter approves the patch: Approved after 300.2 s; the agent's budget clock paused meanwhile" |
+| about 1 s later | Gold star: "All 8 tests pass after the fix", then the report: 8 model calls, 14 tool calls, 45,265 tokens and US$0.005 in 19.2 s of agent time |
+
+A denial shows as a red ✕ on the Policy lane when the model tries one: in one of four
+gpt-5.4-mini runs on 24 Nov it asked `http_get` for the status page. The Luna run above had
+none; it noted that `http_get` only reaches the Orders API. If the agent checks the live API
+after the patch, "Live API still returns 500" says why: nothing redeploys the running copy.
+
+Say: "Every beat on this page comes from a line the harness wrote to its trace: the tool
+calls, the policy's decisions, how long I took to approve, the exit codes and the tokens. The
+chapters and the wording are the bridge's reading of them." (That holds for demo 5; the phased
+runner's page also draws on its phase files and `metrics.json`, see below.)
+
+**Fallbacks**
+
+```bash
+scripts/timeline.sh replay recordings/05-timeline-events.json   # the finished story, at once
+scripts/timeline.sh replay recordings/05-timeline-trace.jsonl   # the same run at its own pace (about 5.5 min)
+```
+
+Add `--speed 10` to the second to play it in about 35 s. Both pages say "not live" above the
+title. The recording is the 25 Nov gpt-6-luna run in the table above, and
+`recordings/luna/05-timeline-run.txt` is its terminal output.
+
+**Known limits**
+
+- In the "All" view, the "At a glance" ribbon fits a run shorter than two hours to its width,
+  so a 30-second run spreads across it. For a run under 15 minutes its ticks count from the
+  start: seconds (0 s, 5 s, 10 s…), then minutes (0 min, 1 min…) once the run is long enough
+  that second ticks would crowd. From 15 minutes on, and always in the "2 h" and "30 min"
+  views, the ticks are clock times. While the run is live the scale keeps growing, so the dots
+  drift left. Times on the cards are hours and minutes; the "At" numbers give seconds into the
+  run.
+- The spend cell shows US cents (US¢0.5 in the Luna run): the page rounds the cell to one
+  decimal, which would turn US$0.005 into US$0. The status line and the final card show US$
+  (US$0.005).
+- "8/8" combines the exit code of a run of the whole suite with a count of `[Fact]` and
+  `[InlineData]` cases in `target/tests`: the trace keeps only the first 300 characters of
+  each tool result, which end before the test summary. A run with `--filter` is reported as
+  part of the suite, and the closing card reports the last run of the whole suite, so a later
+  patch that breaks the tests ends the story red.
+- The root-cause card names the line the patch changes. Luna sometimes fixes the bug by
+  adding the missing `standard` row to the table, as in `recordings/luna/05-diagnose-sandbox.txt`,
+  and then the card reads "Root cause: Pricing.cs line 11", while the code throws at line 16.
+  Say: "It patched the table at line 11; line 16 is where it threw."
+- A rehearsal-flag approval arrives within milliseconds, so the page labels it "Approved at
+  once: rehearsal mode", not a person. A command that needs approval (none appeared in the
+  rehearsals) shows only once it is answered.
+- The phased runner: `scripts/timeline.sh start .run/phased/<run>/trace.jsonl`. The bridge
+  reads `--phases` and `--critic` from the running process to label each phase's model and
+  effort. Not every event there is a trace line: each phase's result and the critic's verdict
+  come from the phase files beside the trace, and the closing totals from `metrics.json`,
+  which also corrects the spend.
+- `scripts/timeline.sh stop` stops only the processes it started: it notes each one's start
+  time and full command line, and signals a PID only while it shows exactly those, so a stale
+  state file never signals anything else. One `timeline.sh` changes the timeline at a time
+  (a lock in `.run/`). `start` and `replay` check their arguments, the whole recording and the
+  port before they change anything, and a failed start stops whatever it had started.
+
+**Removing it.** Nothing else uses it. Revert the commit that added it
+(`git log --format=%h -1 -- scripts/timeline.sh` finds it), or delete `scripts/timeline.sh`,
+`scripts/timeline/`, `recordings/05-timeline-*` and `recordings/luna/05-timeline-run.txt`,
+then this section, the README's, and `timeline` in the README's Layout list.
+
 ## Reset between rehearsals
 
 ```bash
