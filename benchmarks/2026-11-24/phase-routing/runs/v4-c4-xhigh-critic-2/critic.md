@@ -1,0 +1,2 @@
+- Add pricing tests for an unlisted tier and a null tier, asserting zero discount; existing tests do not cover the fallback.
+- Ensure API tests exercise the fixed build. If they target localhost, redeploy first; source changes do not update the deployed service.

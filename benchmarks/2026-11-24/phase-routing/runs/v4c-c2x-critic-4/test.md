@@ -1,0 +1,4 @@
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` directly indexed the tier-discount table; a `standard` tier was absent and raised `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `fallback-for-unlisted-tier-discounts`; null or unlisted tiers now receive no discount, while listed tiers retain their configured discounts.
+- **Test result:** `dotnet test` passed all 8 tests (0 failed, 0 skipped). Verification was against the repo tests; the deployed 1.4.0 service was not redeployed.

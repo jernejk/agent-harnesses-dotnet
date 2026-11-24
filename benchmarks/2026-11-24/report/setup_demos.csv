@@ -1,0 +1,113 @@
+setup,demo,passes,runs,median_wall_s,median_agent_s,median_model_calls,median_tokens
+gpt-5.4 · Azure,01-chatbot,1,1,2,,,
+gpt-5.4 · Azure,02-tools-and-approval,1,1,8,6.9,3,5003
+gpt-5.4 · Azure,03-sessions-first-run,1,1,8,7.9,3,6305
+gpt-5.4 · Azure,03-sessions-resume,1,1,3,2.4,1,815
+gpt-5.4 · Azure,04-research-harness,1,1,43,42.6,13,93371
+gpt-5.4 · Azure,05-diagnose-harness,1,1,26,25.5,8,41764
+gpt-5.4 · Azure,06-bisect-cli,1,1,3,,,
+gpt-5.4 · Azure,06-cli-first,1,1,7,6.1,2,1329
+gpt-5.4-mini · Azure,01-chatbot,5,5,2,,,
+gpt-5.4-mini · Azure,02-tools-and-approval,5,5,6,5.8,3,4930
+gpt-5.4-mini · Azure,03-sessions-first-run,5,5,5,4.7,3,6104
+gpt-5.4-mini · Azure,03-sessions-resume,5,5,3,2.1,1,641
+gpt-5.4-mini · Azure,04-research-harness,5,5,27,25.7,12,76983
+gpt-5.4-mini · Azure,05-diagnose-harness,5,5,20,19.6,9,60040
+gpt-5.4-mini · Azure,06-bisect-cli,5,5,3,,,
+gpt-5.4-mini · Azure,06-cli-first,5,5,6,5.7,2,1317
+gpt-5.4-nano · Azure,01-chatbot,2,2,2,,,
+gpt-5.4-nano · Azure,02-tools-and-approval,2,2,6,5.5,3,4783
+gpt-5.4-nano · Azure,03-sessions-first-run,2,2,9.5,8.3,4,9118.5
+gpt-5.4-nano · Azure,03-sessions-resume,2,2,3,3,1,845.5
+gpt-5.4-nano · Azure,04-research-harness,1,2,19,28.9,13,85734
+gpt-5.4-nano · Azure,05-diagnose-harness,2,2,32,32.05,11.5,49040
+gpt-5.4-nano · Azure,06-bisect-cli,2,2,2.5,,,
+gpt-5.4-nano · Azure,06-cli-first,2,2,8,7.45,2,1334.5
+qwen3-4b · Foundry Local,01-chatbot,2,2,7.5,,,
+qwen3-4b · Foundry Local,02-tools-and-approval,0,2,29,28.4,1,1288.5
+qwen3-4b · Foundry Local,03-sessions-first-run,1,2,28.5,28.05,2.5,3468.5
+qwen3-4b · Foundry Local,03-sessions-resume,2,2,4.5,3.7,1,856.5
+qwen3-4b · Foundry Local,04-research-harness,0,2,151,150,0,0
+qwen3-4b · Foundry Local,05-diagnose-harness,0,2,60.5,59.6,1.5,4684.5
+qwen3-4b · Foundry Local,06-bisect-cli,2,2,3.5,,,
+qwen3-4b · Foundry Local,06-cli-first,2,2,96,94.85,5,10862.5
+gpt-oss-20b · LM Studio · reasoning low,01-chatbot,2,2,0.5,,,
+gpt-oss-20b · LM Studio · reasoning low,02-tools-and-approval,2,2,4,3.75,4,3257.5
+gpt-oss-20b · LM Studio · reasoning low,03-sessions-first-run,2,2,6,5.1,4,6507
+gpt-oss-20b · LM Studio · reasoning low,03-sessions-resume,2,2,4.5,3.8,1,944.5
+gpt-oss-20b · LM Studio · reasoning low,04-research-harness,0,2,20,19.05,17.5,22770
+gpt-oss-20b · LM Studio · reasoning low,05-diagnose-harness,1,2,7.5,7.05,7,26871.5
+gpt-oss-20b · LM Studio · reasoning low,06-bisect-cli,2,2,3,,,
+gpt-oss-20b · LM Studio · reasoning low,06-cli-first,2,2,6.5,6.2,2,1479.5
+inkling-2-mini · Ollama · thinking on (default),01-chatbot,1,1,8,,,
+inkling-2-mini · Ollama · thinking on (default),02-tools-and-approval,1,1,19,16.9,4,6514
+inkling-2-mini · Ollama · thinking on (default),03-sessions-first-run,1,1,23,21.3,3,8631
+inkling-2-mini · Ollama · thinking on (default),03-sessions-resume,1,1,7,6.3,1,1355
+inkling-2-mini · Ollama · thinking on (default),04-research-harness,0,1,151,150,9,75395
+inkling-2-mini · Ollama · thinking on (default),05-diagnose-harness,1,1,120,118.9,16,144058
+inkling-2-mini · Ollama · thinking on (default),06-bisect-cli,0,1,3,,,
+inkling-2-mini · Ollama · thinking on (default),06-cli-first,1,1,36,35.1,2,2909
+inkling-2-mini · Ollama · reasoning low,01-chatbot,3,3,4,,,
+inkling-2-mini · Ollama · reasoning low,02-tools-and-approval,3,3,13,12,3,4437
+inkling-2-mini · Ollama · reasoning low,03-sessions-first-run,3,3,14,13.1,3,7984
+inkling-2-mini · Ollama · reasoning low,03-sessions-resume,3,3,6,5,1,955
+inkling-2-mini · Ollama · reasoning low,04-research-harness,2,3,130,128.7,13,121283
+inkling-2-mini · Ollama · reasoning low,05-diagnose-harness,3,3,48,47.4,7,42293
+inkling-2-mini · Ollama · reasoning low,06-bisect-cli,3,3,4,,,
+inkling-2-mini · Ollama · reasoning low,06-cli-first,3,3,12,11.4,2,1503
+inkling-2-mini · Ollama · reasoning off,01-chatbot,0,0,,,,
+inkling-2-mini · Ollama · reasoning off,02-tools-and-approval,0,0,,,,
+inkling-2-mini · Ollama · reasoning off,03-sessions-first-run,0,0,,,,
+inkling-2-mini · Ollama · reasoning off,03-sessions-resume,0,0,,,,
+inkling-2-mini · Ollama · reasoning off,04-research-harness,0,1,151,150,11,91761
+inkling-2-mini · Ollama · reasoning off,05-diagnose-harness,1,1,72,71.5,13,107813
+inkling-2-mini · Ollama · reasoning off,06-bisect-cli,0,0,,,,
+inkling-2-mini · Ollama · reasoning off,06-cli-first,0,0,,,,
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),01-chatbot,1,1,2,,,
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),02-tools-and-approval,1,1,5,4.7,3,4826
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),03-sessions-first-run,1,1,6,4.5,3,6052
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),03-sessions-resume,1,1,2,1.8,1,632
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),04-research-harness,1,1,41,40.6,14,96010
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),05-diagnose-harness,1,1,22,21.4,9,44749
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),06-bisect-cli,1,1,3,,,
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),06-cli-first,1,1,6,5.6,2,1262
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),01-chatbot,1,1,2,,,
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),02-tools-and-approval,1,1,6,5.8,3,5627
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),03-sessions-first-run,1,1,6,5.8,3,6157
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),03-sessions-resume,1,1,3,2.9,1,777
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),04-research-harness,1,1,36,35.3,11,74379
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),05-diagnose-harness,1,1,18,17.5,7,34684
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),06-bisect-cli,1,1,3,,,
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),06-cli-first,1,1,7,6.5,2,1281
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),01-chatbot,1,1,3,,,
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),02-tools-and-approval,1,1,9,8.6,3,4180
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),03-sessions-first-run,1,1,5,4.4,3,6102
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),03-sessions-resume,1,1,5,4.5,1,592
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),04-research-harness,1,1,34,33.5,14,86332
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),05-diagnose-harness,1,1,25,23.8,8,45028
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),06-bisect-cli,1,1,3,,,
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),06-cli-first,1,1,6,5.5,2,1263
+"gpt-6-luna · OpenAI · Responses API, reasoning low",01-chatbot,1,1,4,,,
+"gpt-6-luna · OpenAI · Responses API, reasoning low",02-tools-and-approval,1,1,7,7.1,3,3039
+"gpt-6-luna · OpenAI · Responses API, reasoning low",03-sessions-first-run,1,1,6,4.9,3,5890
+"gpt-6-luna · OpenAI · Responses API, reasoning low",03-sessions-resume,1,1,2,1.7,1,566
+"gpt-6-luna · OpenAI · Responses API, reasoning low",04-research-harness,1,1,35,33.6,12,75565
+"gpt-6-luna · OpenAI · Responses API, reasoning low",05-diagnose-harness,1,1,22,21.6,7,41863
+"gpt-6-luna · OpenAI · Responses API, reasoning low",06-bisect-cli,1,1,3,,,
+"gpt-6-luna · OpenAI · Responses API, reasoning low",06-cli-first,1,1,6,5.7,2,1080
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),01-chatbot,1,1,2,,,
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),02-tools-and-approval,1,1,7,6.8,3,5610
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),03-sessions-first-run,1,1,7,5.8,3,6103
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),03-sessions-resume,1,1,3,2.3,1,620
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),04-research-harness,1,1,57,57,13,81900
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),05-diagnose-harness,1,1,35,34.4,9,51342
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),06-bisect-cli,1,1,3,,,
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),06-cli-first,1,1,9,8.4,2,1270
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",01-chatbot,1,1,2,,,
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",02-tools-and-approval,1,1,6,5.6,3,5383
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",03-sessions-first-run,1,1,7,6.6,3,5791
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",03-sessions-resume,1,1,4,3.8,1,486
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",04-research-harness,1,1,42,41.5,9,59608
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",05-diagnose-harness,1,1,28,27.1,8,48023
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",06-bisect-cli,1,1,3,,,
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",06-cli-first,1,1,8,6.8,2,1107

@@ -1,0 +1,26 @@
+phase dev          gpt-6-luna · medium
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ dev ═══
+I’ll read `Pricing.cs` first to verify and copy the exact line for the proposal. I don’t have an HTTP-fetch tool here, so I’ll also report whether the incident page could be independently checked.
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+The file contains the direct dictionary index exactly as described. I’ll prepare one proposal replacing only that lookup; I can’t independently access `status.example.com` with the available tools.
+→ write_proposal(name: default-missing-tier-discount, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = TierDiscounts.GetValueOrDefault(customer.Tier);, rationale: Indexing the discount table throws for tiers such as standard because …)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..c304cd9 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -13,7 +13,7 @@ public static class Pricing
+         public static decimal Total(Order order, Customer customer)
+         {
+             var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+    -        var discount = TierDiscounts[customer.Tier];
+    +        var discount = TierDiscounts.GetValueOrDefault(customer.Tier);
+             var total = subtotal * (1 - discount) * (1 + GstRate);
+             return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+         }
+  ← 15 lines · Wrote proposals/default-missing-tier-discount.patch:
+I couldn’t check `status.example.com` with the available tools. The proposal is written but not applied or tested.
+
+default-missing-tier-discount — uses a zero discount for unlisted customer tiers instead of throwing.
+── usage: phased · 3 model calls · 9,690 in / 574 out tokens · ≈ $0.001 · 2 tool calls · 8.2 s
+   dev          gpt-6-luna · medium     8.2 s   3 calls    9,690 in     574 out (290 reasoning) ≈ $0.0013 ok

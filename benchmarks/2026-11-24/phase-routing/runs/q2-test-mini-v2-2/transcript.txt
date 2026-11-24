@@ -1,0 +1,26 @@
+phase test         gpt-5.4-mini · default
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ test ═══
+I'll apply the proposal, then verify tests and the API behavior.
+🔐 approval needed: apply_proposal(name: default-missing-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-missing-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 84 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The tests passed, and I’ll now confirm the API returns a total for order 1001.
+→ http_get(path: /orders/1001/total)
+  ← GET /orders/1001/total -> 500 
+The API still returns 500, so I need to inspect the applied change and current code path.
+→ run_command(command: git diff -- src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+The source change is correct, so I’m checking whether the running service needs a restart or if another code path is throwing.
+→ run_command(command: git log --oneline -1)
+  ← exit 0 · f1812c8 Release 1.4.0
+I found the applied fix, but the API process appears to still be serving the old build.
+- Root cause: `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]`, so `standard` customers were missing from the lookup and threw `KeyNotFoundException`.
+- Commit that introduced it: `9bfbf7d` — **Move tier discounts into a lookup table and add silver tier**.
+- Fix: changed the lookup to `TierDiscounts.GetValueOrDefault(customer.Tier)`, restoring the previous zero-discount fallback for unlisted tiers.
+- Test result after the fix: `dotnet test` passed (`8 passed, 0 failed`), but `GET /orders/1001/total` still returned `500`, indicating the running API instance is still on the old build or otherwise not serving the updated code.
+── usage: phased · 5 model calls · 18,904 in / 394 out tokens · ≈ $0.016 · 4 tool calls · 9.5 s
+   test         gpt-5.4-mini · default    9.5 s   5 calls   18,904 in     394 out (0 reasoning) ≈ $0.0160 ok

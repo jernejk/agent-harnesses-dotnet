@@ -1,0 +1,33 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(service: orders, lines: 200)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders 500s root cause: Pricing.Total throws unhandled KeyNotFoundExce…)
+  📌 Orders 500s root cause: Pricing.Total throws unhandled KeyNotFoundException when looking up pricing key 'standard' in dictionary (Pricing.cs:line 16).
+→ pin_fact(fact: Decision: Hotfix pricing lookup to handle missing/unknown key 'standar…)
+  📌 Decision: Hotfix pricing lookup to handle missing/unknown key 'standard' (and return correct total) and do not restart the Orders service.
+### Orders status check
+- Service **orders** health: **200 / ok**
+- Canary request (GET `/orders/1001/total`): **500**
+
+### Orders logs (most recent 200 lines)
+Repeated unhandled exceptions:
+- `System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in the dictionary.`
+- Stack trace points to: `Orders.Api.Pricing.Total(...)` at **`/src/Orders.Api/Pricing.cs:line 16`**
+- Triggered during order total calculation for requests like **Order 1001**.
+
+### Pinned root cause
+- **Root cause:** pricing lookup throws an unhandled `KeyNotFoundException` for missing pricing key **`standard`** in the pricing dictionary (`Pricing.cs:line 16`).
+
+### Pinned decision
+- **Decision:** **Hotfix the pricing lookup** (handle missing/unknown key like `standard`) and **do not restart** the Orders service.
+history ████████████████████████████░░░░ ≈ 2,660 tok · before compaction
+pinned  📌 Orders 500s root cause: Pricing.Total throws unhandled KeyNotFoundException when looking up pricing key 'standard' in dictionary (Pricing.cs:line 16).
+pinned  📌 Decision: Hotfix pricing lookup to handle missing/unknown key 'standard' (and return correct total) and do not restart the Orders service.
+history ███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   338 tok · after compaction
+pinned  📌 Orders 500s root cause: Pricing.Total throws unhandled KeyNotFoundException when looking up pricing key 'standard' in dictionary (Pricing.cs:line 16).
+pinned  📌 Decision: Hotfix pricing lookup to handle missing/unknown key 'standard' (and return correct total) and do not restart the Orders service.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: gpt-5.4-nano · 4 model calls · 8,707 in / 355 out tokens · ≈ $0.002 · 4 tool calls · 7.7 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 9s

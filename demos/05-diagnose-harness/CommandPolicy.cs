@@ -9,7 +9,8 @@ public closed record Decision
     public sealed record Denied(string Why) : Decision;
 }
 
-public sealed class CommandPolicy(string folder, TimeSpan timeout, TraceLog? trace = null)
+public sealed class CommandPolicy(string folder, TimeSpan timeout, TraceLog? trace = null,
+    SandboxRunner? sandbox = null)
 {
     public Decision Evaluate(string command) => Tokenize(command) switch
     {
@@ -67,8 +68,9 @@ public sealed class CommandPolicy(string folder, TimeSpan timeout, TraceLog? tra
     {
         try
         {
-            var (exit, stdout, stderr) = await Subprocess.RunAsync(
-                program, args, folder, timeout, cancellationToken);
+            var (exit, stdout, stderr) = program == "dotnet" && sandbox is not null
+                ? await sandbox.TestAsync(args, timeout, cancellationToken)
+                : await Subprocess.RunAsync(program, args, folder, timeout, cancellationToken);
             var output = Clip(stdout + stderr)
                 .Replace(Repo.Root + Path.DirectorySeparatorChar, "");
             var tone = exit == 0 ? Tone.Ok : Tone.Warn;
@@ -93,7 +95,7 @@ public sealed class CommandPolicy(string folder, TimeSpan timeout, TraceLog? tra
         return $"DENIED by policy: {why} Do not retry it; adapt.";
     }
 
-    static Decision DotnetTest(string[] args)
+    Decision DotnetTest(string[] args)
     {
         List<string> extra = [];
         for (var i = 0; i < args.Length; i++)
@@ -103,6 +105,9 @@ public sealed class CommandPolicy(string folder, TimeSpan timeout, TraceLog? tra
             {
                 case "--nologo" or "Orders.slnx":
                     break;
+                case "--no-build" or "--no-restore" when sandbox is not null:
+                    return new Decision.Denied(
+                        $"'{args[i]}' needs build state. Each sandbox run starts fresh.");
                 case "--no-build" or "--no-restore":
                     extra.Add(args[i]);
                     break;

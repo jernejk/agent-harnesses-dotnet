@@ -1,0 +1,3 @@
+- Add pricing tests for null and unlisted tiers; the existing tests do not verify the new fallback.
+- Assert the API’s returned total, not just its status, to verify the endpoint result.
+- Ensure the API tests exercise the rebuilt code; if they use localhost, redeploy first or they will test 1.4.0.

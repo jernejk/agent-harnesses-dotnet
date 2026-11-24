@@ -1,0 +1,1 @@
+Proposal created: `default-discount-for-unlisted-tiers` changes the lookup to default unlisted customer tiers to a zero discount. I did not apply or test it, and couldn’t independently check the status page.

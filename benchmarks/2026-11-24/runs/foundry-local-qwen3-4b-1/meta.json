@@ -1,0 +1,15 @@
+{
+  "label": "foundry-local-qwen3-4b-1",
+  "provider": "foundry-local",
+  "models": [
+    "qwen3-4b-generic-gpu:2"
+  ],
+  "endpoint_host": "127.0.0.1:5272",
+  "api": "chat",
+  "reasoning_effort": "default",
+  "started_at": "2026-11-23T14:40:01Z",
+  "wall_s": 410,
+  "exit_code": 1,
+  "machine": "arm64 Apple M5 Max",
+  "note": ""
+}

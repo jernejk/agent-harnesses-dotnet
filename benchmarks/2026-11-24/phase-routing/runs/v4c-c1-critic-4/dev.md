@@ -1,0 +1,1 @@
+Proposal `restore-default-tier-discount` changes `Pricing.cs` to use configured tier discounts and fall back to zero for other or null tiers. It is not applied.

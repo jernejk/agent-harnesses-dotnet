@@ -1,0 +1,18 @@
+boundary tests, no model calls…
+✔ 00-boundaries                16s  exit 0
+model provider: foundry-local
+resetting target/ and starting the Orders service…
+✔ 01-chatbot                    4s  exit 0
+✖ 02-tools-and-approval        28s  exit 0, wanted 0, missing [approval needed: restart_service] [✖ rejected]
+✔ 03-sessions-first-run        17s  exit 0
+✖ 03 compaction did not halve the history: 135 → 98 tokens
+✔ 03-sessions-resume            5s  exit 0
+✖ 04-research-harness         151s  exit 3, wanted 0, missing [Run this plan?] [Saved reports/]
+✖ 05-diagnose-harness          64s  exit 0, wanted 0, missing [✔ applied] [Passed!]
+✔ 06-bisect-cli                 4s  exit 0
+✔ 06-cli-first                 96s  exit 0
+forced failures, expected to fail with a clear message:
+✔ 90-bad-endpoint               1s  exit 2
+✔ 91-rehearsal-flag-guard       1s  exit 2
+model usage: 12 calls, 16,202 in / 8,192 out tokens, ≈ $0.000
+✖ 4 check(s) failed. Output is in recordings/.

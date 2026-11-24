@@ -1,0 +1,4 @@
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` directly indexed `TierDiscounts` by customer tier; `standard` was missing, causing `KeyNotFoundException` and HTTP 500.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `fallback-zero-for-unknown-tier-discounts`; missing or null tiers now receive a zero discount while gold and silver discounts are retained.
+- **Test result:** All 8 tests passed (0 failed, 0 skipped). The live API was not used for verification; it remains on the deployed 1.4.0 build.

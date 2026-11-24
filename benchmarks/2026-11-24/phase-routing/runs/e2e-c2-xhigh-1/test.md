@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` looked up the customer tier in a dictionary that omitted `standard`, causing a `KeyNotFoundException` for order 1001.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `restore-standard-tier-discount`, adding an explicit `standard` tier discount of `0m`.
+- **Test result:** `dotnet test` passed: **8 passed, 0 failed, 0 skipped**. This includes the standard-tier pricing and API tests.

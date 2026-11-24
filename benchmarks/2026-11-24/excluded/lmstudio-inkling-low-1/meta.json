@@ -1,0 +1,13 @@
+{
+  "label": "lmstudio-inkling-low-1",
+  "provider": "lmstudio",
+  "models": [],
+  "endpoint_host": "127.0.0.1:1234",
+  "api": "chat",
+  "reasoning_effort": "low",
+  "started_at": "2026-11-23T15:07:42Z",
+  "wall_s": 26,
+  "exit_code": 1,
+  "machine": "arm64 Apple M5 Max",
+  "note": ""
+}

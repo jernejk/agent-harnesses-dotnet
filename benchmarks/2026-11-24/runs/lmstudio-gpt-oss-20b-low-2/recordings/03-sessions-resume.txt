@@ -1,0 +1,24 @@
+history ███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   336 tok · restored in a new process
+pinned  📌 Root cause: pricing lookup missing 'standard' key leading to 500. Decision: hotfix pricing dictionary, no restart.
+**What we decided**
+
+- **Apply a hot‑fix to the pricing lookup dictionary by adding the missing `'standard'` key (and any other required defaults).**
+- **Do NOT restart the Orders service.**  
+  The change can be applied at runtime and will take effect on the next request.
+
+**Why we made this decision**
+
+| Issue | Impact | Rationale for Hot‑Fix |
+|-------|--------|----------------------|
+| **Missing `'standard'` key** in the pricing dictionary | Every request that needs to calculate an order total throws a `KeyNotFoundException`, causing **500 Internal Server Errors**. | The error is deterministic and localized to the pricing component. Adding the key fixes the problem immediately without affecting other service parts or users. |
+| **Restarting the service** | A restart would temporarily bring the Orders API offline, potentially blocking order placements and causing additional 5xx errors for customers. | The hot‑fix is a lightweight code change that can be injected without downtime, preserving availability while correcting the root cause. |
+| **Future reliability** | Once the key is added, the pricing lookup will succeed for all standard orders. | The hot‑fix restores normal operation and prevents further 500s until a proper release cycle can address any remaining gaps in the pricing logic. |
+
+**Result**
+
+- 500 errors disappear as soon as the hot‑fix is applied.
+- No service disruption for end users.
+- The root cause and decision are pinned so they survive compaction/restarts.
+── usage: openai/gpt-oss-20b · 1 model calls · 617 in / 326 out tokens · ≈ $0.000 · 0 tool calls · 3.4 s
+
+[rehearse] 03-sessions-resume: exit 0 in 4s

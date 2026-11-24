@@ -1,0 +1,9 @@
+model,input_per_1m,output_per_1m,source
+gpt-5.4-mini,0.75,4.50,"Repo spec (docs/spec.md), Azure Global Standard"
+gpt-5.4,2.50,15.00,"Repo spec (docs/spec.md), Azure Global Standard"
+gpt-5.4-nano,0.20,1.25,"Azure Retail Prices API, Global, checked 24 Nov 2026"
+gpt-6-luna,0.10,0.50,"OpenAI pricing page, standard, up to 272K input tokens, checked 24 Nov 2026"
+gpt-6.1-terra,1.00,5.00,"OpenAI pricing page, standard, up to 272K input tokens, checked 24 Nov 2026"
+gpt-5.6-luna,0.20,1.20,"OpenAI pricing page, standard, up to 272K input tokens, checked 24 Nov 2026"
+gpt-5.6-terra,2.00,12.00,"OpenAI pricing page, standard, up to 272K input tokens, checked 24 Nov 2026"
+local models,0,0,"Run on this laptop: no per-token price"

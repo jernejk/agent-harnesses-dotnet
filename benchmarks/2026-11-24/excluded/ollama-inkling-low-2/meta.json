@@ -1,0 +1,13 @@
+{
+  "label": "ollama-inkling-low-2",
+  "provider": "ollama",
+  "models": [],
+  "endpoint_host": "127.0.0.1:11434",
+  "api": "chat",
+  "reasoning_effort": "low",
+  "started_at": "2026-11-23T14:37:08Z",
+  "wall_s": 21,
+  "exit_code": 1,
+  "machine": "arm64 Apple M5 Max",
+  "note": ""
+}

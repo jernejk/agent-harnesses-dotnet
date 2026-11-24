@@ -1,0 +1,175 @@
+phase investigate  gpt-6-luna · xhigh
+phase plan         gpt-6-luna · xhigh
+phase dev          gpt-6-luna · high
+phase test         gpt-6-luna · high
+critic             gpt-6.1-terra · medium (one call after the plan)
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ investigate ═══
+I’ll reproduce the failure, compare releases, and inspect the relevant code; I can’t open the status page here, and I’ll investigate only—not make changes.
+→ todos_add(todos: [{"title":"Reproduce the /total failure with tests or the local API"},…)
+I’ll run the test suite and exercise `/orders/1001/total`, while checking the commits and file changes since v1.3.0.
+→ run_command(command: dotnet test)
+→ http_get(path: /orders/1001/total)
+→ run_command(command: git log --oneline --decorate v1.3.0..HEAD)
+→ run_command(command: git diff --stat v1.3.0..HEAD)
+  ← exit 1 · [xUnit.net 00:00:00.15]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← GET /orders/1001/total -> 500 
+  ← exit 0 · 9bfbf7d Move tier discounts into a lookup table and add silver tier
+  ← exit 0 · 5 files changed, 34 insertions(+), 5 deletions(-)
+The failure reproduces: tests and the API return 500 because pricing throws `KeyNotFoundException` for tier `standard`; I’m tracing the lookup change.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1)
+→ file_access_read_lines(fileName: tests/Orders.Tests/PricingTests.cs, startLine: 1)
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs tests/Orders.Tests/Prici…)
+→ run_command(command: git show v1.3.0:src/Orders.Api/Pricing.cs)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ← exit 0 · }
+The regression is in the new direct dictionary lookup, which has no `standard` key; I’ll confirm the affected order’s tier and the line’s blame.
+→ file_access_grep(regexPattern: standard|TierDiscounts|record Customer|class Customer, globPattern: **/*.cs)
+→ http_get(path: /orders/1001)
+→ run_command(command: git blame -L 7,18 -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git diff v1.3.0..v1.4.0 -- src/Orders.Api/Pricing.cs)
+  ← 2 lines · GET /orders/1001 -> 200
+  ← exit 0 · 2ec9930d (Priya Nair 2026-11-03 11:02:00 +1000 18)         return Math.Round(total, 2, MidpointRound…
+  ← exit 0 · }
+Order 1001 belongs to customer 2, and the store identifies that customer as `standard`; I’ll verify the mapping and then close the investigation tasks.
+→ file_access_read_lines(fileName: src/Orders.Api/OrderStore.cs, startLine: 1, endLine: 20)
+→ file_access_grep(regexPattern: Pricing\.Total|/orders/.*total|MapGet, globPattern: src/**/*.cs)
+The mapping confirms the failing path uses the unsupported tier; the release diff and blame attribute the lookup change to commit `9bfbf7d`.
+→ todos_complete(items: [{"id":1,"reason":"Reproduced with dotnet test (3 failures including t…)
+### Symptom
+`GET /orders/{id}/total` returns HTTP 500 for standard-tier customers.
+
+### Reproduction
+- `GET /orders/1001/total` returned **500**.
+- `dotnet test` failed **3 of 8** tests; the pricing failures report `KeyNotFoundException` for key `standard`.
+- `/orders/1001` returns customer ID `2`; `src/Orders.Api/OrderStore.cs:8` identifies that customer’s tier as `standard`.
+
+### Change that caused it (commit and subject)
+`9bfbf7d8` — **Move tier discounts into a lookup table and add silver tier**. It replaced the previous fallback behavior for non-gold tiers with a dictionary lookup.
+
+### Root cause (file:line and why)
+`src/Orders.Api/Pricing.cs:16` indexes `TierDiscounts` using `customer.Tier`, but the dictionary at lines 7–11 contains only `gold` and `silver`. For a `standard` customer, the lookup throws `KeyNotFoundException`, which causes the endpoint to return 500.
+
+### Evidence
+The test stack trace points to `Pricing.Total` at `Pricing.cs:16`; `git blame` attributes that line to `9bfbf7d8`. Before the change, non-gold tiers received no discount rather than causing an exception.
+
+I can’t open `https://status.example.com` from this environment, so I couldn’t check for an incident. No fix was made during this investigation.
+
+### Confidence
+High.
+═══ plan ═══
+I’ll check the current pricing code and its history against the report, then inspect the relevant existing tests. I’ll use the last good version to identify the exact one-file replacement, and I won’t edit files or call the deployed API.
+→ todos_add(todos: [{"title":"Inspect current pricing implementation and relevant history…)
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ file_access_ls(directory: src)
+→ run_command(command: git status --short)
+→ run_command(command: git show --stat --oneline 9bfbf7d8)
+  ← exit 0 · 
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+The current source confirms the reported failure mechanism: `Total` directly indexes a dictionary with no entry for `standard`. I’m checking the introducing diff and the parent-version implementation next, since the safest change is to restore the prior fallback semantics while retaining the newly intended silver-tier discount.
+→ file_access_ls(directory: tests)
+→ run_command(command: git show 9bfbf7d8 -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git show 9bfbf7d8^:src/Orders.Api/Pricing.cs)
+→ run_command(command: git blame -L 1,30 src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · 2ec9930d (Priya Nair 2026-11-03 11:02:00 +1000 20) }
+The parent revision confirms that gold kept a 5% discount and every other tier got 0%; 1.4.0 intentionally adds silver at 2%. That means the fix should keep the lookup table but make a missing tier default to no discount. I’m checking whether `Tier` can also be null (which matters for preserving all prior behavior), then I’ll run the existing tests as requested.
+→ file_access_ls(directory: tests/Orders.Tests)
+→ file_access_grep(regexPattern: class Customer|record Customer|Tier|Pricing\.Total|KeyNotFoundExceptio…, globPattern: **/*.cs)
+→ file_access_read(fileName: src/Orders.Api/OrderStore.cs)
+→ run_command(command: dotnet test)
+  ← exit 1 · [xUnit.net 00:00:00.13]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+The failure is reproduced exactly: current `dotnet test` has 3 failures out of 8, including both standard-pricing tests and the API test for order 1001. `Customer.Tier` is declared non-nullable, but the old equality check also tolerated a runtime null; I’ll make the proposed fallback tolerate null too, while preserving the 1.4.0 silver discount. I’m reviewing the complete test assertions before writing the handoff.
+→ file_access_read_lines(fileName: tests/Orders.Tests/PricingTests.cs, startLine: 1)
+→ file_access_read_lines(fileName: tests/Orders.Tests/OrdersApiTests.cs, startLine: 1)
+→ file_access_read_lines(fileName: src/Orders.Api/Models.cs, startLine: 1)
+→ run_command(command: git show 9bfbf7d8 -- tests/Orders.Tests/PricingTests.cs src/Orders.Api…)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+The test coverage confirms the behavior to preserve: standard-tier prices include GST without discount, gold retains 5% off, silver retains its new 2% off, rounding stays unchanged, and all three seeded order-total endpoints should return OK. The smallest safe correction is one line in `Pricing.Total`: try the table for known tiers, otherwise use 0% (including a null tier), leaving the lookup table and arithmetic untouched. I’ll verify the worktree state and close the research items; I have not changed any files.
+→ run_command(command: git status --short)
+→ todos_complete(items: [{"id": 1, "reason": "Verified current lookup, commit 9bfbf7d8 and par…)
+  ← exit 0 · 
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:16` — introduced by commit `9bfbf7d8` (`Move tier discounts into a lookup table and add silver tier`). `Total` indexes `TierDiscounts` directly, but the table has entries only for `gold` and `silver`. A `standard` tier therefore throws `KeyNotFoundException`.
+
+The parent version applied a discount only when the tier was `gold`; all other tiers received no discount. The regression affects any tier not in the new table, not just `standard`.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs`, replace this line:
+
+```csharp
+        var discount = TierDiscounts[customer.Tier];
+```
+
+with:
+
+```csharp
+        var discount = customer.Tier is not null && TierDiscounts.TryGetValue(customer.Tier, out var tierDiscount) ? tierDiscount : 0m;
+```
+
+## Why this is the smallest safe fix
+
+This is one line in one file. Known tiers keep their table-defined discounts: gold remains 5% and silver remains 2%. Missing or null tiers receive no discount, restoring the prior behavior without changing the GST calculation, rounding, or the intentional silver-tier change.
+
+## Verification (what the existing tests must show after the fix)
+
+Run `dotnet test`. The existing suite should pass all 8 tests, including:
+
+- Standard-tier total of `110.00` and the standard-tier rounding result of `21.89`.
+- Gold total of `104.50` and silver total of `107.80`.
+- HTTP OK for the existing order-total checks for orders 1001, 1002, and 1003; unknown orders still return 404.
+
+Before the fix, `dotnet test` reproduced 3 failures and 5 passes. Verification is against the repo tests, not the deployed localhost service.
+
+## Risks
+
+The existing tests don’t explicitly cover arbitrary or null tiers, though the proposed fallback handles them. Any tier not added to the table will continue to receive no discount, matching the previous behavior. The running 1.4.0 service won’t receive this repo change without a redeploy, which is out of scope. No files were changed.
+═══ critic ═══
+APPROVE
+═══ dev ═══
+I’ll verify the exact line in `Pricing.cs`, then create a single proposal with the planned one-line fallback. I won’t apply the change or run tests, as requested.
+→ todos_add(todos: [{"title":"Read and confirm the target pricing line","description":"In…)
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 10, endLine: 21)
+The target line matches the incident’s reported direct dictionary index exactly. I’m creating the single proposal now, replacing only that line with the null-safe `TryGetValue` fallback.
+→ write_proposal(name: fallback-for-unlisted-tier-discounts, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = customer.Tier is not null && TierDiscounts.TryG…, rationale: Direct indexing throws for null or any customer tier absent from the d…)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..c963909 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -13,7 +13,7 @@ public static class Pricing
+         public static decimal Total(Order order, Customer customer)
+         {
+             var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+    -        var discount = TierDiscounts[customer.Tier];
+    +        var discount = customer.Tier is not null && TierDiscounts.TryGetValue(customer.Tier, out var tierDiscount) ? tierDiscount : 0m;
+             var total = subtotal * (1 - discount) * (1 + GstRate);
+             return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+         }
+  ← 15 lines · Wrote proposals/fallback-for-unlisted-tier-discounts.patch:
+→ todos_complete(items: [{"id":1,"reason":"Read lines 10–21 of Pricing.cs and confirmed the di…)
+fallback-for-unlisted-tier-discounts — changes tier discount lookup to safely apply no discount for null or unlisted tiers.
+═══ test ═══
+I’ll apply the named proposal, then verify the test result against the stated eight-test expectations.
+→ todos_add(todos: [{"title":"Apply fallback-for-unlisted-tier-discounts proposal","descr…)
+The work is tracked; I’m submitting the exact proposal name for the approval-gated patch and test run.
+🔐 approval needed: apply_proposal(name: fallback-for-unlisted-tier-discounts)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied fallback-for-unlisted-tier-discounts.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 77 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The proposal applied successfully and all eight tests passed, matching the verification plan; I’m closing the tracked items.
+→ todos_complete(items: [{"id":1,"reason":"Applied the exact proposal; the approval-gated oper…)
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` directly indexed the tier-discount table; a `standard` tier was absent and raised `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `fallback-for-unlisted-tier-discounts`; null or unlisted tiers now receive no discount, while listed tiers retain their configured discounts.
+- **Test result:** `dotnet test` passed all 8 tests (0 failed, 0 skipped). Verification was against the repo tests; the deployed 1.4.0 service was not redeployed.
+── usage: phased · 24 model calls · 121,391 in / 7,841 out tokens · ≈ $0.017 · 42 tool calls · 88.9 s
+   investigate  gpt-6-luna · xhigh     25.2 s   7 calls   41,230 in   2,460 out (1,195 reasoning) ≈ $0.0054 ok
+   plan         gpt-6-luna · xhigh     40.2 s   7 calls   46,100 in   4,113 out (2,445 reasoning) ≈ $0.0067 ok
+   critic       gpt-6.1-terra · medium     2.9 s   1 calls    1,069 in     105 out (96 reasoning) ≈ $0.0016 ok
+   dev          gpt-6-luna · high      10.5 s   5 calls   17,358 in     561 out (118 reasoning) ≈ $0.0020 ok
+   test         gpt-6-luna · high      10.1 s   4 calls   15,634 in     602 out (178 reasoning) ≈ $0.0019 ok

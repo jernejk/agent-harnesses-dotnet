@@ -1,0 +1,17 @@
+boundary tests, no model calls…
+✔ 00-boundaries                15s  exit 0
+starting the local model…
+resetting target/ and starting the Orders service…
+✔ 01-chatbot                    3s  exit 0
+✔ 02-tools-and-approval        13s  exit 0
+✔ 03-sessions-first-run        12s  exit 0
+✔ 03-sessions-resume            5s  exit 0
+✔ 04-research-harness         130s  exit 0
+✔ 05-diagnose-harness          45s  exit 0
+✔ 06-bisect-cli                 4s  exit 0
+✔ 06-cli-first                 12s  exit 0
+forced failures, expected to fail with a clear message:
+✔ 90-bad-endpoint               0s  exit 2
+✔ 91-rehearsal-flag-guard       1s  exit 2
+model usage: 31 calls, 175,326 in / 6,574 out tokens, ≈ $0.000
+✔ all demos green. Output is in recordings/.

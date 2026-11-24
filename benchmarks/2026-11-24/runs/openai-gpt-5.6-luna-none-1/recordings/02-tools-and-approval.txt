@@ -1,0 +1,19 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+→ get_service_status(service: payments)
+→ get_recent_logs(service: orders, lines: 80)
+→ get_recent_logs(service: payments, lines: 80)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+  ← 80 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- **Cause is Orders itself, not payments.** Orders health is `200`, but its canary returns `500`.
+- Logs show repeated `KeyNotFoundException`: key **`standard`** missing in `Orders.Api.Pricing.Total` at `Pricing.cs:16`.
+- The payments status/log checks were denied because that service is outside this agent’s scope; no evidence implicates payments.
+- I attempted to restart Orders, but the production restart was **rejected by the approver**, so Orders was not restarted.
+── usage: gpt-5.6-luna · 3 model calls · 4,611 in / 215 out tokens · ≈ $0.000 · 5 tool calls · 4.7 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 5s

@@ -1,0 +1,14 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+→ get_recent_logs(service: orders, lines: 80)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 80 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- **Not payments:** Orders service health is “ok” but the canary `GET /orders/1001/total` returns **500** immediately. Evidence: `health 200 ... canary GET /orders/1001/total -> 500`
+- **Cause inside Orders:** Logs show **`KeyNotFoundException: The given key 'standard' was not present in the dictionary`** from **`Orders.Api.Pricing.Total(...)`** (`/src/Orders.Api/Pricing.cs:line 16`), i.e., pricing logic/config issue rather than a payments dependency outage.
+- **Restart blocked:** I attempted to restart **Orders**, but the action was **rejected by the operator/approver**, so no restart was performed.
+── usage: gpt-5.4-nano · 3 model calls · 4,519 in / 229 out tokens · ≈ $0.001 · 3 tool calls · 5.2 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 6s

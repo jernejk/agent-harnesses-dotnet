@@ -1,0 +1,96 @@
+phase plan         gpt-6-luna · max
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll verify whether the status page reports a related incident, then inspect the cited endpoint and the release change/tests. I’ll only read and run read-only checks; I won’t modify the repository.
+→ todos_add(todos: [{"title":"Check the status page and inspect the reported release chan…)
+→ run_command(command: curl -L --max-time 10 https://status.example.com)
+→ run_command(command: git show ab38e53 -- src/Orders.Api/Program.cs)
+  ✖ DENIED by policy: curl -L --max-time 10 https://status.example.com: No curl. Use http_get for the Orders API.
+  ← exit 0 · public partial class Program;
+The cited commit does not match the reported root-cause claim: its patch adds `builder.Services.AddProblemDetails()` as well as changing the not-found helper. I can’t access the status site with the available tools (`curl` is denied, and no `http_get` tool is exposed), so I won’t claim a status-page result. I’m checking the current file, history, and tests before deciding whether any fix is justified.
+→ run_command(command: git show HEAD:src/Orders.Api/Program.cs)
+→ run_command(command: git log --oneline --decorate -8)
+→ run_command(command: git grep -n "Order_totals_are_available")
+→ run_command(command: git status --short)
+  ← exit 0 · public partial class Program;
+  ← exit 0 · 2518c83 Initial Orders API with in-memory store
+  ← exit 0 · tests/Orders.Tests/OrdersApiTests.cs:13:    public async Task Order_totals_are_available(int orderId…
+  ← exit 0 · 
+→ run_command(command: git show HEAD:tests/Orders.Tests/OrdersApiTests.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/Orders.Api.csproj)
+→ run_command(command: git show HEAD:src/Orders.Api/OrderStore.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+  ← exit 0 · </Project>
+  ← exit 0 · }
+  ← exit 0 · }
+The current `/total` path uses `Results.Problem` only for a missing order; it does not use that helper for order 1001, which exists. The actual 500 candidate is further downstream: order 1001 belongs to a `standard` customer, while `Pricing` currently indexes a discount table containing only `gold` and `silver`. I’m verifying when that regression was introduced and what the tests cover before proposing a change.
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git show fcded06:src/Orders.Api/Pricing.cs)
+→ run_command(command: git ls-tree -r --name-only HEAD)
+→ run_command(command: git grep -n "TierDiscounts\|standard\|discount")
+  ← exit 0 · }
+  ← exit 0 · }
+  ✖ DENIED by policy: git ls-tree -r --name-only HEAD: git ls-tree is not allowed. Try log, show, diff, blame or grep.
+  ✖ DENIED by policy: git grep -n "TierDiscounts\|standard\|discount": No shell operators (; | & < > ` $), one command.
+The regression is now traceable to `9bfbf7d`, not the problem-details change: before that commit, every non-gold customer received a 0% discount; afterward, the lookup throws for the existing `standard` tier. I’m checking the exact source lines and the test inventory so the plan can distinguish a targeted fix from broader fallback behavior.
+→ run_command(command: git blame -L 1,24 -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git grep -n "public async Task")
+→ run_command(command: git grep -n "Pricing" tests)
+  ← exit 0 · 2ec9930d (Priya Nair 2026-11-03 11:02:00 +1000 20) }
+  ← exit 0 · tests/Orders.Tests/OrdersApiTests.cs:20:    public async Task Unknown_orders_return_404()
+  ← exit 0 · tests/Orders.Tests/PricingTests.cs:26:        Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("sta…
+The test inventory explains the reported “3 failed, 5 passed”: `PricingTests` exercises `standard` twice, and the API theory includes order 1001, also standard; the other listed cases use gold or silver. I’ll confirm the precise line references and test assertions, then give the implementation plan.
+→ run_command(command: git show HEAD:tests/Orders.Tests/PricingTests.cs)
+→ run_command(command: git blame -L 1,38 -- src/Orders.Api/Program.cs)
+→ run_command(command: git blame -L 1,25 -- src/Orders.Api/OrderStore.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/Models.cs)
+  ← exit 0 · }
+  ← exit 0 · ^2518c83 (Sam Rivera 2026-11-02 09:14:00 +1000 32) public partial class Program;
+  ← exit 0 · ^2518c83 (Sam Rivera 2026-11-02 09:14:00 +1000 22) }
+  ← exit 0 · public sealed record OrderTotal(int OrderId, decimal Total, string Currency);
+→ todos_complete(items: [{"id":1,"reason":"Inspected ab38e53 and the current API code; the sta…)
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:7–16`: the tier-discount dictionary contains `gold` and `silver`, but not `standard`. Line 16 indexes it using the customer’s tier, so `standard` throws `KeyNotFoundException`.
+
+`src/Orders.Api/OrderStore.cs:8,14` maps order `1001` to a `standard` customer. The regression was introduced in `9bfbf7d`, which replaced the previous “gold gets 5%, otherwise 0%” logic with the dictionary lookup. The test inventory matches the reported failures: two standard-tier pricing tests and the API test for order 1001.
+
+The reported cause in `Program.cs:30` is not supported by the current code: `AddProblemDetails()` is registered at line 5, and the not-found helper is only used when the order is missing. Order 1001 proceeds to `Pricing.Total`.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs`, add an explicit zero discount for the existing `standard` tier.
+
+**Before:**
+```csharp
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+    };
+```
+
+**After:**
+```csharp
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+        ["standard"] = 0m,
+    };
+```
+
+Leave the lookup on line 16 unchanged.
+
+## Why this is the smallest safe fix
+
+One dictionary entry restores the prior behavior for standard customers while preserving the intended gold and silver discounts. It avoids changing endpoint handling or making unrecognized tiers silently receive a zero discount.
+
+## Verification (what to run and what it must show)
+
+After applying the change, run `dotnet test`. It should report **8 passed, 0 failed**, including the standard-tier pricing tests and `Order_totals_are_available(orderId: 1001)`. The existing gold, silver, rounding, and unknown-order tests should continue to pass.
+
+Also verify `GET /orders/1001/total` returns **200** with a total of **195.8 AUD**; `GET /orders/9999/total` should remain **404**.
+
+## Risks
+
+An unrecognized tier will still throw; this fix deliberately handles the known `standard` tier without defining a fallback policy for unknown values. I could not verify `https://status.example.com`: the available tools did not provide an HTTP fetch, and the attempted `curl` request was denied. No repository files were changed, and I did not run the tests.
+── usage: phased · 9 model calls · 74,197 in / 9,644 out tokens · ≈ $0.012 · 23 tool calls · 89.0 s
+   plan         gpt-6-luna · max       89.0 s   9 calls   74,197 in   9,644 out (7,776 reasoning) ≈ $0.0122 ok

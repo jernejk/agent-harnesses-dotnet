@@ -1,0 +1,14 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.7 s, 0 tokens
+- **Cause:** The regression is from a pricing refactor that changed discounts from “gold gets 5%, everyone else gets 0%” to a lookup table. That table now includes `silver`, and `Pricing.Total` does `TierDiscounts[customer.Tier]`, so any tier not present in the table will throw; the failing path is tied to the tier/customer data change in the same commit.
+
+- **Commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — *Move tier discounts into a lookup table and add silver tier*.
+
+- **One-line fix:** Use a safe default lookup, e.g. `var discount = TierDiscounts.TryGetValue(customer.Tier, out var d) ? d : 0m;` instead of indexing the dictionary directly.
+── usage: gpt-5.4-mini · 2 model calls · 1,139 in / 198 out tokens · ≈ $0.002 · 1 tool calls · 6.3 s
+
+                             time        tokens     cost            
+agent does it all (05)     27.9 s    77,259 tok   $0.064    18 tools
+CLI first (06)              6.3 s     1,337 tok   $0.002     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 7s

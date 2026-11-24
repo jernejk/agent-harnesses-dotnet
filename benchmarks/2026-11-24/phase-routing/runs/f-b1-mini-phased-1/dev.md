@@ -1,0 +1,1 @@
+fix-orders-total-standard-tier: changes `src/Orders.Api/Pricing.cs` to use a safe default discount for unknown tiers instead of throwing on direct dictionary lookup.

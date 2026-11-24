@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-5.4-mini:default",
+    "plan": "gpt-5.4-mini:default",
+    "dev": "gpt-5.4-mini:default",
+    "test": "gpt-5.4-mini:default"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 12.3,
+      "modelCalls": 5,
+      "toolCalls": 11,
+      "inputTokens": 18956,
+      "outputTokens": 1028,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 15488,
+      "costUsd": 0.018843,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 9.4,
+      "modelCalls": 4,
+      "toolCalls": 6,
+      "inputTokens": 16950,
+      "outputTokens": 857,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 12800,
+      "costUsd": 0.016569,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 5.4,
+      "modelCalls": 4,
+      "toolCalls": 4,
+      "inputTokens": 13364,
+      "outputTokens": 334,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 10752,
+      "costUsd": 0.011526,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 7.2,
+      "modelCalls": 4,
+      "toolCalls": 3,
+      "inputTokens": 16839,
+      "outputTokens": 322,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 14336,
+      "costUsd": 0.014078,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 34.300000000000004,
+    "modelCalls": 17,
+    "toolCalls": 24,
+    "inputTokens": 66109,
+    "outputTokens": 2541,
+    "reasoningTokens": 0,
+    "cachedInputTokens": 53376,
+    "costUsd": 0.061016,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fix-orders-total-missing-tier"
+  ]
+}

@@ -1,0 +1,48 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ mode_get()
+→ todos_add(todos: [{"description":"Summarize .NET 11 changes relevant to C# agents","tit…)
+→ file_memory_write(content: # Plan - Fetch .NET 11 overview (learn.microsoft.com) - Fetch C# 15 wh…, description: Plan for .NET 11 + Agent Framework report, fileName: plan.md)
+Plan: fetch the .NET 11 overview, C# 15 whats-new, Agent Framework overview, the 1.28.0 GitHub release, and the claw/harness devblogs post (plus the .NET 11 announcement blog if useful). I'll track findings in notes.md with [n] citations, then write a 250–400 word report on what changed for C# agent builders.
+  ☐ Fetch .NET 11 overview
+  ☐ Fetch C# 15 overview
+  ☐ Fetch Agent Framework release and blog
+  ☐ Fetch Agent Framework overview
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+Executing now. Fetching the .NET 11 overview and C# 15 whats-new pages first.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+  ← 113 lines · [3] Microsoft Agent Framework Overview | Microsoft Learn
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+The 1.28.0 tag 404s; I'll fetch the claw/harness blog instead, which is one of the required sources.
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 58 lines · [4] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases)
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases. HTTP 404.
+→ file_memory_write(content: # Notes - [1] .NET 11 GA. Runtime: Runtime Async no longer preview (ne…, description: Short notes with citations for .NET 11 + Agent Framework report, fileName: notes.md)
+→ todos_complete(items: [{"id":1,"reason":"Fetched .NET 11 overview; key changes recorded"},{"…)
+→ write_report(markdown: ## What changed in .NET 11  .NET 11 is GA. Runtime Async is now stable…, title: .NET 11 and Agent Framework for C# agents)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 4 of 4 fetched sources.
+→ todos_complete(items: [{"id":5,"reason":"Report written"}])
+Done. Key points:
+
+- **.NET 11**: GA; Runtime Async is now stable for net11.0, with JIT/NativeAOT improvements, crash report logging, and richer libraries (Process run-and-capture, Zstandard/CRC32/ZIP, IEEE 754 Decimal types, System.Text.Json unions + JSONL, OpenTelemetry MemoryCache metrics, async validation, Activity tracing rules) [1].
+- **C# 15** (default for net11.0): collection expression arguments, union types with exhaustive switch, closed hierarchies, extension indexers, labeled break/continue, non-virtual static interface members on older runtimes, memory-safety preview [2].
+- **Agent Framework**: four areas — Agents, Harness Agent (batteries-included: planning/todos, context compaction, file access/memory, don't-ask-again approvals, observability), Workflows, Integrations. Successor to AutoGen + Semantic Kernel; Go is in public preview [3]. The claw/harness series builds a personal-finance assistant across 4 parts: todos/plan-execute, file access/approvals/durable memory, skills/background agents/CodeAct, and observability/governance/Foundry Hosted Agents/evaluation [4].
+- **Caveat**: the requested `dotnet-1.28.0` GitHub release tag and the releases index both returned 404, so no release-notes claims were made.
+
+Report saved to `reports/what-changed-in-net-11-and-agent.md`.
+  ✔ Fetch .NET 11 overview
+  ✔ Fetch C# 15 overview
+  ✔ Fetch Agent Framework release and blog
+  ✔ Fetch Agent Framework overview
+  ✔ Write the report
+── usage: inkling-2-mini · 13 model calls · 109,475 in / 3,378 out tokens · ≈ $0.000 · 13 tool calls · 115.3 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 116s

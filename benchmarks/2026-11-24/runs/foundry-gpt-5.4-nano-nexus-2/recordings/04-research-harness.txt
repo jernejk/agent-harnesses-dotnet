@@ -1,0 +1,54 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ todos_add(todos: [{"title":"Fetch .NET 11 overview and identify agent-relevant runtime/…)
+→ file_memory_write(fileName: plan.md, content: - Fetch .NET 11 overview and identify agent-relevant runtime/SDK/C# ch…, description: Planned steps for answering: what changed in .NET 11 and Agent Framewo…)
+- Fetch .NET 11 overview and identify agent-relevant runtime/SDK/C# changes for C# developers [todo 1]  
+- Fetch C# 15 whats-new and extract any language features relevant to agent building (e.g., new syntax/types) [todo 2]  
+- Fetch Agent Framework overview/release/build harness sources for updates affecting agent builders [todo 3]  
+- Write the report [todo 4]
+  ☐ Fetch .NET 11 overview and identify agent-relevant runtime/SDK/C# changes for C# developers
+  ☐ Fetch C# 15 whats-new and extract any language features relevant to agent building (e.g., new syntax/types)
+  ☐ Fetch Agent Framework overview/release/build harness sources for updates affecting agent builders
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+  ← 113 lines · [3] Microsoft Agent Framework Overview | Microsoft Learn
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 58 lines · [4] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+→ todos_complete(items: [{"id":1,"reason":"Fetched .NET 11 overview and extracted runtime and …)
+→ write_report(title: Key .NET 11 and Agent Framework changes for building agents in C#, markdown: ## .NET 11 (runtime + libraries) - **Runtime Async is now built in for…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 4 of 4 fetched sources.
+## .NET 11 (runtime + libraries)
+- **Runtime Async is now built in for net11**: .NET 11 runtime-native async no longer requires setting `<EnablePreviewFeatures>` for projects targeting `net11.0`, and runtime libraries are compiled with `runtime-async=on`, with additional performance improvements and warm-up/codegen optimizations for common `await` paths. [1]
+- **More reliability and deployment safety**: .NET 11 includes in-process crash report logging (managed stack trace + runtime state), several reliability fixes, and advisory file locking disabled by default on iOS/tvOS. [1]
+- **Library additions commonly useful for agent tooling**: new `System.Diagnostics`/OpenTelemetry integration for `MemoryCache`, expanded `System.Text.Json` features including C# union support, improved networking/HTTP options, and new process helpers (including signaling and safer process lookup). [1]
+- **Agent payload/state building blocks**: new in-memory stream types and numeric parsing/generic numeric APIs, plus new cryptography/networking helpers (e.g., HTTP/3 stream priority via `QuicStream.Priority`, typed DNS resolution via a `DnsResolver` class). [1]
+
+## C# 15 language features that matter for agents
+- **Union types**: C# 15 introduces `union` types, with compiler-checked exhaustiveness for switch expressions across union cases—useful when an agent must handle multiple structured message/tool/action variants. [2]
+- **Closed hierarchies**: the `closed` modifier enables compile-time knowledge of derived types within an assembly, enabling exhaustive switch handling without a default arm. [2]
+- **Collection expression arguments**: allows `with(...)` elements inside collection expressions to pass constructor/factory arguments like capacity/comparers directly through the collection syntax. [2]
+
+## Agent Framework (what changed for C# agent builders)
+- **Core architecture for agents**: Agent Framework describes four primary areas—agents, harness agent, workflows, and integrations—plus foundational building blocks like model clients, agent sessions for state, context providers, middleware, and MCP clients. [3]
+- **Harness-focused building model**: the Agent Framework “harness” is presented as the “agent loop” that provides tools, planning/todo execution modes, durable memory, approvals, and observability (demonstrated in a .NET + Python series). [4]
+
+## Notes on “what changed” specifics
+The fetched sources above don’t include a specific Agent Framework **.NET release/change log entry** for the requested tag (an attempted GitHub release tag fetch returned 404), so I can only summarize what’s stated in the overview and harness blog post from the primary sources. [3][4]
+↻ loop: You still have incomplete todo items. Continue working until every item is complete, marking each item as comp…
+→ todos_complete(items: [{"id":4,"reason":"A complete 250–400 word report with cited claims pe…)
+Completed todo item **4** (“Write the report”). A 250–400 word Markdown summary with citations per paragraph/bullet was produced via the `write_report` step, covering .NET 11, C# 15, and the Agent Framework harness/architecture from the fetched primary sources.
+  ✔ Fetch .NET 11 overview and identify agent-relevant runtime/SDK/C# changes for C# developers
+  ✔ Fetch C# 15 whats-new and extract any language features relevant to agent building (e.g., new syntax/types)
+  ✔ Fetch Agent Framework overview/release/build harness sources for updates affecting agent builders
+  ✔ Write the report
+── usage: gpt-5.4-nano · 13 model calls · 83,692 in / 2,042 out tokens · ≈ $0.019 · 10 tool calls · 28.9 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 30s

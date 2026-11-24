@@ -1,0 +1,12 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.7 s, 0 tokens
+- Cause: `Pricing.Total` now does `TierDiscounts[customer.Tier]`, but the table only has `gold` (5%) and `silver` (2%); `standard` (and any unlisted tier) is missing, so standard-tier totals throw `KeyNotFoundException` instead of getting 0%. The same commit also flips the seeded Mia Chen order/customer from `standard` to `silver`.
+- Commit: `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier”.
+- One-line fix: add `["standard"] = 0m` to `TierDiscounts` (or use `TryGetValue(customer.Tier, out var d) ? d : 0m`).
+── usage: inkling-2-mini · 2 model calls · 1,247 in / 1,662 out tokens · ≈ $0.000 · 1 tool calls · 35.1 s
+
+                             time        tokens     cost            
+agent does it all (05)    118.9 s   144,058 tok   $0.000    22 tools
+CLI first (06)             35.1 s     2,909 tok   $0.000     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 36s

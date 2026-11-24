@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-5.4-mini:default",
+    "plan": "gpt-5.4-mini:default",
+    "dev": "gpt-5.4-mini:default",
+    "test": "gpt-5.4-mini:default"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 13.4,
+      "modelCalls": 6,
+      "toolCalls": 13,
+      "inputTokens": 26592,
+      "outputTokens": 996,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 19200,
+      "costUsd": 0.024426,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 12,
+      "modelCalls": 6,
+      "toolCalls": 5,
+      "inputTokens": 25939,
+      "outputTokens": 1307,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 17536,
+      "costUsd": 0.025336,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 5.4,
+      "modelCalls": 4,
+      "toolCalls": 3,
+      "inputTokens": 13030,
+      "outputTokens": 311,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 9728,
+      "costUsd": 0.011172,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 5.7,
+      "modelCalls": 3,
+      "toolCalls": 2,
+      "inputTokens": 11596,
+      "outputTokens": 283,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 5888,
+      "costUsd": 0.009970,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 36.5,
+    "modelCalls": 19,
+    "toolCalls": 23,
+    "inputTokens": 77157,
+    "outputTokens": 2897,
+    "reasoningTokens": 0,
+    "cachedInputTokens": 52352,
+    "costUsd": 0.070904,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fix-order-total-tier-lookup"
+  ]
+}

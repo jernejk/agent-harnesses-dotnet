@@ -1,0 +1,1 @@
+fallback-for-unknown-tier-discounts — replaces direct tier discount indexing with a zero-discount fallback for unknown or null tiers, preserving configured discounts.

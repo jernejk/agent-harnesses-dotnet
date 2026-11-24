@@ -1,0 +1,1 @@
+fix-standard-tier-total-lookup: changes `src/Orders.Api/Pricing.cs` to safely default unknown customer tiers to `0m` discount instead of throwing on the dictionary lookup.

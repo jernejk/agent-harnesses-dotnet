@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly looks up `customer.Tier`, but `TierDiscounts` lacked `standard`; the lookup throws `KeyNotFoundException`. `src/Orders.Api/OrderStore.cs:8` assigns that tier.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `add-standard-tier-zero-discount`, adding `["standard"] = 0m` to the discount dictionary.
+- **Test result:** **8 passed, 0 failed**. The deployed localhost API remains on 1.4.0; the fix will reach it only after redeployment.

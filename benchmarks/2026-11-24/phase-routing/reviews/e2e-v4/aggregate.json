@@ -1,0 +1,62 @@
+{
+ "v4-c2-xhigh": {
+  "mean": 8.8,
+  "per_reviewer": {
+   "opus": 8.8,
+   "sol": 9,
+   "neon": 8.6
+  },
+  "wrong": 0,
+  "judged": 15
+ },
+ "v4-c1-conservative": {
+  "mean": 8.733333333333333,
+  "per_reviewer": {
+   "opus": 8.6,
+   "sol": 9,
+   "neon": 8.6
+  },
+  "wrong": 0,
+  "judged": 15
+ },
+ "v4-c3-hybrid": {
+  "mean": 8.8,
+  "per_reviewer": {
+   "opus": 8.8,
+   "sol": 9,
+   "neon": 8.6
+  },
+  "wrong": 0,
+  "judged": 15
+ },
+ "f-c4-xhigh-critic": {
+  "mean": 7.6,
+  "per_reviewer": {
+   "opus": 7.6,
+   "sol": 8.2,
+   "neon": 7
+  },
+  "wrong": 0,
+  "judged": 15
+ },
+ "v4-b1-mini-phased": {
+  "mean": 9.4,
+  "per_reviewer": {
+   "opus": 8.8,
+   "sol": 9.8,
+   "neon": 9.6
+  },
+  "wrong": 0,
+  "judged": 15
+ },
+ "v4-c4-xhigh-critic": {
+  "mean": 7.6,
+  "per_reviewer": {
+   "opus": 7.4,
+   "sol": 8.2,
+   "neon": 7.2
+  },
+  "wrong": 0,
+  "judged": 15
+ }
+}

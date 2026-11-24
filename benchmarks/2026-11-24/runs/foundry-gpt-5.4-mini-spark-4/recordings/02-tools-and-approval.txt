@@ -1,0 +1,20 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+→ get_service_status(service: payments)
+→ get_recent_logs(service: orders, lines: 80)
+→ get_recent_logs(service: payments, lines: 80)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 1 ms
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+  ← 80 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- I found the cause in **Orders itself**, not payments: `Orders.Api.Pricing.Total(...)` is throwing `KeyNotFoundException: "standard" was not present in the dictionary` and that’s what produces the 500s.
+- Evidence from logs: `System.Collections.Generic.KeyNotFoundException... at Orders.Api.Pricing.Total(Order order, Customer customer) in /_/src/Orders.Api/Pricing.cs:line 16`.
+- Evidence from health/canary: `health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 1 ms` — the service is up, but the endpoint is failing.
+- Payments could not be checked by the tool: `DENIED: payments. Outside this agent's scope (card data). Ask a human.`
+- I attempted to restart Orders, but the action was blocked: `The operator rejected this call.`
+── usage: gpt-5.4-mini · 3 model calls · 4,643 in / 306 out tokens · ≈ $0.005 · 5 tool calls · 5.8 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 7s

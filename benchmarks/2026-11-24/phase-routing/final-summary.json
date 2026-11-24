@@ -1,0 +1,1998 @@
+{
+ "f-b0-mini-single": {
+  "n": 5,
+  "fixes": 4,
+  "median_seconds": 47.9,
+  "median_cost": 0.0351,
+  "cost_per_fix": 0.054775,
+  "total_cost": 0.2191,
+  "runs": [
+   {
+    "run": "f-b0-mini-single-1",
+    "group": "f-b0-mini-single",
+    "status": "ok",
+    "seconds": 52.9,
+    "calls": 12,
+    "tools": 23,
+    "input": 97957,
+    "output": 1584,
+    "reasoning": null,
+    "cost": 0.0806,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 2,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {}
+   },
+   {
+    "run": "f-b0-mini-single-2",
+    "group": "f-b0-mini-single",
+    "status": "ok",
+    "seconds": 50.2,
+    "calls": 11,
+    "tools": 14,
+    "input": 49345,
+    "output": 1321,
+    "reasoning": null,
+    "cost": 0.043,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 1,
+    "phases": {}
+   },
+   {
+    "run": "f-b0-mini-single-3",
+    "group": "f-b0-mini-single",
+    "status": "ok",
+    "seconds": 47.9,
+    "calls": 9,
+    "tools": 14,
+    "input": 40377,
+    "output": 1007,
+    "reasoning": null,
+    "cost": 0.0348,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {}
+   },
+   {
+    "run": "f-b0-mini-single-4",
+    "group": "f-b0-mini-single",
+    "status": "ok",
+    "seconds": 46.1,
+    "calls": 7,
+    "tools": 12,
+    "input": 41541,
+    "output": 877,
+    "reasoning": null,
+    "cost": 0.0351,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {}
+   },
+   {
+    "run": "f-b0-mini-single-5",
+    "group": "f-b0-mini-single",
+    "status": "ok",
+    "seconds": 45.7,
+    "calls": 7,
+    "tools": 16,
+    "input": 28745,
+    "output": 909,
+    "reasoning": null,
+    "cost": 0.0256,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": false,
+    "fixed": false,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {}
+   }
+  ]
+ },
+ "f-b1-mini-phased": {
+  "n": 5,
+  "fixes": 5,
+  "median_seconds": 73.8,
+  "median_cost": 0.081649,
+  "cost_per_fix": 0.0825236,
+  "total_cost": 0.41261800000000004,
+  "runs": [
+   {
+    "run": "f-b1-mini-phased-1",
+    "group": "f-b1-mini-phased",
+    "status": "ok",
+    "seconds": 63.1,
+    "calls": 19,
+    "tools": 28,
+    "input": 74464,
+    "output": 2826,
+    "reasoning": 0,
+    "cost": 0.068566,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 12.7,
+      "cost": 0.025474,
+      "calls": 7,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 9.1,
+      "cost": 0.020502,
+      "calls": 5,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 35.6,
+      "cost": 0.011962,
+      "calls": 4,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 5.7,
+      "cost": 0.010628,
+      "calls": 3,
+      "reasoning": 0,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-b1-mini-phased-2",
+    "group": "f-b1-mini-phased",
+    "status": "ok",
+    "seconds": 97.49999999999999,
+    "calls": 21,
+    "tools": 28,
+    "input": 90127,
+    "output": 3123,
+    "reasoning": 0,
+    "cost": 0.081649,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 46.5,
+      "cost": 0.036073,
+      "calls": 8,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 7.4,
+      "cost": 0.015947,
+      "calls": 4,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 35.8,
+      "cost": 0.011939,
+      "calls": 4,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 7.8,
+      "cost": 0.01769,
+      "calls": 5,
+      "reasoning": 0,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-b1-mini-phased-3",
+    "group": "f-b1-mini-phased",
+    "status": "ok",
+    "seconds": 98.39999999999999,
+    "calls": 22,
+    "tools": 33,
+    "input": 104885,
+    "output": 3481,
+    "reasoning": 0,
+    "cost": 0.094327,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 47.9,
+      "cost": 0.049582,
+      "calls": 9,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 40.2,
+      "cost": 0.022461,
+      "calls": 6,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 4,
+      "cost": 0.009242,
+      "calls": 3,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 6.3,
+      "cost": 0.013042,
+      "calls": 4,
+      "reasoning": 0,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-b1-mini-phased-4",
+    "group": "f-b1-mini-phased",
+    "status": "ok",
+    "seconds": 73.8,
+    "calls": 20,
+    "tools": 32,
+    "input": 83665,
+    "output": 2979,
+    "reasoning": 0,
+    "cost": 0.076155,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 2,
+    "phases": {
+     "investigate": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 12.6,
+      "cost": 0.024103,
+      "calls": 6,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 13,
+      "cost": 0.029522,
+      "calls": 7,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 37.5,
+      "cost": 0.011697,
+      "calls": 4,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 10.7,
+      "cost": 0.010833,
+      "calls": 3,
+      "reasoning": 0,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-b1-mini-phased-5",
+    "group": "f-b1-mini-phased",
+    "status": "ok",
+    "seconds": 60.9,
+    "calls": 22,
+    "tools": 34,
+    "input": 102917,
+    "output": 3274,
+    "reasoning": 0,
+    "cost": 0.091921,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 30.4,
+      "cost": 0.034567,
+      "calls": 7,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 13.1,
+      "cost": 0.031197,
+      "calls": 7,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 10.8,
+      "cost": 0.011737,
+      "calls": 4,
+      "reasoning": 0,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 6.6,
+      "cost": 0.01442,
+      "calls": 4,
+      "reasoning": 0,
+      "status": "ok"
+     }
+    }
+   }
+  ]
+ },
+ "f-c1-conservative": {
+  "n": 5,
+  "fixes": 3,
+  "median_seconds": 79.7,
+  "median_cost": 0.014942,
+  "cost_per_fix": 0.024957999999999998,
+  "total_cost": 0.074874,
+  "runs": [
+   {
+    "run": "f-c1-conservative-1",
+    "group": "f-c1-conservative",
+    "status": "ok",
+    "seconds": 77.60000000000001,
+    "calls": 23,
+    "tools": 47,
+    "input": 117332,
+    "output": 6418,
+    "reasoning": 2390,
+    "cost": 0.014942,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": false,
+    "fixed": false,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 1,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 24.5,
+      "cost": 0.004843,
+      "calls": 7,
+      "reasoning": 879,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 30.5,
+      "cost": 0.005634,
+      "calls": 7,
+      "reasoning": 1003,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 7.7,
+      "cost": 0.001748,
+      "calls": 4,
+      "reasoning": 125,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 14.9,
+      "cost": 0.002717,
+      "calls": 5,
+      "reasoning": 383,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c1-conservative-2",
+    "group": "f-c1-conservative",
+    "status": "ok",
+    "seconds": 77.7,
+    "calls": 22,
+    "tools": 44,
+    "input": 133358,
+    "output": 6123,
+    "reasoning": 2541,
+    "cost": 0.016398,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 22.1,
+      "cost": 0.005328,
+      "calls": 7,
+      "reasoning": 972,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 34.3,
+      "cost": 0.008011,
+      "calls": 8,
+      "reasoning": 1317,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 9.6,
+      "cost": 0.001222,
+      "calls": 3,
+      "reasoning": 106,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 11.7,
+      "cost": 0.001837,
+      "calls": 4,
+      "reasoning": 146,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c1-conservative-3",
+    "group": "f-c1-conservative",
+    "status": "ok",
+    "seconds": 80.5,
+    "calls": 21,
+    "tools": 38,
+    "input": 104915,
+    "output": 6457,
+    "reasoning": 2874,
+    "cost": 0.01372,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": false,
+    "fixed": false,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 1,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 25.9,
+      "cost": 0.004703,
+      "calls": 7,
+      "reasoning": 1016,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 31.1,
+      "cost": 0.005091,
+      "calls": 6,
+      "reasoning": 1213,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 5.9,
+      "cost": 0.001171,
+      "calls": 3,
+      "reasoning": 125,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 17.6,
+      "cost": 0.002755,
+      "calls": 5,
+      "reasoning": 520,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c1-conservative-4",
+    "group": "f-c1-conservative",
+    "status": "ok",
+    "seconds": 79.7,
+    "calls": 21,
+    "tools": 37,
+    "input": 105638,
+    "output": 6008,
+    "reasoning": 2744,
+    "cost": 0.013569,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 24.6,
+      "cost": 0.00507,
+      "calls": 7,
+      "reasoning": 795,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 32,
+      "cost": 0.004973,
+      "calls": 6,
+      "reasoning": 1583,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 5.9,
+      "cost": 0.001121,
+      "calls": 3,
+      "reasoning": 70,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 17.2,
+      "cost": 0.002405,
+      "calls": 5,
+      "reasoning": 296,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c1-conservative-5",
+    "group": "f-c1-conservative",
+    "status": "ok",
+    "seconds": 97.89999999999999,
+    "calls": 22,
+    "tools": 47,
+    "input": 130348,
+    "output": 6421,
+    "reasoning": 2664,
+    "cost": 0.016245,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 49.2,
+      "cost": 0.005851,
+      "calls": 8,
+      "reasoning": 1133,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 33,
+      "cost": 0.007415,
+      "calls": 7,
+      "reasoning": 1351,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 5.6,
+      "cost": 0.001141,
+      "calls": 3,
+      "reasoning": 65,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 10.1,
+      "cost": 0.001838,
+      "calls": 4,
+      "reasoning": 115,
+      "status": "ok"
+     }
+    }
+   }
+  ]
+ },
+ "f-c2-max": {
+  "n": 5,
+  "fixes": 4,
+  "median_seconds": 146,
+  "median_cost": 0.023877,
+  "cost_per_fix": 0.028688499999999995,
+  "total_cost": 0.11475399999999998,
+  "runs": [
+   {
+    "run": "f-c2-max-1",
+    "group": "f-c2-max",
+    "status": "ok",
+    "seconds": 146,
+    "calls": 28,
+    "tools": 46,
+    "input": 170731,
+    "output": 14089,
+    "reasoning": 9649,
+    "cost": 0.024117,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 49.5,
+      "cost": 0.008592,
+      "calls": 9,
+      "reasoning": 3659,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 71.2,
+      "cost": 0.0107,
+      "calls": 9,
+      "reasoning": 5253,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 11.1,
+      "cost": 0.002184,
+      "calls": 5,
+      "reasoning": 179,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 14.2,
+      "cost": 0.002641,
+      "calls": 5,
+      "reasoning": 558,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c2-max-2",
+    "group": "f-c2-max",
+    "status": "ok",
+    "seconds": 130.1,
+    "calls": 24,
+    "tools": 45,
+    "input": 136916,
+    "output": 12185,
+    "reasoning": 8428,
+    "cost": 0.019783,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 1,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 42.1,
+      "cost": 0.006782,
+      "calls": 8,
+      "reasoning": 2815,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 70.6,
+      "cost": 0.009854,
+      "calls": 9,
+      "reasoning": 5119,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 6.7,
+      "cost": 0.001221,
+      "calls": 3,
+      "reasoning": 133,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 10.7,
+      "cost": 0.001926,
+      "calls": 4,
+      "reasoning": 361,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c2-max-3",
+    "group": "f-c2-max",
+    "status": "ok",
+    "seconds": 178.5,
+    "calls": 25,
+    "tools": 47,
+    "input": 155449,
+    "output": 14143,
+    "reasoning": 9745,
+    "cost": 0.022615,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 55.5,
+      "cost": 0.007762,
+      "calls": 8,
+      "reasoning": 3472,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 93.6,
+      "cost": 0.010972,
+      "calls": 9,
+      "reasoning": 5614,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 15.5,
+      "cost": 0.001848,
+      "calls": 4,
+      "reasoning": 316,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 13.9,
+      "cost": 0.002033,
+      "calls": 4,
+      "reasoning": 343,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c2-max-4",
+    "group": "f-c2-max",
+    "status": "ok",
+    "seconds": 144.2,
+    "calls": 25,
+    "tools": 50,
+    "input": 172626,
+    "output": 14199,
+    "reasoning": 9918,
+    "cost": 0.024362,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 53.1,
+      "cost": 0.008367,
+      "calls": 8,
+      "reasoning": 4268,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 69.6,
+      "cost": 0.012133,
+      "calls": 9,
+      "reasoning": 5055,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 10,
+      "cost": 0.001864,
+      "calls": 4,
+      "reasoning": 269,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 11.5,
+      "cost": 0.001998,
+      "calls": 4,
+      "reasoning": 326,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c2-max-5",
+    "group": "f-c2-max",
+    "status": "ok",
+    "seconds": 153.9,
+    "calls": 27,
+    "tools": 52,
+    "input": 166465,
+    "output": 14462,
+    "reasoning": 9818,
+    "cost": 0.023877,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": false,
+    "fixed": false,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 2,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 54.5,
+      "cost": 0.008069,
+      "calls": 8,
+      "reasoning": 4221,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 69.9,
+      "cost": 0.010462,
+      "calls": 9,
+      "reasoning": 4804,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 11,
+      "cost": 0.001793,
+      "calls": 4,
+      "reasoning": 208,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 18.5,
+      "cost": 0.003553,
+      "calls": 6,
+      "reasoning": 585,
+      "status": "ok"
+     }
+    }
+   }
+  ]
+ },
+ "f-c2-xhigh": {
+  "n": 5,
+  "fixes": 5,
+  "median_seconds": 113,
+  "median_cost": 0.017216,
+  "cost_per_fix": 0.017495999999999998,
+  "total_cost": 0.08747999999999999,
+  "runs": [
+   {
+    "run": "f-c2-xhigh-1",
+    "group": "f-c2-xhigh",
+    "status": "ok",
+    "seconds": 85,
+    "calls": 25,
+    "tools": 47,
+    "input": 139116,
+    "output": 7564,
+    "reasoning": 3437,
+    "cost": 0.017694,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 29.1,
+      "cost": 0.005757,
+      "calls": 7,
+      "reasoning": 1560,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 35.2,
+      "cost": 0.007898,
+      "calls": 9,
+      "reasoning": 1445,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 9.1,
+      "cost": 0.002091,
+      "calls": 5,
+      "reasoning": 149,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 11.6,
+      "cost": 0.001948,
+      "calls": 4,
+      "reasoning": 283,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c2-xhigh-2",
+    "group": "f-c2-xhigh",
+    "status": "ok",
+    "seconds": 113,
+    "calls": 26,
+    "tools": 52,
+    "input": 149023,
+    "output": 9746,
+    "reasoning": 5387,
+    "cost": 0.019775,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 1,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 35.9,
+      "cost": 0.006714,
+      "calls": 8,
+      "reasoning": 2005,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 42.5,
+      "cost": 0.007117,
+      "calls": 7,
+      "reasoning": 2355,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 10.6,
+      "cost": 0.002045,
+      "calls": 5,
+      "reasoning": 141,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 24,
+      "cost": 0.003899,
+      "calls": 6,
+      "reasoning": 886,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c2-xhigh-3",
+    "group": "f-c2-xhigh",
+    "status": "ok",
+    "seconds": 88.8,
+    "calls": 23,
+    "tools": 42,
+    "input": 119206,
+    "output": 7488,
+    "reasoning": 3755,
+    "cost": 0.015665,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 32,
+      "cost": 0.005936,
+      "calls": 7,
+      "reasoning": 1604,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 32.1,
+      "cost": 0.005153,
+      "calls": 6,
+      "reasoning": 1499,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 10.4,
+      "cost": 0.002026,
+      "calls": 5,
+      "reasoning": 151,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 14.3,
+      "cost": 0.00255,
+      "calls": 5,
+      "reasoning": 501,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c2-xhigh-4",
+    "group": "f-c2-xhigh",
+    "status": "ok",
+    "seconds": 113.4,
+    "calls": 23,
+    "tools": 38,
+    "input": 132018,
+    "output": 7858,
+    "reasoning": 4249,
+    "cost": 0.01713,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 34.7,
+      "cost": 0.006596,
+      "calls": 8,
+      "reasoning": 1423,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 58.6,
+      "cost": 0.007525,
+      "calls": 8,
+      "reasoning": 2633,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 9.8,
+      "cost": 0.001214,
+      "calls": 3,
+      "reasoning": 126,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 10.3,
+      "cost": 0.001795,
+      "calls": 4,
+      "reasoning": 67,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c2-xhigh-5",
+    "group": "f-c2-xhigh",
+    "status": "ok",
+    "seconds": 114.29999999999998,
+    "calls": 23,
+    "tools": 45,
+    "input": 125332,
+    "output": 9366,
+    "reasoning": 5577,
+    "cost": 0.017216,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 1,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 34.7,
+      "cost": 0.006565,
+      "calls": 8,
+      "reasoning": 1406,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 49.4,
+      "cost": 0.005903,
+      "calls": 6,
+      "reasoning": 3132,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 8.1,
+      "cost": 0.001185,
+      "calls": 3,
+      "reasoning": 168,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 22.1,
+      "cost": 0.003563,
+      "calls": 6,
+      "reasoning": 871,
+      "status": "ok"
+     }
+    }
+   }
+  ]
+ },
+ "f-c3-hybrid": {
+  "n": 5,
+  "fixes": 5,
+  "median_seconds": 115.1,
+  "median_cost": 0.070448,
+  "cost_per_fix": 0.0740676,
+  "total_cost": 0.370338,
+  "runs": [
+   {
+    "run": "f-c3-hybrid-1",
+    "group": "f-c3-hybrid",
+    "status": "ok",
+    "seconds": 90.89999999999999,
+    "calls": 25,
+    "tools": 57,
+    "input": 153123,
+    "output": 6549,
+    "reasoning": 2344,
+    "cost": 0.089376,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 1,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 26.9,
+      "cost": 0.005493,
+      "calls": 8,
+      "reasoning": 935,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 39.2,
+      "cost": 0.078655,
+      "calls": 8,
+      "reasoning": 582,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 8.3,
+      "cost": 0.001413,
+      "calls": 3,
+      "reasoning": 384,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 16.5,
+      "cost": 0.003815,
+      "calls": 6,
+      "reasoning": 443,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c3-hybrid-2",
+    "group": "f-c3-hybrid",
+    "status": "ok",
+    "seconds": 115.5,
+    "calls": 23,
+    "tools": 53,
+    "input": 132978,
+    "output": 8360,
+    "reasoning": 4055,
+    "cost": 0.069744,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 2,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 23.6,
+      "cost": 0.005006,
+      "calls": 7,
+      "reasoning": 969,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 47.9,
+      "cost": 0.058073,
+      "calls": 6,
+      "reasoning": 1271,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 20,
+      "cost": 0.002809,
+      "calls": 4,
+      "reasoning": 997,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 24,
+      "cost": 0.003856,
+      "calls": 6,
+      "reasoning": 818,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c3-hybrid-3",
+    "group": "f-c3-hybrid",
+    "status": "ok",
+    "seconds": 102.8,
+    "calls": 24,
+    "tools": 51,
+    "input": 129141,
+    "output": 7238,
+    "reasoning": 2989,
+    "cost": 0.068253,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 27.8,
+      "cost": 0.00555,
+      "calls": 8,
+      "reasoning": 1058,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 38.5,
+      "cost": 0.057467,
+      "calls": 7,
+      "reasoning": 660,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 12.8,
+      "cost": 0.002288,
+      "calls": 4,
+      "reasoning": 398,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 23.7,
+      "cost": 0.002948,
+      "calls": 5,
+      "reasoning": 873,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c3-hybrid-4",
+    "group": "f-c3-hybrid",
+    "status": "ok",
+    "seconds": 115.1,
+    "calls": 24,
+    "tools": 47,
+    "input": 134440,
+    "output": 6878,
+    "reasoning": 3047,
+    "cost": 0.072517,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 27.2,
+      "cost": 0.005194,
+      "calls": 7,
+      "reasoning": 973,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 48.8,
+      "cost": 0.061815,
+      "calls": 7,
+      "reasoning": 671,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 19.6,
+      "cost": 0.002826,
+      "calls": 5,
+      "reasoning": 822,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 19.5,
+      "cost": 0.002682,
+      "calls": 5,
+      "reasoning": 581,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c3-hybrid-5",
+    "group": "f-c3-hybrid",
+    "status": "ok",
+    "seconds": 123.80000000000001,
+    "calls": 25,
+    "tools": 53,
+    "input": 140720,
+    "output": 8191,
+    "reasoning": 3919,
+    "cost": 0.070448,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 31.5,
+      "cost": 0.005495,
+      "calls": 7,
+      "reasoning": 1141,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 42.9,
+      "cost": 0.058089,
+      "calls": 7,
+      "reasoning": 667,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 19.4,
+      "cost": 0.002426,
+      "calls": 4,
+      "reasoning": 888,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 30,
+      "cost": 0.004438,
+      "calls": 7,
+      "reasoning": 1223,
+      "status": "ok"
+     }
+    }
+   }
+  ]
+ },
+ "f-c4-xhigh-critic": {
+  "n": 5,
+  "fixes": 5,
+  "median_seconds": 160.4,
+  "median_cost": 0.033564,
+  "cost_per_fix": 0.0317616,
+  "total_cost": 0.158808,
+  "runs": [
+   {
+    "run": "f-c4-xhigh-critic-1",
+    "group": "f-c4-xhigh-critic",
+    "status": "ok",
+    "seconds": 146.9,
+    "calls": 31,
+    "tools": 66,
+    "input": 200212,
+    "output": 15476,
+    "reasoning": 9496,
+    "cost": 0.02989,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 31.4,
+      "cost": 0.006626,
+      "calls": 8,
+      "reasoning": 1555,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 39.7,
+      "cost": 0.007168,
+      "calls": 7,
+      "reasoning": 2459,
+      "status": "ok"
+     },
+     "critic": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 5,
+      "cost": 0.002368,
+      "calls": 1,
+      "reasoning": 176,
+      "status": "ok"
+     },
+     "revise": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 47.5,
+      "cost": 0.009437,
+      "calls": 7,
+      "reasoning": 4293,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 9.9,
+      "cost": 0.001596,
+      "calls": 3,
+      "reasoning": 593,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 13.4,
+      "cost": 0.002695,
+      "calls": 5,
+      "reasoning": 420,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c4-xhigh-critic-2",
+    "group": "f-c4-xhigh-critic",
+    "status": "ok",
+    "seconds": 160.4,
+    "calls": 37,
+    "tools": 71,
+    "input": 221516,
+    "output": 16090,
+    "reasoning": 9390,
+    "cost": 0.034206,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 2,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 27.7,
+      "cost": 0.005855,
+      "calls": 8,
+      "reasoning": 1160,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 40.2,
+      "cost": 0.008149,
+      "calls": 8,
+      "reasoning": 2044,
+      "status": "ok"
+     },
+     "critic": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 11.6,
+      "cost": 0.004455,
+      "calls": 1,
+      "reasoning": 605,
+      "status": "ok"
+     },
+     "revise": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 44.7,
+      "cost": 0.008362,
+      "calls": 7,
+      "reasoning": 4078,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 14.1,
+      "cost": 0.003143,
+      "calls": 6,
+      "reasoning": 637,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 22.1,
+      "cost": 0.004242,
+      "calls": 7,
+      "reasoning": 866,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c4-xhigh-critic-3",
+    "group": "f-c4-xhigh-critic",
+    "status": "ok",
+    "seconds": 175.5,
+    "calls": 41,
+    "tools": 83,
+    "input": 297289,
+    "output": 18171,
+    "reasoning": 11149,
+    "cost": 0.041587,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 30.5,
+      "cost": 0.00688,
+      "calls": 9,
+      "reasoning": 1444,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 42.8,
+      "cost": 0.008807,
+      "calls": 9,
+      "reasoning": 2625,
+      "status": "ok"
+     },
+     "critic": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 7.6,
+      "cost": 0.003081,
+      "calls": 1,
+      "reasoning": 292,
+      "status": "ok"
+     },
+     "revise": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 53.1,
+      "cost": 0.014843,
+      "calls": 10,
+      "reasoning": 4866,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 11.5,
+      "cost": 0.002505,
+      "calls": 5,
+      "reasoning": 366,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 30,
+      "cost": 0.005471,
+      "calls": 7,
+      "reasoning": 1556,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c4-xhigh-critic-4",
+    "group": "f-c4-xhigh-critic",
+    "status": "ok",
+    "seconds": 162,
+    "calls": 35,
+    "tools": 68,
+    "input": 228179,
+    "output": 16818,
+    "reasoning": 10754,
+    "cost": 0.033564,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 31.5,
+      "cost": 0.006028,
+      "calls": 7,
+      "reasoning": 1894,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 32.3,
+      "cost": 0.005969,
+      "calls": 7,
+      "reasoning": 1642,
+      "status": "ok"
+     },
+     "critic": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 5.8,
+      "cost": 0.002598,
+      "calls": 1,
+      "reasoning": 204,
+      "status": "ok"
+     },
+     "revise": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 51.3,
+      "cost": 0.011103,
+      "calls": 8,
+      "reasoning": 5113,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 12.7,
+      "cost": 0.00247,
+      "calls": 5,
+      "reasoning": 443,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 28.4,
+      "cost": 0.005396,
+      "calls": 7,
+      "reasoning": 1458,
+      "status": "ok"
+     }
+    }
+   },
+   {
+    "run": "f-c4-xhigh-critic-5",
+    "group": "f-c4-xhigh-critic",
+    "status": "ok",
+    "seconds": 99.5,
+    "calls": 24,
+    "tools": 44,
+    "input": 122964,
+    "output": 9286,
+    "reasoning": 5713,
+    "cost": 0.019561,
+    "applied": true,
+    "green": true,
+    "commit": true,
+    "line": true,
+    "fixed": true,
+    "patches": 1,
+    "live_after": 0,
+    "denials": 0,
+    "phases": {
+     "investigate": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 25.6,
+      "cost": 0.004961,
+      "calls": 7,
+      "reasoning": 1253,
+      "status": "ok"
+     },
+     "plan": {
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 47.8,
+      "cost": 0.008072,
+      "calls": 8,
+      "reasoning": 3660,
+      "status": "ok"
+     },
+     "critic": {
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 7,
+      "cost": 0.002914,
+      "calls": 1,
+      "reasoning": 359,
+      "status": "ok"
+     },
+     "dev": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 9,
+      "cost": 0.001696,
+      "calls": 4,
+      "reasoning": 195,
+      "status": "ok"
+     },
+     "test": {
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 10.1,
+      "cost": 0.001918,
+      "calls": 4,
+      "reasoning": 246,
+      "status": "ok"
+     }
+    }
+   }
+  ]
+ }
+}

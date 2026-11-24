@@ -1,0 +1,17 @@
+{
+  "label": "ollama-inkling-low-0",
+  "provider": "ollama",
+  "models": [
+    "inkling-2-mini"
+  ],
+  "endpoint_host": "127.0.0.1:11434",
+  "api": "chat",
+  "reasoning_effort": "low",
+  "started_at": "2026-11-23T13:53:19Z",
+  "wall_s": 242,
+  "exit_code": 0,
+  "machine": "arm64 Apple M5 Max",
+  "note": "Imported. First run with reasoning effort low, before the presets were renamed; the requests are the same as AGENT_PROVIDER=ollama sends now.",
+  "partial": false,
+  "imported": true
+}

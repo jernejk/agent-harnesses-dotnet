@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed the tier-discount dictionary directly; a `standard` tier was absent and caused a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `restore-unknown-tier-zero-discount`, using `TryGetValue` and a zero-discount fallback for unrecognized or null tiers.
+- **Verification:** `dotnet test` passed **8/8**. API checks returned expected totals for 1002 and 1003 and 404 for unknown order 9999, but **1001 still returned HTTP 500**, so the endpoint verification is not fully passing.

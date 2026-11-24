@@ -1,0 +1,5 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+
+✖ The endpoint 127.0.0.1:1234 returned HTTP 400.
+
+[rehearse] 02-tools-and-approval: exit 2 in 1s

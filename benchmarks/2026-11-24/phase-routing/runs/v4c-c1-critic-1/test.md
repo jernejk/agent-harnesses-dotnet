@@ -1,0 +1,4 @@
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` directly indexed the tier-discount table; `"standard"` was absent, causing `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `pricing-tier-discount-fallback`; null or unlisted tiers now receive zero discount, while listed tier discounts remain intact.
+- **Test result:** **8 passed, 0 failed**.

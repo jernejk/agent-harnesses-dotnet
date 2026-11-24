@@ -1,0 +1,15 @@
+setup,home,home_short,model,reasoning,reasoning_label,api,runs,full_runs,green_runs,partial,median_wall_s,median_cost_usd,median_model_calls,median_tokens,price_in,price_out
+gpt-5.4 · Azure,Azure AI Foundry,Azure,gpt-5.4,default,,chat,1,1,1,no,118,0.4252,31,148688,2.5,15
+gpt-5.4-mini · Azure,Azure AI Foundry,Azure,gpt-5.4-mini,default,,chat,5,5,5,no,92,0.1361,31,163499,0.75,4.5
+gpt-5.4-nano · Azure,Azure AI Foundry,Azure,gpt-5.4-nano,default,,chat,2,2,1,no,100,0.0255,30,110798.5,0.2,1.25
+qwen3-4b · Foundry Local,Foundry Local (local),Foundry Local,qwen3-4b,default,,chat,2,2,0,no,399,0,10.5,21783,,
+gpt-oss-20b · LM Studio · reasoning low,LM Studio (local),LM Studio,gpt-oss-20b,low,reasoning low,chat,2,2,0,no,70.5,0,36.5,62016,,
+inkling-2-mini · Ollama · thinking on (default),Ollama (local),Ollama,inkling-2-mini,default,thinking on (default),chat,1,1,0,no,387,0,36,239270,,
+inkling-2-mini · Ollama · reasoning low,Ollama (local),Ollama,inkling-2-mini,low,reasoning low,chat,3,3,2,no,242,0,31,181900,,
+inkling-2-mini · Ollama · reasoning off,Ollama (local),Ollama,inkling-2-mini,none,reasoning off,chat,1,0,0,yes,,,,,,
+gpt-5.6-luna · OpenAI · reasoning off (Chat Completions),OpenAI API,OpenAI,gpt-5.6-luna,none,reasoning off (Chat Completions),chat,1,1,1,no,104,0.0352,33,153608,0.2,1.2
+gpt-5.6-terra · OpenAI · reasoning off (Chat Completions),OpenAI API,OpenAI,gpt-5.6-terra,none,reasoning off (Chat Completions),chat,1,1,1,no,100,0.2894,28,122994,2,12
+gpt-6-luna · OpenAI · reasoning off (Chat Completions),OpenAI API,OpenAI,gpt-6-luna,none,reasoning off (Chat Completions),chat,1,1,1,no,106,0.0158,32,143576,0.1,0.5
+"gpt-6-luna · OpenAI · Responses API, reasoning low",OpenAI API,OpenAI,gpt-6-luna,low,"Responses API, reasoning low",responses,1,1,1,no,103,0.0145,29,128115,0.1,0.5
+gpt-6.1-terra · OpenAI · reasoning off (Chat Completions),OpenAI API,OpenAI,gpt-6.1-terra,none,reasoning off (Chat Completions),chat,1,1,1,no,140,0.165,32,146924,1,5
+"gpt-6.1-terra · OpenAI · Responses API, reasoning low",OpenAI API,OpenAI,gpt-6.1-terra,low,"Responses API, reasoning low",responses,1,1,1,no,118,0.1352,27,120512,1,5

@@ -1,0 +1,2 @@
+- Establish that null tiers cannot reach pricing, or handle them: `GetValueOrDefault` still throws for a null key.
+- Verify tests cover another unlisted tier, null if supported, and unchanged gold and silver discounts; the cited tests only establish the standard-tier cases.

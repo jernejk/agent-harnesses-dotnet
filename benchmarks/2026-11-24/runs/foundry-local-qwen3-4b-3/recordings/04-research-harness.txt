@@ -1,0 +1,7 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+
+⛔ budget used up (hh:mm:ss wall clock): the harness stopped the run.
+── usage: qwen3-4b-generic-gpu:2 · 0 model calls · 0 in / 0 out tokens · ≈ $0.000 · 0 tool calls · 150.0 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 3 in 151s

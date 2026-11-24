@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:7–11,16` defined discounts only for gold and silver, then indexed the dictionary directly. A standard-tier customer caused a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `default-unknown-tier-discount-to-zero`: a null-safe `TryGetValue` lookup now defaults unlisted tiers to zero discount, preserving the gold and silver rates.
+- **Test result:** `dotnet test` passed **8/8**. The standard, gold, silver, rounding, three order-total API cases, and unknown-order 404 tests pass. The plan expected 10 tests, but the explicit unlisted-tier and null-tier tests were not added, so those cases aren’t independently verified by the suite.

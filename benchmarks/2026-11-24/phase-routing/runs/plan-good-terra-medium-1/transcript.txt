@@ -1,0 +1,110 @@
+phase plan         gpt-6.1-terra · medium
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll check the status page if the available tools permit it, then verify the pricing change, affected order data, and tests before writing a minimal fix plan. I won’t modify the repository.
+→ mode_get()
+→ todos_add(todos: [{"title": "Check incident status and inspect the pricing regression a…)
+→ run_command(command: curl -I https://status.example.com)
+→ run_command(command: git status --short)
+  ✖ DENIED by policy: curl -I https://status.example.com: No curl. Use http_get for the Orders API.
+  ← exit 0 · 
+The status-page request is blocked by the command policy, and no external HTTP tool is available, so I can’t confirm whether that page reports an incident. The working tree is clean; I’ll verify the reported regression directly in the repository.
+→ file_access_ls()
+→ run_command(command: ls -la)
+→ run_command(command: git show 9bfbf7d --)
+→ run_command(command: git log --oneline -6)
+  ✖ DENIED by policy: ls -la: 'ls' is not allow-listed.
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ← exit 0 · 3c4235d Add pricing and API tests
+The commit confirms that direct dictionary indexing replaced a zero-discount fallback for every non-gold tier. I’ll check the current endpoint and tests as well, including whether the proposed fix should preserve that fallback for unrecognized tiers.
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ file_access_read(fileName: src/Orders.Api/OrderStore.cs)
+→ file_access_read(fileName: tests/Orders.Tests/PricingTests.cs)
+→ file_access_ls(directory: tests/Orders.Tests)
+→ file_access_ls(directory: src/Orders.Api)
+→ run_command(command: dotnet test)
+  ← exit 1 · [xUnit.net 00:00:00.16]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+The current test run reproduces all three reported failures. A missing-key fallback would restore the pre-1.4 behavior for standard and other unrecognized tiers while retaining silver’s new discount; I’m checking the API response contract and existing test gaps before specifying the exact patch.
+→ file_access_read(fileName: tests/Orders.Tests/OrdersApiTests.cs)
+→ file_access_read(fileName: src/Orders.Api/Program.cs)
+→ file_access_read(fileName: src/Orders.Api/Models.cs)
+→ file_access_read(fileName: README.md)
+→ file_access_read(fileName: Directory.Build.props)
+→ run_command(command: git status --short)
+→ todos_complete(items: [{"id": 1, "reason": "Confirmed status page cannot be accessed with av…)
+  ← exit 0 · 
+The API test currently checks only the status code, not the returned amount. I’ll include a focused regression test for an unknown tier and an assertion for order 1001’s calculated total, so the plan verifies both the restored fallback and the incident’s user-visible result.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 7, endLine: 19)
+→ file_access_read_lines(fileName: tests/Orders.Tests/PricingTests.cs, startLine: 8, endLine: 28)
+→ file_access_read_lines(fileName: tests/Orders.Tests/OrdersApiTests.cs, startLine: 1, endLine: 23)
+→ todos_complete(items: [{"id": 2, "reason": "Reviewed unit and API coverage, endpoint respons…)
+→ todos_complete(items: [{"id":3,"reason":"Prepared exact production and test changes, verific…)
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:16` directly indexes a discount table that contains `gold` and `silver`, but not `standard`. The lookup throws `KeyNotFoundException`. Order 1001 belongs to a standard-tier customer (`OrderStore.cs:8,14`).
+
+Commit `9bfbf7d` replaced the previous zero-discount fallback for non-gold tiers with the direct lookup. I reproduced the reported baseline: **3 failed, 5 passed**.
+
+I could not check `https://status.example.com`: external HTTP access is unavailable through the permitted tools.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs:16`:
+
+```diff
+-        var discount = TierDiscounts[customer.Tier];
++        var discount = TierDiscounts.TryGetValue(customer.Tier, out var tierDiscount) ? tierDiscount : 0m;
+```
+
+Add an unknown-tier regression test after the standard-tier test in `tests/Orders.Tests/PricingTests.cs`:
+
+```diff
+     public void Standard_customers_pay_list_price_plus_gst() =>
+         Assert.Equal(110.00m, Pricing.Total(HundredDollars, Tier("standard")));
+
++    [Fact]
++    public void Unknown_tiers_pay_list_price_plus_gst() =>
++        Assert.Equal(110.00m, Pricing.Total(HundredDollars, Tier("unknown")));
++
+     [Fact]
+```
+
+Extend the existing API test in `tests/Orders.Tests/OrdersApiTests.cs` to verify order 1001’s response body:
+
+```diff
+ using System.Net;
++using System.Net.Http.Json;
+ using Microsoft.AspNetCore.Mvc.Testing;
++using Orders.Api;
+```
+
+```diff
+         var response = await factory.CreateClient().GetAsync($"/orders/{orderId}/total");
+         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++        if (orderId == 1001)
++        {
++            var total = await response.Content.ReadFromJsonAsync<OrderTotal>();
++            Assert.NotNull(total);
++            Assert.Equal(1001, total.OrderId);
++            Assert.Equal(195.80m, total.Total);
++            Assert.Equal("AUD", total.Currency);
++        }
+```
+
+## Why this is the smallest safe fix
+
+The production change is one line. It restores the former zero-discount behavior for missing tiers while preserving the configured gold and silver discounts, GST calculation, and rounding. The added tests cover the previously implicit fallback and the affected API result.
+
+## Verification
+
+After applying the changes, run `dotnet test`. It should report **9 passed, 0 failed**: the existing standard, rounding, gold, silver, API, and 404 tests must pass alongside the new unknown-tier test. Order 1001’s API test must confirm HTTP 200 and a total of **195.80 AUD**.
+
+For a deployed smoke test, request `GET /orders/1001/total` and confirm the same status and total; also confirm `/health` returns 200.
+
+## Risks
+
+- Unknown non-null tiers will receive no discount, matching the pre-1.4 behavior but potentially masking misspelled tier values.
+- A null tier remains outside this fix; the dictionary lookup rejects null keys.
+- The proposed changes have **not been applied or tested**.
+── usage: phased · 7 model calls · 42,028 in / 2,201 out tokens · ≈ $0.053 · 26 tool calls · 67.9 s
+   plan         gpt-6.1-terra · medium    67.9 s   7 calls   42,028 in   2,201 out (458 reasoning) ≈ $0.0530 ok

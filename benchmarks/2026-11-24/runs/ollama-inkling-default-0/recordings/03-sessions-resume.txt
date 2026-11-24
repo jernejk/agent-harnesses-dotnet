@@ -1,0 +1,11 @@
+history ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   443 tok · restored in a new process
+pinned  📌 Orders 500s root cause: KeyNotFoundException for key 'standard' in pricing lookup (Orders.Api.Pricing.Total, Pricing.cs line 16) — unhandled exception -> 500 on /orders/{id}/total (e.g. order 1001). Status health 200 but canary 500s.
+pinned  📌 Decision: hotfix the pricing lookup (fix the 'standard' key miss in Pricing.cs); do NOT restart the service.
+We decided to **hotfix the pricing lookup and not restart the service**.
+
+Why: the 500s come from an unhandled `KeyNotFoundException` for key `'standard'` in `Orders.Api.Pricing.Total` (`Pricing.cs`, line 16), which throws on `/orders/{id}/total` requests (e.g. order 1001). The service stays healthy at the health endpoint (`/health` returns 200), but the canary `GET /orders/1001/total` returns 500. So the app is not down — the exception is a code-level bug, not a crash or a hung process. Restarting would not clear the bad lookup, so we fix the lookup instead.
+
+Note: the fix itself still hasn't been applied — I have no code-editing/deploy tool here, only pinning. The pinned decision is what to do when the fix is implemented.
+── usage: inkling-2-mini · 1 model calls · 1,104 in / 251 out tokens · ≈ $0.000 · 0 tool calls · 6.3 s
+
+[rehearse] 03-sessions-resume: exit 0 in 7s

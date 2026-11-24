@@ -1,0 +1,16 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+→ run_command(command: dotnet test)
+  ← exit 1 · [xUnit.net hh:mm:ss.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+→ file_access_read_lines(fileName: _/src/Orders.Api/Pricing.cs, startLine: 1, endLine: 40)
+→ file_access_ls(directory: src)
+── usage: openai/gpt-oss-20b · 4 model calls · 13,517 in / 143 out tokens · ≈ $0.000 · 3 tool calls · 3.1 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 3s

@@ -1,0 +1,17 @@
+configuration,label,models,prompts,runs,fixed,median_s,cost_per_run,cost_per_fix,blind,judged_wrong
+f-b0-mini-single,"stage demo, one agent",gpt-5.4-mini (default = medium),v1 demo prompt,5,4,47.9,0.0438,0.0548,7.4,3/15
+f-b1-mini-phased,phased,gpt-5.4-mini everywhere,v3,5,5,73.8,0.0825,0.0825,8.67,0/15
+f-c1-conservative,Luna conservative,Luna high · high · medium · medium,v3,5,3,79.7,0.015,0.025,7.13,1/15
+f-c2-xhigh,Luna higher (xhigh),Luna xhigh · xhigh · high · high,v3,5,5,113,0.0175,0.0175,7.2,0/15
+f-c2-max,Luna higher (max),Luna max · max · high · high,v3,5,4,146,0.023,0.0287,6.53,0/15
+f-c3-hybrid,hybrid,Luna high · Terra medium plans · Luna high · Luna medium,v3,5,5,115.1,0.0741,0.0741,7.53,0/15
+f-c4-xhigh-critic,Luna xhigh + Terra check,Luna xhigh … + one Terra medium call after the plan,v3,5,5,160.4,0.0318,0.0318,7.6,0/15
+v4-b1-mini-phased,phased,gpt-5.4-mini everywhere,v4,5,5,38.1,0.0783,0.0783,8.87,0/30
+v4-c1-conservative,Luna conservative,Luna high · high · medium · medium,v4,5,5,81.8,0.0165,0.0165,8.37,0/30
+v4-c2-xhigh,Luna higher (xhigh),Luna xhigh · xhigh · high · high,v4,5,5,106.7,0.0194,0.0194,8.8,0/15
+v4-c3-hybrid,hybrid,Luna high · Terra medium plans · Luna high · Luna medium,v4,5,5,69.2,0.0652,0.0652,8.8,0/15
+v4-c4-xhigh-critic,Luna xhigh + Terra check (prompts misaligned),as above,v4*,5,5,176.4,0.032,0.032,7.6,0/15
+v4c-c1-critic,Luna conservative + Terra check,Luna high · high · medium · medium + one Terra call,v4,5,5,87.0,0.0191,0.0191,7.87,0/15
+v4c-c2x-critic,Luna xhigh + Terra check,Luna xhigh · xhigh · high · high + one Terra call,v4,5,5,101.8,0.0199,0.0199,8.33,0/15
+v5-b1-mini-phased,phased,gpt-5.4-mini everywhere,v5,5,5,64.2,0.0696,0.0696,8.4,0/15
+v5-c1-conservative,Luna conservative,Luna high · high · medium · medium,v5,5,5,58.3,0.0112,0.0112,9.13,0/15

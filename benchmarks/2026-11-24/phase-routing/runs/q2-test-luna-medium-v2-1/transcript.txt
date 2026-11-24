@@ -1,0 +1,33 @@
+phase test         gpt-6-luna · medium
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ test ═══
+I’ll apply the named proposal, then verify its test output and the order-total endpoint.
+→ todos_add(todos: [{"title":"Apply the default-missing-tier-discount proposal","descript…)
+The task is tracked; I’m invoking the exact proposal name now.
+🔐 approval needed: apply_proposal(name: default-missing-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-missing-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 85 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+All 8 tests pass; I’ll check the live total endpoint and confirm the repository’s resulting change state.
+→ http_get(path: /orders/1001/total)
+→ run_command(command: git status --short)
+→ run_command(command: git log -1 --oneline)
+  ← GET /orders/1001/total -> 500 
+  ← exit 0 · M src/Orders.Api/Pricing.cs
+  ← exit 0 · f1812c8 Release 1.4.0
+The endpoint still returns 500 despite passing tests, so I’ll inspect the applied code and regression commit before reporting that mismatch.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1, endLine: 24)
+→ run_command(command: git show --oneline --stat 9bfbf7d)
+→ run_command(command: git diff -- src/Orders.Api/Pricing.cs)
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+  ← exit 0 · }
+The fix is present at `Pricing.cs:16`; the requested test suite passes, but the local API check remains 500, so I’ll record verification accurately.
+→ todos_complete(items: [{"id":1,"reason":"Applied the named proposal; Pricing.cs now uses Get…)
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly indexed the discount table with `customer.Tier`; standard was absent, causing `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `default-missing-tier-discount`, using `TierDiscounts.GetValueOrDefault(customer.Tier)` so unlisted tiers receive zero discount.
+- **Verification:** Tests passed: **8 passed, 0 failed**. However, `GET /orders/1001/total` still returned **HTTP 500** from the local service, so the endpoint verification did not pass.
+── usage: phased · 6 model calls · 25,215 in / 1,101 out tokens · ≈ $0.003 · 9 tool calls · 15.7 s
+   test         gpt-6-luna · medium    15.7 s   6 calls   25,215 in   1,101 out (428 reasoning) ≈ $0.0031 ok

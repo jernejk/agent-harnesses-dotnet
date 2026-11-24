@@ -1,0 +1,85 @@
+phase plan         gpt-6.1-terra · medium
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll check the reported status page if the available tools permit it, then verify the endpoint and release change in the repository. I’ll provide a fix plan without modifying files.
+→ mode_get()
+→ todos_add(todos: [{"title": "Check service status and inspect the reported endpoint and…)
+→ run_command(command: curl -I https://status.example.com)
+→ run_command(command: git status --short)
+  ✖ DENIED by policy: curl -I https://status.example.com: No curl. Use http_get for the Orders API.
+  ← exit 0 · 
+The status-page request was blocked by the command policy, and no web-access tool is available here, so I can’t establish whether that page reports an incident. The working tree is clean; I’ll now check the actual endpoint, tests, and commit.
+→ file_access_ls()
+→ run_command(command: git show ab38e53 --)
+→ run_command(command: git log --oneline -12)
+→ run_command(command: dotnet test --no-restore)
+  ← exit 0 · public partial class Program;
+  ← exit 0 · 2518c83 Initial Orders API with in-memory store
+  ← exit 1 · [xUnit.net 00:00:00.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+The findings don’t match the code: the cited commit actually registers problem details. The test run instead shows a `KeyNotFoundException` for customer tier `standard` in pricing; I’ll trace the lookup table, seed data, and existing test coverage before proposing the change.
+→ file_access_ls(directory: src/Orders.Api)
+→ file_access_ls(directory: tests/Orders.Tests)
+→ file_access_read_lines(fileName: src/Orders.Api/Program.cs, startLine: 1)
+→ run_command(command: git show 9bfbf7d --)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1)
+→ file_access_read_lines(fileName: src/Orders.Api/OrderStore.cs, startLine: 1)
+→ file_access_read_lines(fileName: tests/Orders.Tests/OrdersApiTests.cs, startLine: 1)
+→ file_access_read_lines(fileName: tests/Orders.Tests/PricingTests.cs, startLine: 1)
+Order 1001 belongs to a `standard` customer, but the new discount table contains only `gold` and `silver`. Existing tests already cover standard pricing and the endpoint’s status, so the narrowest production change appears to be adding the missing zero-discount entry rather than changing 404 handling.
+→ file_access_read_lines(fileName: src/Orders.Api/Models.cs, startLine: 1)
+→ file_access_read(fileName: README.md)
+→ run_command(command: git tag --list)
+→ todos_complete(items: [{"id": 1, "reason": "Attempted status check (blocked by policy); insp…)
+  ← exit 0 · v1.4.0
+→ run_command(command: git show v1.3.0:src/Orders.Api/Pricing.cs)
+→ run_command(command: git show v1.4.0:src/Orders.Api/Pricing.cs)
+→ run_command(command: git status --short)
+→ todos_complete(items: [{"id": 3, "reason": "Prepared the one-line change, existing regressio…)
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · 
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:7–16`: the discount table lacks an entry for `standard`, and its indexed lookup throws `KeyNotFoundException`. Order 1001 belongs to a standard customer (`OrderStore.cs:8,14`).
+
+The regression came from `9bfbf7d`, not the cited problem-details commit. In v1.3.0, standard customers received a zero discount. Problem details are already registered at `Program.cs:5`.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs`, replace:
+
+```csharp
+    {
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+    };
+```
+
+with:
+
+```csharp
+    {
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+        ["standard"] = 0m,
+    };
+```
+
+## Why this is the smallest safe fix
+
+It restores the known standard-tier behavior without changing gold, silver, or unknown-order handling. Existing pricing tests already assert the standard total and rounding.
+
+## Verification (what to run and what it must show)
+
+- Run `dotnet test`: all 8 tests should pass. Before the fix, `dotnet test --no-restore` produced 3 failures and 5 passes.
+- Run the API with `dotnet run --project src/Orders.Api`. Request `/orders/1001/total`: it should return HTTP 200 with total `195.80` and currency `AUD`.
+- Request `/orders/1002/total` and `/orders/1003/total`: both should return HTTP 200. Request `/orders/9999/total`: it should still return HTTP 404.
+
+## Risks
+
+- Other unrecognized or differently cased tiers still throw; this targeted fix deliberately does not silently price them as standard.
+- The status-page check was blocked by the tool policy, so an external incident could not be confirmed.
+- The change has **not** been applied or verified; the working tree remains clean.
+── usage: phased · 7 model calls · 42,377 in / 1,757 out tokens · ≈ $0.051 · 24 tool calls · 32.5 s
+   plan         gpt-6.1-terra · medium    32.5 s   7 calls   42,377 in   1,757 out (315 reasoning) ≈ $0.0512 ok

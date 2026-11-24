@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed the discount table directly; `standard` is absent, causing an unhandled `KeyNotFoundException` for order 1001.
+- **Introducing commit:** `9bfbf7d8` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `fallback-unknown-customer-tiers`; missing or null tiers now receive a zero discount. The proposal changed only `Pricing.cs` and did not add the planned regression tests.
+- **Test result:** `dotnet test` passes **8/8** after the fix. That is below the plan’s expected 11 tests because the proposal omitted the test changes; I did not use the live API for verification.

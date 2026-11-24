@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` before the fix (the lookup is now line 17) indexed the discount table with the customer’s tier; `standard` was missing, causing a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `add-standard-tier-discount`, adding an explicit `standard` discount of `0m`.
+- **Test result:** All 8 tests passed. The suite covers standard totals of `110.00` and `21.89`, and HTTP 200 responses for orders 1001–1003. The deployed API was not used for verification.

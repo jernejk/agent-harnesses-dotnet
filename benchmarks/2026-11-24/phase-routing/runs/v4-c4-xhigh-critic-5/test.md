@@ -1,0 +1,4 @@
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` directly indexed the discount table. Since `standard` was absent, order 1001’s total request threw `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `default-unmapped-tier-discount`; null or unmapped tiers now receive a zero discount while mapped tiers retain their table discounts.
+- **Test result:** `dotnet test` passed **8 tests, 0 failed**. The plan expected 10 tests, but its two proposed null-tier and unmapped-tier regression tests were not included in the applied change.

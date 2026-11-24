@@ -1,0 +1,2 @@
+- Replace the direct lookup with a zero-discount fallback for every unlisted tier, including null if allowed; preserve the gold and silver discounts.
+- Add regression tests for unlisted tiers and null if allowed, alongside the existing standard, gold, silver and API tests. Run `dotnet test` and require all tests to pass.

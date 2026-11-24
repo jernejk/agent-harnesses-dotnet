@@ -1,0 +1,23 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(lines: 200, service: orders)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 1 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.…)
+→ pin_fact(fact: Decision: hotfix the pricing lookup; do NOT restart the service.)
+  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.Pricing.Total (Pricing.cs line 16) — missing 'standard' pricing tier in dictionary; unhandled exception -> 500. Service health 200 ok but canary 500.
+  📌 Decision: hotfix the pricing lookup; do NOT restart the service.
+Findings and pinned decision:
+
+- **Status:** health endpoint returns 200 "ok" (v1.4.0), but canary GET /orders/1001/total → 500 in 1 ms.
+- **Root cause:** `KeyNotFoundException: The given key 'standard' was not present in the dictionary` at `Orders.Api.Pricing.Total` (Pricing.cs:16), thrown from Program.cs:24 for order total requests. Consistent across all failing requests (1001/1002/1003). Not a restart/infra issue.
+- **Decision (pinned):** hotfix the pricing lookup; do not restart the service.
+history ███████████████████████████░░░░░ ≈ 2,581 tok · before compaction
+pinned  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.Pricing.Total (Pricing.cs line 16) — missing 'standard' pricing tier in dictionary; unhandled exception -> 500. Service health 200 ok but canary 500.
+pinned  📌 Decision: hotfix the pricing lookup; do NOT restart the service.
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   259 tok · after compaction
+pinned  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.Pricing.Total (Pricing.cs line 16) — missing 'standard' pricing tier in dictionary; unhandled exception -> 500. Service health 200 ok but canary 500.
+pinned  📌 Decision: hotfix the pricing lookup; do NOT restart the service.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: inkling-2-mini · 3 model calls · 7,703 in / 390 out tokens · ≈ $0.000 · 4 tool calls · 13.4 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 14s

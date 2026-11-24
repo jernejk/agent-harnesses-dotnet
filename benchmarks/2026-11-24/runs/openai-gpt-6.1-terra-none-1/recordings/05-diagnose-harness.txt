@@ -1,0 +1,76 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+I’ll check the incident status, reproduce the failure, trace the regression since v1.3.0, and propose the smallest fix.
+→ todos_add(todos: [{"title":"Check incident status and reproduce the failure"},{"title":…)
+I’ll check the status URL alongside the test suite and the local total endpoint.
+→ run_command(command: dotnet test)
+→ http_get(path: https://status.example.com)
+→ http_get(path: /orders/1001/total)
+  ← exit 1 · [xUnit.net hh:mm:ss.13]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← DENIED: https://status.example.com. http_get only reaches /health, /orders/{id} and /orders/{id}/total on the …
+  ← GET /orders/1001/total -> 500 
+The status-site request was denied because the HTTP tool only reaches the local API; tests reproduce three failures and the endpoint returns 500.
+→ run_command(command: git log --oneline v1.3.0..HEAD)
+→ run_command(command: git diff v1.3.0..HEAD)
+→ run_command(command: git status --short)
+→ todos_complete(items: [{"id": 1, "reason": "Reproduced three failing tests and HTTP 500; ext…)
+  ← exit 0 · 9bfbf7d Move tier discounts into a lookup table and add silver tier
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ← exit 0 · 
+The regression is in pricing; I’ll inspect the lookup and the commit that introduced it.
+→ run_command(command: cat -n src/Orders.Api/Pricing.cs)
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+→ run_command(command: cat -n tests/Orders.Tests/PricingTests.cs)
+→ run_command(command: cat -n src/Orders.Api/OrderStore.cs)
+  ✖ DENIED by policy: cat -n src/Orders.Api/Pricing.cs: 'cat' is not allow-listed.
+  ← exit 0 · }
+  ✖ DENIED by policy: cat -n tests/Orders.Tests/PricingTests.cs: 'cat' is not allow-listed.
+  ✖ DENIED by policy: cat -n src/Orders.Api/OrderStore.cs: 'cat' is not allow-listed.
+The `cat` commands were denied; the commit diff shows the new lookup omitted the previous zero-discount fallback.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1, endLine: 30)
+→ run_command(command: git show HEAD:src/Orders.Api/OrderStore.cs)
+→ run_command(command: git show HEAD:tests/Orders.Tests/PricingTests.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · }
+`Pricing.cs:16` indexes a table without `standard`, throwing instead of applying the former zero-discount fallback.
+→ todos_complete(items: [{"id": 2, "reason": "Identified missing zero-discount fallback at Pri…)
+→ write_proposal(name: restore-tier-discount-fallback, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = TierDiscounts.GetValueOrDefault(customer.Tier, …, rationale: The lookup introduced in commit 9bfbf7d throws for standard and other …)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..4645759 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -13,7 +13,7 @@ public static class Pricing
+         public static decimal Total(Order order, Customer customer)
+         {
+             var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+    -        var discount = TierDiscounts[customer.Tier];
+    +        var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);
+             var total = subtotal * (1 - discount) * (1 + GstRate);
+             return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+         }
+  ← 15 lines · Wrote proposals/restore-tier-discount-fallback.patch:
+The one-line proposal restores the zero-discount fallback; I’ll submit it for human approval and test execution.
+🔐 approval needed: apply_proposal(name: restore-tier-discount-fallback)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied restore-tier-discount-fallback.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 74 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The proposal was applied, and all eight tests now pass.
+→ todos_complete(items: [{"id":3,"reason":"Applied the one-line fallback proposal; the post-ap…)
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed a discount table missing the `standard` tier, causing an exception and HTTP 500.
+- **Introduced by:** commit `9bfbf7d` in the 1.4.0 changes.
+- **Fix:** Applied a zero-discount fallback for tiers absent from the table.
+- **Tests after fix:** All 8 passed. The external incident status could not be checked because the HTTP tool only reaches the local API.
+── usage: gpt-6.1-terra · 9 model calls · 50,250 in / 1,092 out tokens · ≈ $0.000 · 20 tool calls · 34.4 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 35s

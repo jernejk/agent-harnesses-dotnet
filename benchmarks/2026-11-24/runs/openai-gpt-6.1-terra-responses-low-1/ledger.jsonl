@@ -1,0 +1,7 @@
+{"at":"2026-11-24T01:12:59.756355+10:00","app":"chatbot","model":"gpt-6.1-terra","calls":1,"input":55,"output":59}
+{"at":"2026-11-24T01:13:05.959479+10:00","app":"tools","model":"gpt-6.1-terra","calls":3,"input":5175,"output":208}
+{"at":"2026-11-24T01:13:13.199602+10:00","app":"sessions","model":"gpt-6.1-terra","calls":3,"input":5608,"output":183}
+{"at":"2026-11-24T01:13:17.631892+10:00","app":"sessions","model":"gpt-6.1-terra","calls":1,"input":411,"output":75}
+{"at":"2026-11-24T01:13:59.782443+10:00","app":"research","model":"gpt-6.1-terra","calls":9,"input":57617,"output":1991}
+{"at":"2026-11-24T01:14:27.647466+10:00","app":"diagnose","model":"gpt-6.1-terra","calls":8,"input":46995,"output":1028}
+{"at":"2026-11-24T01:14:38.125897+10:00","app":"cli-first","model":"gpt-6.1-terra","calls":2,"input":979,"output":128}

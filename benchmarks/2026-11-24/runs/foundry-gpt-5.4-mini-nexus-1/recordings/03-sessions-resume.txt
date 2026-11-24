@@ -1,0 +1,8 @@
+history █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   184 tok · restored in a new process
+pinned  📌 Orders 500s root cause: Pricing.Total throws KeyNotFoundException because customer segment 'standard' is missing from the pricing dictionary (Pricing.cs:16). Decision: hotfix the pricing lookup and do not restart the service.
+We decided to hotfix the pricing lookup and not restart the service.
+
+Why: the Orders 500s are caused by `Pricing.Total` throwing `KeyNotFoundException` because customer segment `standard` is missing from the pricing dictionary (`Pricing.cs:16`).
+── usage: gpt-5.4-mini · 1 model calls · 500 in / 56 out tokens · ≈ $0.001 · 0 tool calls · 1.8 s
+
+[rehearse] 03-sessions-resume: exit 0 in 2s

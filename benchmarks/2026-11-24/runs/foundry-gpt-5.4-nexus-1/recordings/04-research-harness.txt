@@ -1,0 +1,52 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ todos_add(todos: [{"title":"Outline the research scope","description":"Identify the sou…)
+→ file_memory_write(fileName: plan.md, content: 1. Outline the research scope using the provided source set and focus …, description: Plan for researching .NET 11 and Microsoft Agent Framework changes rel…)
+Plan:
+1. Define the answer structure around .NET 11, C# 15, and Microsoft Agent Framework changes for C# agent builders.
+2. Review the platform sources for runtime, SDK, and language updates that matter to agent applications.
+3. Review the Agent Framework sources for architecture, features, and recent release changes.
+4. Write a concise cited Markdown report.
+
+I saved this plan to `plan.md`.
+  ☐ Outline the research scope
+  ☐ Review platform sources
+  ☐ Review Agent Framework sources
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+→ todos_complete(items: [{"id":1,"reason":"The scope is established from the approved plan and…)
+I’ll fetch the platform sources and extract only agent-relevant changes.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+→ fetch_url(url: https://devblogs.microsoft.com/dotnet/announcing-dotnet-11/)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+  ← 53 lines · [3] Announcing .NET 11 - .NET Blog
+I’ll save short platform notes and mark that review item complete.
+→ file_memory_write(fileName: notes.md, content: - [1] .NET 11 runtime adds Runtime Async with cleaner stack traces, lo…, description: Short research notes with source-number citations for .NET 11, C# 15, …)
+→ todos_complete(items: [{"id":2,"reason":"Reviewed the .NET 11 overview, C# 15 page, and .NET…)
+Next I’ll fetch the Agent Framework sources for capabilities and recent changes.
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 113 lines · [4] Microsoft Agent Framework Overview | Microsoft Learn
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+  ← 58 lines · [5] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+The GitHub release URL 404’d, so I’ll rely on the Learn overview and Agent Framework blog post and note that the release page was unavailable.
+→ file_memory_replace(fileName: notes.md, oldString: - [3] The SDK enables a Native AOT CLI host and warm MSBuild server by…, newString: - [3] The SDK enables a Native AOT CLI host and warm MSBuild server by…, replaceAll: False)
+→ todos_complete(items: [{"id":3,"reason":"Reviewed the Agent Framework overview and harness b…)
+I have enough sourced material, so I’ll write the final report now.
+→ write_report(title: What changed in .NET 11 and Agent Framework for C# agent builders, markdown: ## Platform .NET 11 is generally available as a Standard Term Support …)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 5 of 5 fetched sources.
+→ todos_complete(items: [{"id":4,"reason":"Wrote the final cited Markdown report summarizing .…)
+Done — I researched the provided Microsoft sources, kept notes in `notes.md`, and wrote the final report. The key takeaways are that .NET 11 brings Runtime Async and agent-relevant library updates, C# 15 adds union types and closed hierarchies that fit agent state/result modeling, and Microsoft Agent Framework now centers on agents, harnesses, workflows, and integrations as the successor direction to Semantic Kernel and AutoGen. [1][2][4]
+
+One source limitation: the provided GitHub release URL for `microsoft/agent-framework` `dotnet-1.28.0` returned HTTP 404 when fetched, so I did not make any claims from it. [4][5]
+  ✔ Outline the research scope
+  ✔ Review platform sources
+  ✔ Review Agent Framework sources
+  ✔ Write the report
+── usage: gpt-5.4 · 13 model calls · 91,169 in / 2,202 out tokens · ≈ $0.261 · 15 tool calls · 42.6 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 43s

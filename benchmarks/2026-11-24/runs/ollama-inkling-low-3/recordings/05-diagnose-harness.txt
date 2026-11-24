@@ -1,0 +1,52 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+→ run_command(command: git log --oneline -10)
+→ http_get(path: /health)
+  ← exit 0 · 2518c83 Initial Orders API with in-memory store
+  ← 2 lines · GET /health -> 200
+→ run_command(command: dotnet test)
+→ http_get(path: /orders/1001/total)
+  ← exit 1 · [xUnit.net hh:mm:ss.19]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← GET /orders/1001/total -> 500 
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ run_command(command: git show 9bfbf7d --stat)
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+→ run_command(command: git show 9bfbf7d)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+The status page isn't reachable via my tools (http_get only hits the local API), so I'll note that and proceed with the diagnosis.
+→ write_proposal(file: src/Orders.Api/Pricing.cs, name: add-standard-tier-discount, rationale: The lookup table omits the 'standard' tier, so standard customers (and…, replace:         ["gold"] = 0.05m,         ["silver"] = 0.02m,         ["standa…, find:         ["gold"] = 0.05m,         ["silver"] = 0.02m,)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..d5985af 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -8,6 +8,7 @@ public static class Pricing
+         {
+             ["gold"] = 0.05m,
+             ["silver"] = 0.02m,
+    +        ["standard"] = 0m,
+         };
+     
+         public static decimal Total(Order order, Customer customer)
+  ← 13 lines · Wrote proposals/add-standard-tier-discount.patch:
+🔐 approval needed: apply_proposal(name: add-standard-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied add-standard-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 78 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+Done. Note: I could not reach https://status.example.com (no browser/web tool available; http_get only targets the local Orders API), so the incident check was skipped — the failure was reproduced locally instead.
+
+- Root cause: `src/Orders.Api/Pricing.cs` line 16 — the `TierDiscounts` lookup table (introduced in 9bfbf7d) is missing the `"standard"` key, so `TierDiscounts[customer.Tier]` throws `KeyNotFoundException` for standard customers, yielding HTTP 500 on `GET /orders/{id}/total`.
+- Commit: 9bfbf7d "Move tier discounts into a lookup table and add silver tier" (part of the 1.4.0 deploy).
+- Fix: added `["standard"] = 0m` to the table (proposal `add-standard-tier-discount`, applied).
+- Test result: `dotnet test` now passes 8/8 (was 5 passed / 3 failed).
+── usage: inkling-2-mini · 7 model calls · 41,323 in / 970 out tokens · ≈ $0.000 · 9 tool calls · 47.4 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 48s

@@ -1,0 +1,4 @@
+
+The root cause is a bug in the recently deployed code that is causing an unhandled exception when processing the /orders/{id}/total endpoint.
+
+[rehearse] 01-chatbot: exit 0 in 4s

@@ -1,0 +1,27 @@
+phase test         gpt-6-luna · medium
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ test ═══
+I’ll apply the named proposal, inspect the test result, and then check the live endpoint with the deployment-version caveat in mind.
+→ todos_add(todos: [{"title":"Apply the approved pricing fix proposal","description":"App…)
+The fix is ready to apply; its verification should come from the tests because the localhost service remains on the old deployed build.
+🔐 approval needed: apply_proposal(name: default-missing-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-missing-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 82 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+All 8 tests passed; I’ll now confirm the code diff and check the live version and order-total endpoint as the plan specifies.
+→ run_command(command: git diff)
+→ http_get(path: /health)
+→ http_get(path: /orders/1001/total)
+  ← exit 0 · }
+  ← 2 lines · GET /health -> 200
+  ← GET /orders/1001/total -> 500 
+The diff matches the planned fallback; the live service is still 1.4.0 and returns 500, as expected before redeployment.
+→ todos_complete(items: [{"id":1,"reason":"Applied default-missing-tier-discount; the diff cha…)
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly indexed `TierDiscounts` with the customer tier; `standard` was absent, causing `KeyNotFoundException`.
+- **Regression commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Replaced `TierDiscounts[customer.Tier]` with `TierDiscounts.GetValueOrDefault(customer.Tier)`, so unlisted tiers receive a zero discount.
+- **Test result:** `dotnet test` passed: **8 passed, 0 failed**. The live API remains on 1.4.0: `/health` returned 200, but `/orders/1001/total` still returns 500 until redeployment.
+── usage: phased · 5 model calls · 20,943 in / 1,097 out tokens · ≈ $0.003 · 6 tool calls · 15.4 s
+   test         gpt-6-luna · medium    15.4 s   5 calls   20,943 in   1,097 out (455 reasoning) ≈ $0.0026 ok

@@ -1,0 +1,2 @@
+{"at": "2026-11-23T23:59:40.411425+10:00", "app": "diagnose", "model": "inkling-2-mini", "calls": 13, "input": 105311, "output": 2502}
+{"at": "2026-11-24T00:02:11.171163+10:00", "app": "research", "model": "inkling-2-mini", "calls": 11, "input": 86348, "output": 5413}

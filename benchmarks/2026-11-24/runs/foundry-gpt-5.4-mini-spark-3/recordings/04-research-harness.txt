@@ -1,0 +1,43 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ mode_get()
+→ todos_add(todos: [{"title":"Capture plan in plan.md","description":"Outline a short res…)
+Plan: I’ll review the .NET 11 and C# 15 announcements, then the Agent Framework overview, release notes, and blog post, and extract only what the sources explicitly say about building agents in C#. I’ll keep short notes in memory with source numbers, then write a concise report.
+→ file_memory_write(fileName: plan.md, content: 1. Review .NET 11 and C# 15 sources for agent-relevant runtime and lan…, description: Working plan for a short research task on .NET 11, C# 15, and Agent Fr…)
+→ file_memory_write(fileName: notes.md, content: , description: Short research notes with citation markers for .NET 11, C# 15, and Age…)
+Plan: I’ll review the .NET 11 and C# 15 announcements, then the Agent Framework overview, release notes, and blog post, and extract only what the sources explicitly say about building agents in C#. I’ll keep short notes in memory with source numbers, then write a concise report.
+  ☐ Capture plan in plan.md
+  ☐ Review .NET 11 and C# 15 sources
+  ☐ Review Agent Framework sources
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+I’ll start by reading the .NET and C# sources together, then the Agent Framework sources, so I can separate language/runtime changes from framework-specific changes.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+→ fetch_url(url: https://devblogs.microsoft.com/dotnet/announcing-dotnet-11/)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+  ← 53 lines · [3] Announcing .NET 11 - .NET Blog
+I’ve got the .NET and C# material. Next I’m reading the Agent Framework overview, release, and blog post to identify what it says about agent building in C#.
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 113 lines · [4] Microsoft Agent Framework Overview | Microsoft Learn
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+  ← 58 lines · [5] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+I found the main Agent Framework overview and blog guidance; the GitHub release URL wasn’t available at that path, so I’ll rely on the overview and blog plus the .NET 11/C# 15 pages for the answer.
+→ file_memory_write(fileName: notes.md, content: - .NET 11 adds Runtime Async, lower-overhead async, better JIT/AOT, an…, description: Short source-backed notes for the current research task.)
+→ todos_complete(items: [{"id":1,"reason":"Saved the research plan to plan.md in memory."},{"i…)
+I’ve finished the source reading and notes. I’m writing the report now, keeping it limited to what the fetched pages explicitly say.
+→ write_report(title: .NET 11 and Agent Framework for C# agents, markdown: ## What changed .NET 11 positions C# 15 and Microsoft Agent Framework …)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 5 of 5 fetched sources.
+→ todos_complete(items: [{"id":4,"reason":"Wrote and saved the final report with citations fro…)
+Done — I reviewed the Microsoft .NET 11, C# 15, and Agent Framework sources, captured short notes in memory, and wrote the report.
+  ✔ Capture plan in plan.md
+  ✔ Review .NET 11 and C# 15 sources
+  ✔ Review Agent Framework sources
+  ✔ Write the report
+── usage: gpt-5.4-mini · 12 model calls · 76,956 in / 1,862 out tokens · ≈ $0.066 · 14 tool calls · 25.2 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 26s

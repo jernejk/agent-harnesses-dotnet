@@ -1,0 +1,15 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+
+→ file_access_ls(directory: store)
+→ file_access_grep(regexPattern: 500, globPattern: reports/**, directory: store)
+── usage: qwen3-4b-generic-gpu:2 · 2 model calls · 6,797 in / 2,572 out tokens · ≈ $0.000 · 2 tool calls · 63.9 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 64s

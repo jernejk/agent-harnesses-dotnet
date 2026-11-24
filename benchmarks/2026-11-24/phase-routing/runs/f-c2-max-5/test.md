@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:17` directly indexes the discount table, which lacked `standard`; order 1001’s customer is standard tier.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Added `["standard"] = 0m` to the discount table.
+- **Test result:** `dotnet test` completed successfully: **8 passed, 0 failed**. The live API was not used for verification; its deployed 1.4.0 build remains unchanged until redeployment.

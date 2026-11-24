@@ -1,0 +1,13 @@
+{
+  "label": "foundry-local-qwen3-4b-2",
+  "provider": "foundry-local",
+  "models": [],
+  "endpoint_host": "127.0.0.1:5272",
+  "api": "chat",
+  "reasoning_effort": "default",
+  "started_at": "2026-11-23T14:46:51Z",
+  "wall_s": 20,
+  "exit_code": 1,
+  "machine": "arm64 Apple M5 Max",
+  "note": ""
+}

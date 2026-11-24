@@ -1,0 +1,7 @@
+history ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈    46 tok · restored in a new process
+pinned  📌 We hotfix the pricing lookup and do not restart.
+
+We decided to hotfix the pricing lookup for Orders 500s without restarting the service. This decision was made to quickly resolve the issue and minimize downtime. By applying the hotfix directly to the pricing lookup, we ensure that the service continues to operate without interruption. This approach allows us to address the issue promptly while maintaining the availability of the service.
+── usage: qwen3-4b-generic-gpu:2 · 1 model calls · 559 in / 254 out tokens · ≈ $0.000 · 0 tool calls · 3.7 s
+
+[rehearse] 03-sessions-resume: exit 0 in 4s

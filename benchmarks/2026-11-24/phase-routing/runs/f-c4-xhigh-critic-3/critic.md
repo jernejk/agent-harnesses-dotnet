@@ -1,0 +1,3 @@
+- Replace indexed lookup with a zero-discount fallback for **all unmapped tiers**, not just `standard`; preserve the existing gold and silver rates.
+- Add pricing tests for an unlisted tier and, if accepted, a null tier. Update the expected test count accordingly.
+- Ensure the API tests run against the newly built code in a test host, not the deployed localhost service; `dotnet test` alone does not establish which build they exercise.

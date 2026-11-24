@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  BoundaryTests -> ~/Developer/personal/repos/agent-harnesses-dotnet/tests/BoundaryTests/bin/Debug/net11.0/BoundaryTests.dll
+Test run for ~/Developer/personal/repos/agent-harnesses-dotnet/tests/BoundaryTests/bin/Debug/net11.0/BoundaryTests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   119, Skipped:     0, Total:   119, Duration: 14 s - BoundaryTests.dll (net11.0)
+
+[rehearse] 00-boundaries: exit 0 in 15s

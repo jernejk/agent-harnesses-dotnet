@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:xhigh",
+    "plan": "gpt-6-luna:xhigh",
+    "dev": "gpt-6-luna:high",
+    "test": "gpt-6-luna:high"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 53.4,
+      "modelCalls": 11,
+      "toolCalls": 25,
+      "inputTokens": 76753,
+      "outputTokens": 3870,
+      "reasoningTokens": 2054,
+      "cachedInputTokens": 64708,
+      "costUsd": 0.009610,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 45,
+      "modelCalls": 6,
+      "toolCalls": 17,
+      "inputTokens": 43397,
+      "outputTokens": 3561,
+      "reasoningTokens": 2020,
+      "cachedInputTokens": 23782,
+      "costUsd": 0.006120,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 10.2,
+      "modelCalls": 3,
+      "toolCalls": 2,
+      "inputTokens": 9740,
+      "outputTokens": 423,
+      "reasoningTokens": 135,
+      "cachedInputTokens": 8459,
+      "costUsd": 0.001186,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 30.3,
+      "modelCalls": 4,
+      "toolCalls": 3,
+      "inputTokens": 15562,
+      "outputTokens": 737,
+      "reasoningTokens": 317,
+      "cachedInputTokens": 11246,
+      "costUsd": 0.001925,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 138.9,
+    "modelCalls": 24,
+    "toolCalls": 47,
+    "inputTokens": 145452,
+    "outputTokens": 8591,
+    "reasoningTokens": 4526,
+    "cachedInputTokens": 108195,
+    "costUsd": 0.018841,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "restore-standard-tier-discount"
+  ]
+}

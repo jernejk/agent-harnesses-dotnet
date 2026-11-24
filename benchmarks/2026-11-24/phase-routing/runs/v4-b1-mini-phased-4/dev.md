@@ -1,0 +1,1 @@
+fix-orders-total-missing-tier: changes `src/Orders.Api/Pricing.cs` to safely default missing tiers to `0m` discount instead of throwing on dictionary lookup.

@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:high",
+    "plan": "gpt-6-luna:high",
+    "dev": "gpt-6-luna:medium",
+    "test": "gpt-6-luna:medium"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 24.6,
+      "modelCalls": 7,
+      "toolCalls": 17,
+      "inputTokens": 40826,
+      "outputTokens": 1974,
+      "reasoningTokens": 795,
+      "cachedInputTokens": 34202,
+      "costUsd": 0.005070,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 32,
+      "modelCalls": 6,
+      "toolCalls": 14,
+      "inputTokens": 35152,
+      "outputTokens": 2915,
+      "reasoningTokens": 1583,
+      "cachedInputTokens": 28435,
+      "costUsd": 0.004973,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 5.9,
+      "modelCalls": 3,
+      "toolCalls": 2,
+      "inputTokens": 9532,
+      "outputTokens": 335,
+      "reasoningTokens": 70,
+      "cachedInputTokens": 8342,
+      "costUsd": 0.001121,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 17.2,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "inputTokens": 20128,
+      "outputTokens": 784,
+      "reasoningTokens": 296,
+      "cachedInputTokens": 18097,
+      "costUsd": 0.002405,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 79.7,
+    "modelCalls": 21,
+    "toolCalls": 37,
+    "inputTokens": 105638,
+    "outputTokens": 6008,
+    "reasoningTokens": 2744,
+    "cachedInputTokens": 89076,
+    "costUsd": 0.013569,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fallback-zero-for-unlisted-tier-discounts"
+  ]
+}

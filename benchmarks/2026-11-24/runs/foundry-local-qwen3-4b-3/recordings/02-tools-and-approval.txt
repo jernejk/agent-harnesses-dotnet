@@ -1,0 +1,4 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+── usage: qwen3-4b-generic-gpu:2 · 1 model calls · 529 in / 2,048 out tokens · ≈ $0.000 · 0 tool calls · 27.3 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 28s

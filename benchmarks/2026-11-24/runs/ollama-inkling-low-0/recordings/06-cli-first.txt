@@ -1,0 +1,12 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 3.0 s, 0 tokens
+- Cause: the new `TierDiscounts` lookup in `Pricing.cs` only defines "gold" and "silver"; "standard" (and any other tier) is missing, so `TierDiscounts[customer.Tier]` throws `KeyNotFoundException` for standard-tier orders (e.g. the existing rounding/standard tests).
+- Commit: 9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0 ("Move tier discounts into a lookup table and add silver tier").
+- Fix: add a "standard" entry, e.g. `["standard"] = 0m,` (or use `TryGetValue` with a default of 0m).
+── usage: inkling-2-mini · 2 model calls · 1,247 in / 256 out tokens · ≈ $0.000 · 1 tool calls · 10.6 s
+
+                             time        tokens     cost            
+agent does it all (05)     44.5 s    39,158 tok   $0.000     7 tools
+CLI first (06)             10.6 s     1,503 tok   $0.000     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 12s

@@ -1,0 +1,98 @@
+phase plan         gpt-6.1-terra · medium
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll check the status page if the available tools permit it, then verify the pricing change, affected data, and tests in the repository. I’ll provide a fix plan rather than modify the code.
+→ mode_get()
+→ todos_add(todos: [{"title": "Check service status and inspect the reported pricing regr…)
+→ run_command(command: curl -I https://status.example.com)
+→ run_command(command: git status --short)
+  ✖ DENIED by policy: curl -I https://status.example.com: No curl. Use http_get for the Orders API.
+  ← exit 0 · 
+The available command policy blocks access to the status page, and no external HTTP tool is available, so I can’t verify whether an incident is posted there. The working tree is clean; I’ll check the repository evidence directly.
+→ file_access_ls()
+→ file_access_grep(regexPattern: TierDiscounts|CalculateTotal|standard|rounding)
+→ run_command(command: git show --stat 9bfbf7d)
+→ run_command(command: git log --oneline -8)
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+  ← exit 0 · 2518c83 Initial Orders API with in-memory store
+  ✂ tool output cut from 1,922,381 chars
+The reported commit is present in the release history and changed both pricing and customer data. I’m checking the exact implementation and test assertions now, including the pre-change fallback behavior.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1)
+→ file_access_read_lines(fileName: src/Orders.Api/OrderStore.cs, startLine: 1)
+→ file_access_read_lines(fileName: tests/Orders.Tests/PricingTests.cs, startLine: 1)
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs src/Orders.Api/OrderStor…)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+→ file_access_ls(directory: tests/Orders.Tests)
+→ file_access_ls(directory: src/Orders.Api)
+→ todos_complete(items: [{"id": 1, "reason": "Verified pricing, order data, and introducing co…)
+→ run_command(command: dotnet test --no-restore)
+  ← exit 1 · [xUnit.net 00:00:00.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+The baseline test run reproduces all three reported failures. The previous implementation gave every non-gold tier a zero discount, so merely adding `standard` to the table would leave other previously supported values vulnerable; I’m checking the model and API tests before specifying the fallback and regression coverage.
+→ file_access_read_lines(fileName: src/Orders.Api/Models.cs, startLine: 1)
+→ file_access_read_lines(fileName: src/Orders.Api/Program.cs, startLine: 1)
+→ file_access_read_lines(fileName: tests/Orders.Tests/OrdersApiTests.cs, startLine: 1)
+→ file_access_read(fileName: README.md)
+→ todos_complete(items: [{"id": 2, "reason": "Reproduced 3 failures and reviewed API, data mod…)
+→ run_command(command: git status --short)
+  ← exit 0 · 
+## Root cause (file:line)
+
+- `src/Orders.Api/Pricing.cs:16` directly indexes a dictionary that contains `gold` and `silver`, but not `standard` (`Pricing.cs:7–11`). The lookup throws `KeyNotFoundException`.
+- Order 1001 belongs to a standard-tier customer (`src/Orders.Api/OrderStore.cs:8,14`). Commit `9bfbf7d` replaced the previous zero-discount fallback for non-gold tiers with the direct lookup.
+
+The baseline `dotnet test --no-restore` reproduced **3 failures and 5 passes**. I could not check the status page: external HTTP access is unavailable with the provided tools.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs:16`, replace:
+
+```csharp
+        var discount = TierDiscounts[customer.Tier];
+```
+
+with:
+
+```csharp
+        var discount = customer.Tier != null && TierDiscounts.TryGetValue(customer.Tier, out var tierDiscount)
+            ? tierDiscount
+            : 0m;
+```
+
+In `tests/Orders.Tests/PricingTests.cs`, replace the final lines:
+
+```csharp
+    public void Totals_round_to_cents() =>
+        Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+}
+```
+
+with:
+
+```csharp
+    public void Totals_round_to_cents() =>
+        Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+
+    [Theory]
+    [InlineData("bronze")]
+    [InlineData(null)]
+    public void Unknown_tiers_pay_list_price_plus_gst(string? tier) =>
+        Assert.Equal(110.00m, Pricing.Total(HundredDollars, Tier(tier!)));
+}
+```
+
+## Why this is the smallest safe fix
+
+The lookup retains the 1.4.0 gold and silver discounts while restoring the prior zero-discount fallback for standard, unknown, and null tier values. Adding only `standard` to the dictionary would leave the other fallback cases broken. The existing tests cover standard pricing, rounding, and the affected API; the added test protects the broader fallback.
+
+## Verification (what to run and what it must show)
+
+1. Run `dotnet test` after the change: all **10 test cases** must pass, including standard, gold, silver, rounding, unknown-tier, null-tier, and API tests.
+2. Run the service and request `GET /orders/1001/total`: it must return HTTP 200 with order ID `1001`, total `195.80`, and currency `AUD`.
+3. Check the status page through an authorized external channel; its current state could not be verified here.
+
+## Risks
+
+- Unknown or null tiers receive no discount rather than producing an error, matching the old fallback; invalid tier data could therefore go unnoticed.
+- The fix has not been applied or tested after modification. The working tree remains clean.
+── usage: phased · 7 model calls · 49,375 in / 2,126 out tokens · ≈ $0.060 · 22 tool calls · 35.4 s
+   plan         gpt-6.1-terra · medium    35.4 s   7 calls   49,375 in   2,126 out (550 reasoning) ≈ $0.0600 ok

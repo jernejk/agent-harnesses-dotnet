@@ -1,0 +1,111 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:xhigh",
+    "plan": "gpt-6-luna:xhigh",
+    "dev": "gpt-6-luna:high",
+    "test": "gpt-6-luna:high",
+    "revise": "gpt-6-luna:xhigh"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 22.3,
+      "modelCalls": 7,
+      "toolCalls": 14,
+      "inputTokens": 41325,
+      "outputTokens": 2003,
+      "reasoningTokens": 797,
+      "cachedInputTokens": 34922,
+      "costUsd": 0.005134,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 58.9,
+      "modelCalls": 8,
+      "toolCalls": 25,
+      "inputTokens": 66096,
+      "outputTokens": 5970,
+      "reasoningTokens": 4126,
+      "cachedInputTokens": 54936,
+      "costUsd": 0.009595,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "critic",
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 2.1,
+      "modelCalls": 1,
+      "toolCalls": 0,
+      "inputTokens": 1078,
+      "outputTokens": 73,
+      "reasoningTokens": 64,
+      "cachedInputTokens": 0,
+      "costUsd": 0.001443,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 10.4,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "inputTokens": 17259,
+      "outputTokens": 614,
+      "reasoningTokens": 242,
+      "cachedInputTokens": 15690,
+      "costUsd": 0.002033,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 14.1,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "inputTokens": 20877,
+      "outputTokens": 1003,
+      "reasoningTokens": 491,
+      "cachedInputTokens": 18707,
+      "costUsd": 0.002589,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 107.8,
+    "modelCalls": 26,
+    "toolCalls": 47,
+    "inputTokens": 146635,
+    "outputTokens": 9663,
+    "reasoningTokens": 5720,
+    "cachedInputTokens": 124255,
+    "costUsd": 0.020794,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fallback-unknown-customer-tier-discount"
+  ]
+}

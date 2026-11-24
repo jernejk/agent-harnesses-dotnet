@@ -23,7 +23,7 @@ command beats the agent.
 - `git`, `curl` and `bash`; the boundary tests also use `perl`.
 - An OpenAI-compatible chat endpoint with tool calling: Azure OpenAI or Foundry (v1 API),
   OpenAI, or a local server such as LM Studio.
-- Optional: [direnv](https://direnv.net) and Docker (for the Aspire dashboard).
+- Optional: [direnv](https://direnv.net) and Docker (for the Aspire dashboard and demo 05's sandbox).
 
 ## Configure the model
 
@@ -48,6 +48,36 @@ export AGENT_MODEL="<model id shown by LM Studio>"
 
 Change the model for a single run with `dotnet run <file> -e AGENT_MODEL=gpt-5.4`.
 
+## Where the model runs
+
+`AGENT_PROVIDER` picks where the model runs, for one run with `dotnet run <file> -e AGENT_PROVIDER=…`
+or for the shell with `export`:
+
+| `AGENT_PROVIDER` | Model | Start it with |
+| --- | --- | --- |
+| `foundry` (the default when `AGENT_ENDPOINT` is set) | `AGENT_MODEL` at `AGENT_ENDPOINT`: Azure AI Foundry, OpenAI or any OpenAI-compatible server | the settings above |
+| `ollama` (the default otherwise) | inkling-2-mini | `scripts/local-model.sh start` (Ollama 0.40.17 or later) |
+| `lmstudio` | openai/gpt-oss-20b | `lms server start --port 1234`, then `lms load openai/gpt-oss-20b -c 32768` |
+| `foundry-local` | qwen3-4b | `foundry config set port 5272`, then `foundry model load qwen3-4b` |
+
+The three local presets never send a cloud key, and once the model is downloaded and its
+server is running they need no network. `LOCAL_ENDPOINT`,
+`LOCAL_MODEL` and `LOCAL_REASONING_EFFORT` override their defaults. For example,
+`dotnet run demos/05-diagnose-harness/diagnose.cs -e AGENT_PROVIDER=ollama` runs the diagnose
+harness with no network.
+
+- `AGENT_REASONING_EFFORT` (`default`, `none`, `low`, `medium`, `high` or `xhigh`) limits how long
+  a reasoning model thinks before each reply. Unset, nothing is sent. The `ollama` preset uses
+  `low`: inkling-2-mini was slower with thinking at its default, and slower again with it off.
+- `AGENT_API=responses` uses the Responses API instead of Chat Completions. OpenAI's newest models
+  need it for tools with reasoning on, because Chat Completions refuses tools unless
+  `reasoning_effort` is `none`. It sends `store=false`, so the app keeps the history either way.
+- `AGENT_DEBUG=1` adds the endpoint's own error text to an HTTP error.
+
+Measured results for each of these, with raw output for every run, are in
+[benchmarks/2026-11-24](benchmarks/2026-11-24/README.md). `scripts/bench.sh <label>` runs one
+more rehearsal and saves it the same way.
+
 ## Run
 
 ```bash
@@ -71,20 +101,60 @@ Traces: `scripts/dashboard.sh` starts the Aspire dashboard on <http://localhost:
 `-e OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` to demo 04 or 05, or pass
 `-- --console-traces` to print spans instead.
 
-A full rehearsal on `gpt-5.4-mini` takes about 75 seconds, 13 of them for the boundary
-tests, and costs about USD 0.10. Every harness run prints its own token count, estimated
+A full rehearsal on `gpt-5.4-mini` took a median of 92 seconds and about USD 0.14 in five
+runs ([benchmarks](benchmarks/2026-11-24/README.md)). When Docker and the .NET 11 SDK image
+are present, it also runs demo 05 in the sandbox below; four such rehearsals took 103–126
+seconds and cost USD 0.12–0.21. Every harness run prints its own token count, estimated
 cost, tool calls and wall time.
 
 ## Boundaries
 
 The harness, not the model, enforces the boundaries, and
 [docs/boundary-lessons.md](docs/boundary-lessons.md) lists the holes a review found and how
-they were closed. Two limits remain by design. `dotnet test` builds and runs the repo's own
-code: the harness pins what runs and strips model keys from its environment, but it is not
+they were closed. Two limits remain by design. By default, `dotnet test` builds and runs the
+repo's own code on the host: the harness pins what runs and strips model keys from its environment, but it is not
 a sandbox, so only point demo 05 at a repo you trust. And `--auto-approve-for-rehearsal`
 answers every approval with yes once `HARNESS_REHEARSAL=1` is set, which
 `scripts/rehearse.sh` does. That check guards against using the flag by accident; it is not
 a security boundary.
+
+## Extra: the sandbox
+
+Demo 05 can run its tests in Docker, including the rerun after you approve a patch.
+Policy is the first wall. The container is the second for the test process. Git, the
+Orders HTTP probe and the agent run on the host.
+
+```bash
+docker image inspect mcr.microsoft.com/dotnet/sdk:11.0 >/dev/null || docker pull mcr.microsoft.com/dotnet/sdk:11.0
+scripts/reset-target.sh
+dotnet run demos/05-diagnose-harness/diagnose.cs -- --sandbox
+cat recordings/05-diagnose-sandbox.txt   # stage fallback
+```
+
+The reset warms `~/.nuget/packages`. Use a local Docker context that can read both the
+worktree and the package cache. The container restores offline from that read-only
+cache and builds a copy of the source in disposable storage. Answer `y` to approve the
+patch. [Presenter notes](docs/PRESENTER-DEMOS.md#extra-the-sandbox) have the rehearsal
+details.
+
+Four green rehearsals with Azure Foundry `gpt-5.4-mini` on an M5 Max MacBook Pro measured
+21–35 s, 5–17 model calls and $0.018–$0.073 for the sandbox run, versus 15–24 s, 8–10
+calls and $0.031–$0.043 for the host run. Sandbox runs used 20,709–87,247 input and
+636–1,678 output tokens. Host runs used 35,273–50,465 input and 923–1,197 output
+tokens. A no-op container took 70 ms to start and exit (median of five runs).
+
+**WHAT'S REAL**
+
+The startup probe was run and recorded. It showed an external TCP connection refused
+and writes refused at the container root and source mount. The boundary test verified
+the host canary was untouched. All four sandbox rehearsals passed all eight Orders tests
+after the approved patch. In the third, the agent then checked the live API again, which
+still returned 500 because nothing redeploys the running copy of Orders, and applied a
+second, unneeded patch; its summary blamed the wrong commit.
+
+Not demoed: Docker Sandboxes (`sbx`) puts the whole agent in its own microVM, the better
+fit when Git and the agent's other tools also need isolating. This demo puts only the test
+processes in ordinary Docker containers.
 
 ## Layout
 
@@ -93,6 +163,7 @@ demos/          one folder per demo; shared/ holds the plumbing every demo inclu
 target-seed/    the Orders service, one folder per commit of its history
 target/         generated by scripts/reset-target.sh: its own throwaway git repo (ignored)
 tests/          BoundaryTests: one xunit test per boundary hole, no model calls
+benchmarks/     rehearsals on each model and runtime, kept by scripts/bench.sh, with a summary
 scripts/        reset-target, orders (start/stop the service), dashboard, rehearse
 reports/        research reports (and their .trace.jsonl, ignored)
 proposals/      patches the diagnose harness proposes (ignored)

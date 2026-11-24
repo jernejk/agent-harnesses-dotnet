@@ -1,0 +1,14 @@
+component,value
+Machine,"MacBook Pro (Mac17,11), Apple M5 Max: 18-core CPU, 40-core GPU, 128 GB unified memory"
+macOS,27.2.1
+.NET SDK,"11.0.100 (C# 15, file-based apps)"
+Microsoft Agent Framework,1.28.0
+Microsoft.Extensions.AI,10.11.0
+OpenAI .NET SDK,2.14.0
+Azure AI Foundry,"Global Standard deployments in eastus2: gpt-5.4-mini (2026-03-17), gpt-5.4 (2026-03-05), gpt-5.4-nano (2026-03-17), through the v1 API and Chat Completions"
+OpenAI API,"api.openai.com: gpt-6-luna, gpt-6.1-terra, gpt-5.6-luna and gpt-5.6-terra, through Chat Completions with reasoning off and the Responses API with reasoning low"
+Ollama,"0.40.17 (official release): inkling-2-mini:latest, NVFP4 weights on the MLX runner, 32K context, one request at a time"
+LM Studio,"0.4.28: openai/gpt-oss-20b (MXFP4) and thinkingmachines/inkling-2-mini (GGUF Q4_K_M), 32K context"
+Foundry Local,"0.13.0 (ONNX Runtime 1.31.0, GenAI 0.18.0): qwen3-4b-generic-gpu:2 on the WebGPU execution provider"
+Harness budgets,"Demo 04: 40 model calls, 40 tool calls, 150 s. Demo 05: 30 model calls, 40 tool calls, 150 s."
+Run order,"One rehearsal at a time: local models first, then Azure, then OpenAI. Other agents were building .NET code on the same Mac during some local runs."

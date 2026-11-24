@@ -1,0 +1,2 @@
+- Guard a null tier before the lookup: `GetValueOrDefault` still throws for a null dictionary key, whereas the prior behavior gave other tiers zero discount.
+- Add pricing tests for null and an unlisted tier, plus checks that gold and silver retain their configured discounts. Run the API test against the newly built code, not the deployed localhost service.

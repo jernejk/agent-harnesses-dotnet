@@ -1,0 +1,15 @@
+{
+  "label": "lmstudio-gpt-oss-20b-low-2",
+  "provider": "lmstudio",
+  "models": [
+    "openai/gpt-oss-20b"
+  ],
+  "endpoint_host": "127.0.0.1:1234",
+  "api": "chat",
+  "reasoning_effort": "low",
+  "started_at": "2026-11-23T14:38:47Z",
+  "wall_s": 63,
+  "exit_code": 1,
+  "machine": "arm64 Apple M5 Max",
+  "note": ""
+}

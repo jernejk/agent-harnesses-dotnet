@@ -1,0 +1,1 @@
+fix-standard-tier-total-500: changes Pricing.cs to safely default missing tier discounts to zero instead of throwing on standard-tier orders.

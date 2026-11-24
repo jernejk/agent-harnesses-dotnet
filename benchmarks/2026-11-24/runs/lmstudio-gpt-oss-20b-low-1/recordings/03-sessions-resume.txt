@@ -1,0 +1,28 @@
+history ███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   322 tok · restored in a new process
+pinned  📌 Root cause: Pricing lookup missing 'standard' key leading to 500s. Decision: Hotfix pricing lookup, no restart.
+**What we decided**
+
+- **Fix the pricing lookup by adding (or restoring) the missing `'standard'` key.**  
+- **Deploy that change as a hot‑fix without restarting the Orders service.**
+
+---
+
+### Why we made this decision
+
+| Factor | Detail |
+|--------|--------|
+| **Root cause** | The pricing lookup dictionary in `Orders.Api.Pricing.Total` no longer contains the key `'standard'`. Every request that tries to look up this key throws a `KeyNotFoundException`, which is not caught and propagates as an HTTP 500. |
+| **Impact** | 200+ requests per second are failing, causing a spike in 500 responses and degrading the user experience. |
+| **Speed of fix** | Adding the key (or re‑inserting the original pricing data) is a trivial code change that can be applied in minutes. |
+| **Service stability** | The Orders service is currently healthy (`status: ok`). A restart would momentarily bring the API down for all users, amplifying the outage. |
+| **Risk** | The change is isolated to a lookup table; it does not touch request routing, database connections, or other critical paths. The risk of introducing new bugs is minimal. |
+| **Operational overhead** | No need for a full deployment cycle or downtime window – we can push the hot‑fix directly. |
+
+---
+
+**Bottom line**
+
+By hot‑fixing the pricing lookup we eliminate the 500s immediately, keep the service online, and avoid unnecessary restart‑related disruption. The decision is now pinned for reference.
+── usage: openai/gpt-oss-20b · 1 model calls · 601 in / 345 out tokens · ≈ $0.000 · 0 tool calls · 4.2 s
+
+[rehearse] 03-sessions-resume: exit 0 in 5s

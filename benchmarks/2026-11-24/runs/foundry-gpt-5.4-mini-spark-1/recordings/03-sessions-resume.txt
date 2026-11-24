@@ -1,0 +1,12 @@
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   228 tok · restored in a new process
+pinned  📌 Orders 500 root cause: Pricing.Total throws KeyNotFoundException because it looks up the 'standard' key in a dictionary where that key is missing (Pricing.cs line 16). Decision: hotfix the pricing lookup and do not restart the service.
+We decided to **hotfix the pricing lookup and not restart the service**.
+
+Why:
+- Orders 500s are caused by `Pricing.Total` throwing `KeyNotFoundException`.
+- It tries to read the `'standard'` key from a dictionary.
+- That key is missing, so requests fail with 500.
+- This is a code/data bug in pricing logic, not something a restart will fix.
+── usage: gpt-5.4-mini · 1 model calls · 555 in / 86 out tokens · ≈ $0.001 · 0 tool calls · 3.1 s
+
+[rehearse] 03-sessions-resume: exit 0 in 4s

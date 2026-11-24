@@ -1,0 +1,2 @@
+- Replace the indexer with a zero-discount fallback for every unlisted tier, including null if it can reach pricing; preserve the gold and silver discounts.
+- Add tests for unlisted tiers and any reachable null tier, plus checks that known-tier discounts remain unchanged. Run the full test suite against the changed code.

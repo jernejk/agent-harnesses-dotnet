@@ -1,0 +1,4 @@
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` directly indexed the tier-discount dictionary; order 1001’s `"standard"` tier was absent, causing a `KeyNotFoundException` and HTTP 500.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `fallback-for-unmapped-customer-tiers`, using a null-safe lookup that defaults unmapped tiers to a 0% discount.
+- **Test result:** All 8 tests passed (0 failed, 0 skipped). The local API remains on deployed build 1.4.0; verification used the tests, not the API.

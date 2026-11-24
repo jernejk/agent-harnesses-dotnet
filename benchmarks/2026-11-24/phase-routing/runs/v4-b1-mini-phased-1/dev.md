@@ -1,0 +1,1 @@
+fix-standard-tier-pricing: changes `src/Orders.Api/Pricing.cs` to safely default missing tiers to 0% discount instead of throwing.

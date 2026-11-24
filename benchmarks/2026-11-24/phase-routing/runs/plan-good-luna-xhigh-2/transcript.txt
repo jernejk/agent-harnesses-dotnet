@@ -1,0 +1,77 @@
+phase plan         gpt-6-luna · xhigh
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll verify the relevant source, tests, and the referenced commit before proposing a patch. I’ll also try the requested status-page check if the read-only command policy permits it; I won’t modify the repository.
+→ todos_add(todos: [{"title":"Check the status page and inspect the reported pricing code…)
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ file_access_read(fileName: src/Orders.Api/OrderStore.cs)
+→ file_access_ls(directory: )
+→ run_command(command: curl -I --max-time 10 https://status.example.com)
+  ✖ DENIED by policy: curl -I --max-time 10 https://status.example.com: No curl. Use http_get for the Orders API.
+The status-page check was denied by the command policy, which explicitly says not to retry that request; no status-page result is available from this environment. The reported source confirms a direct dictionary index for a tier missing from the table. I’m now checking the tests and the prior commit behavior to pin down the exact minimal change.
+→ file_access_ls(directory: tests)
+→ file_access_ls(directory: src/Orders.Api)
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git show 9bfbf7d^:src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+  ← exit 0 · }
+→ file_access_ls(directory: tests/Orders.Tests)
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ file_access_read(fileName: src/Orders.Api/Program.cs)
+→ file_access_read(fileName: src/Orders.Api/Models.cs)
+The commit diff confirms the regression: it replaced the previous gold-specific conditional (all other tiers got zero discount) with a dictionary indexer, while introducing a silver discount. The compatible minimal repair is to use a dictionary lookup that returns the decimal default (`0m`) for unknown tiers, preserving both configured gold/silver behavior and prior fallback behavior. I’m checking the test expectations and project target next.
+→ file_access_read(fileName: tests/Orders.Tests/PricingTests.cs)
+→ file_access_read(fileName: tests/Orders.Tests/OrdersApiTests.cs)
+→ file_access_read(fileName: tests/Orders.Tests/Orders.Tests.csproj)
+→ file_access_read(fileName: src/Orders.Api/Orders.Api.csproj)
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1, endLine: 22)
+→ file_access_read_lines(fileName: tests/Orders.Tests/PricingTests.cs, startLine: 1, endLine: 40)
+→ run_command(command: dotnet test)
+→ run_command(command: git status --short)
+  ← exit 1 · [xUnit.net 00:00:00.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← exit 0 · 
+The test run reproduces exactly the reported three failures (5 pass), and `git status --short` is clean. The tests also establish the compatibility target: standard gets no discount, while gold and silver keep their configured discounts. I have not changed any files; I’ll give the one-line implementation plan and verification criteria now.
+→ todos_complete(items: [{"id":1,"reason":"Inspected Pricing.cs, OrderStore.cs, relevant tests…)
+### Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:16` directly indexes `TierDiscounts` using the customer’s tier. The dictionary at lines 7–11 contains only `gold` and `silver`; order 1001’s customer is `standard` (`src/Orders.Api/OrderStore.cs:8,14`), so the lookup throws `KeyNotFoundException` and the API returns HTTP 500.
+
+The parent of commit `9bfbf7d` used a conditional that gave gold a discount and all other tiers zero discount. The commit replaced that fallback with the throwing lookup.
+
+I could not verify `https://status.example.com`: the read-only command policy denied the attempted request and instructed me not to retry.
+
+### Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs`, replace line 16:
+
+**Before**
+```csharp
+var discount = TierDiscounts[customer.Tier];
+```
+
+**After**
+```csharp
+var discount = TierDiscounts.GetValueOrDefault(customer.Tier);
+```
+
+### Why this is the smallest safe fix
+
+It is a one-line change. A missing tier returns the decimal default, `0m`, restoring the previous no-discount fallback for standard and other unlisted tiers. The configured gold and silver discounts remain unchanged.
+
+### Verification (what to run and what it must show)
+
+Run:
+
+```sh
+dotnet test
+```
+
+It must show **8 passed, 0 failed**. In particular, the standard-pricing and rounding tests should pass, the API test for order 1001 should receive HTTP 200, and the existing gold, silver, and other API tests should continue to pass.
+
+Before the change, `dotnet test` reproduced the reported result: **3 failed, 5 passed**.
+
+### Risks
+
+Unknown or misspelled tiers will receive zero discount rather than produce an error. That matches the prior behavior, but it could conceal invalid tier data; any new tier that needs a discount must be added explicitly to the lookup table.
+── usage: phased · 8 model calls · 50,258 in / 3,629 out tokens · ≈ $0.007 · 22 tool calls · 43.2 s
+   plan         gpt-6-luna · xhigh     43.2 s   8 calls   50,258 in   3,629 out (2,082 reasoning) ≈ $0.0068 ok

@@ -1,0 +1,12 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.7 s, 0 tokens
+- **Cause:** The new discount lookup indexes `TierDiscounts[customer.Tier]`, but `"standard"` was omitted, so standard-customer pricing throws `KeyNotFoundException`.
+- **Commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — *Move tier discounts into a lookup table and add silver tier*.
+- **One-line fix:** Add `["standard"] = 0m,` to `TierDiscounts` (or use `TryGetValue` with a zero-discount fallback).
+── usage: gpt-5.6-terra · 2 model calls · 1,139 in / 142 out tokens · ≈ $0.000 · 1 tool calls · 6.5 s
+
+                             time        tokens     cost            
+agent does it all (05)     17.5 s    34,684 tok   $0.000    14 tools
+CLI first (06)              6.5 s     1,281 tok   $0.000     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 7s

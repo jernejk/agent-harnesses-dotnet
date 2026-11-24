@@ -1,0 +1,20 @@
+
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.9 s, 0 tokens
+
+→ bisect()
+  ← git bisect: 9bfbf7d in 4.4 s, 0 tokens
+
+→ bisect()
+  ← git bisect: 9bfbf7d in 4.2 s, 0 tokens
+
+→ bisect()
+  ← git bisect: 9bfbf7d in 3.5 s, 0 tokens
+
+── usage: qwen3-4b-generic-gpu:2 · 5 model calls · 6,370 in / 1,724 out tokens · ≈ $0.000 · 4 tool calls · 95.1 s
+
+                             time        tokens     cost            
+agent does it all (05)     63.9 s     9,369 tok   $0.000     2 tools
+CLI first (06)             95.1 s     8,094 tok   $0.000     4 tools
+
+[rehearse] 06-cli-first: exit 0 in 96s

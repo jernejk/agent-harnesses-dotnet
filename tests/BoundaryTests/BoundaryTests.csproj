@@ -40,6 +40,7 @@
     <Compile Include="../../demos/05-diagnose-harness/OrdersApi.cs" Link="Demos/OrdersApi.cs" />
     <Compile Include="../../demos/05-diagnose-harness/Proposals.cs" Link="Demos/Proposals.cs" />
     <Compile Include="../../demos/05-diagnose-harness/RepoPath.cs" Link="Demos/RepoPath.cs" />
+    <Compile Include="../../demos/05-diagnose-harness/SandboxRunner.cs" Link="Demos/SandboxRunner.cs" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly indexed the discount table using the customer tier; `standard` was not a key, causing a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `default-unlisted-tier-discount`. `Pricing.Total` now uses `TryGetValue` and defaults unlisted or null tiers to zero discount, preserving the gold and silver discounts.
+- **Test result:** **8 passed, 0 failed.** The plan expected 9 tests, but this single-file proposal did not include the planned bronze regression test. I did not check the live API because it still runs the 1.4.0 deployment.

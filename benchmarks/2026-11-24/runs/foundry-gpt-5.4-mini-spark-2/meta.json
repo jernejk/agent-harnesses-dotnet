@@ -1,0 +1,15 @@
+{
+  "label": "foundry-gpt-5.4-mini-spark-2",
+  "provider": "foundry",
+  "models": [
+    "gpt-5.4-mini"
+  ],
+  "endpoint_host": "*.openai.azure.com",
+  "api": "chat",
+  "reasoning_effort": "default",
+  "started_at": "2026-11-23T14:49:44Z",
+  "wall_s": 89,
+  "exit_code": 0,
+  "machine": "arm64 Apple M5 Max",
+  "note": "Azure AI Foundry, spark resource, Global Standard deployment gpt-5.4-mini"
+}

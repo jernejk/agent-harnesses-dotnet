@@ -1,0 +1,81 @@
+phase plan         gpt-6-luna · xhigh
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll verify the claimed response-path regression against the current source and the 1.3.0/1.4.0 history, then inspect the existing tests and identify the smallest one-file replacement that restores the prior behavior without undoing other 1.4.0 changes. I’ll leave the code untouched and specify test-based verification only.
+→ todos_add(todos: [{"title":"Verify the reported cause and relevant code/history","descr…)
+I’m starting by checking the exact 1.4.0 diff and locating the source/tests. This will establish whether the reported helper change is real before treating the missing problem-details registration as the cause.
+→ file_access_ls(directory: )
+→ run_command(command: git show ab38e53 -- src/Orders.Api/Program.cs)
+→ run_command(command: git status --short)
+→ run_command(command: git log --oneline -8)
+  ← exit 0 · public partial class Program;
+  ← exit 0 · 
+  ← exit 0 · 2518c83 Initial Orders API with in-memory store
+The reported explanation is already contradicted by the commit diff: `ab38e53` explicitly adds `builder.Services.AddProblemDetails()`, so “problem details are not registered” is not supported. The same commit routes both unknown-order endpoints through `NotFound(id)`, so I’ll trace how that helper serializes responses and compare all 1.4.0 changes and existing assertions before selecting a replacement.
+→ file_access_read(fileName: src/Orders.Api/Program.cs)
+→ file_access_ls(directory: tests)
+→ file_access_ls(directory: src)
+→ file_access_read(fileName: CHANGELOG.md)
+→ run_command(command: git show f1812c8 --)
+  ← exit 0 · store.FindOrder(id) is { } order ? Results.Ok(order) : NotFound(id));
+→ file_access_ls(directory: tests/Orders.Tests)
+→ file_access_ls(directory: src/Orders.Api)
+→ run_command(command: git show 9bfbf7d --)
+→ run_command(command: git show fcded06 --)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ← exit 0 · });
+The more likely regression is outside `Program.cs`: the 1.4.0 pricing refactor changed a permissive “gold gets 5%, otherwise no discount” rule into a dictionary indexer containing only gold and silver. If order 1001 belongs to a standard-tier customer, that indexer throws and yields HTTP 500, matching the incident. I’ll verify the fixture data and tests, then compare this behavior to the pre-refactor implementation.
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ file_access_read(fileName: src/Orders.Api/OrderStore.cs)
+→ file_access_read(fileName: tests/Orders.Tests/PricingTests.cs)
+→ file_access_read(fileName: tests/Orders.Tests/OrdersApiTests.cs)
+→ file_access_read(fileName: src/Orders.Api/Orders.Api.csproj)
+The fixture confirms order `1001` maps to customer tier `"standard"`, and existing tests explicitly require standard-tier pricing to remain list price plus GST. The 1.4.0 dictionary omits `"standard"` and uses a throwing indexer; I’m checking the prior version’s fallback and running the repository’s current test suite so the final plan is grounded in observed test results.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1)
+→ file_access_read_lines(fileName: src/Orders.Api/Program.cs, startLine: 1)
+→ run_command(command: git show 9bfbf7d^:src/Orders.Api/Pricing.cs)
+→ run_command(command: dotnet test)
+  ← exit 0 · }
+  ← exit 1 · [xUnit.net 00:00:00.13]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+The pre-refactor code confirms that every tier except exact `"gold"` got a zero discount. Current `dotnet test` reproduces precisely three failures: two pricing tests on `"standard"` and the API total for order 1001; all throw at the dictionary indexer, while the 1.4.0 problem-details endpoint is unrelated. I’m checking the customer type/nullability before choosing a fallback expression that preserves the old behavior for unrecognized tier values, not merely `"standard"`.
+→ file_access_read(fileName: src/Orders.Api/Models.cs)
+→ file_access_read(fileName: Directory.Build.props)
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+The `Customer.Tier` record is annotated non-null, but the historical code also tolerated any non-`"gold"` value by applying no discount. To preserve that fallback even for an unexpected/null runtime value while retaining the 1.4.0 dictionary and silver entry, the safest single-line replacement is a null-guarded `TryGetValue` with `0m` fallback. I’ll confirm the investigation left the worktree untouched, then give the requested implementation plan and post-fix test expectations.
+→ run_command(command: git status --short)
+  ← exit 0 · 
+→ todos_complete(items: [{"id":1,"reason":"Verified ab38e53 registers AddProblemDetails; inspe…)
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:16` — the 1.4.0 pricing refactor uses a dictionary indexer for `customer.Tier`, but the dictionary contains only `"gold"` and `"silver"`. Order `1001` belongs to a `"standard"` customer, so `Pricing.Total` throws `KeyNotFoundException`; the total endpoint returns HTTP 500.
+
+The reported cause is not supported: `src/Orders.Api/Program.cs:5` registers `AddProblemDetails()`. The `NotFound` helper is for unknown orders and is not reached for order `1001`.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs`, replace this line:
+
+```csharp
+var discount = TierDiscounts[customer.Tier];
+```
+
+with:
+
+```csharp
+var discount = customer.Tier is { } tier && TierDiscounts.TryGetValue(tier, out var tierDiscount) ? tierDiscount : 0m;
+```
+
+## Why this is the smallest safe fix
+
+It is one line in one file. It preserves the 1.4.0 lookup table and its gold and silver discounts, while restoring the previous zero-discount fallback for any tier not in the table. The null guard also avoids a lookup exception for a null runtime value. No changes to the problem-details behavior, logging, or total calculation are needed.
+
+## Verification (what the existing tests must show after the fix)
+
+Run `dotnet test`—not the live API. It must pass all eight existing tests, including standard-tier pricing and totals for orders `1001`, `1002`, and `1003`; the unknown-order test must still receive 404. The current unmodified code reproduces three failures and five passes.
+
+## Risks
+
+The existing tests cover standard-tier fallback, but not arbitrary unrecognized tiers or a null runtime tier. The replacement preserves the old fallback for those values as well. The existing unknown-order test checks the 404 status, not the RFC 9457 response body.
+── usage: phased · 10 model calls · 87,863 in / 5,734 out tokens · ≈ $0.012 · 28 tool calls · 59.1 s
+   plan         gpt-6-luna · xhigh     59.1 s  10 calls   87,863 in   5,734 out (3,728 reasoning) ≈ $0.0117 ok

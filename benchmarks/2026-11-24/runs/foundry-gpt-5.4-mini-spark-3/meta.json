@@ -1,0 +1,15 @@
+{
+  "label": "foundry-gpt-5.4-mini-spark-3",
+  "provider": "foundry",
+  "models": [
+    "gpt-5.4-mini"
+  ],
+  "endpoint_host": "*.openai.azure.com",
+  "api": "chat",
+  "reasoning_effort": "default",
+  "started_at": "2026-11-23T15:14:39Z",
+  "wall_s": 97,
+  "exit_code": 0,
+  "machine": "arm64 Apple M5 Max",
+  "note": "Azure AI Foundry, spark resource; after the review fixes and Responses support"
+}

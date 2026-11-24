@@ -1,0 +1,46 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:medium",
+    "plan": "gpt-6-luna:medium",
+    "dev": "gpt-6-luna:medium",
+    "test": "gpt-6-luna:medium"
+  },
+  "only": "test",
+  "phases": [
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 14.6,
+      "modelCalls": 4,
+      "toolCalls": 3,
+      "inputTokens": 15400,
+      "outputTokens": 977,
+      "reasoningTokens": 569,
+      "cachedInputTokens": 10958,
+      "costUsd": 0.002028,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 14.6,
+    "modelCalls": 4,
+    "toolCalls": 3,
+    "inputTokens": 15400,
+    "outputTokens": 977,
+    "reasoningTokens": 569,
+    "cachedInputTokens": 10958,
+    "costUsd": 0.002028,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "default-missing-tier-discount"
+  ]
+}

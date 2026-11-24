@@ -1,0 +1,17 @@
+{
+  "label": "ollama-inkling-none-partial",
+  "provider": "ollama",
+  "models": [
+    "inkling-2-mini"
+  ],
+  "endpoint_host": "127.0.0.1:11434",
+  "api": "chat",
+  "reasoning_effort": "none",
+  "started_at": "2026-11-23T13:59:40Z",
+  "wall_s": 223,
+  "exit_code": 3,
+  "machine": "arm64 Apple M5 Max",
+  "note": "Imported. Demos 05 and 04 only, reasoning effort none.",
+  "partial": true,
+  "imported": true
+}

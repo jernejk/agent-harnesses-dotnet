@@ -94,6 +94,59 @@ explains it: two model calls, about 1,300 tokens." Leave the comparison table up
 deterministic part first. Give the agent the ambiguous part, and let the harness call the CLI."
 If asked: Ctrl+C in the middle of either bisect puts `target/` back, with the fix restored.
 
+## Extra: the sandbox
+
+After the main demo 05 run, reset the target to get the failure back, then run the
+optional sandbox version and approve the patch with `y`. Docker needs the pre-pulled .NET 11 SDK image
+and the NuGet cache populated by the reset.
+
+```bash
+scripts/reset-target.sh
+dotnet run demos/05-diagnose-harness/diagnose.cs -- --sandbox
+cat recordings/05-diagnose-sandbox.txt   # stage fallback
+```
+
+Say “Policy is the first wall. The container is the second for the test process.”
+Point to the three startup refusals. Each `dotnet test` run uses a fresh container, with
+`--network none`, a read-only root and source, and disposable `/work` and `/tmp`.
+Git and `http_get` still run on the host. The optional rehearsal check runs when
+Docker and the image are available.
+
+Measured on 24 Nov 2026 using Azure Foundry `gpt-5.4-mini` on the M5 Max. Wall time
+is the entire demo command, rounded to seconds by the rehearsal. Both modes used
+rehearsal auto-approval and a fresh target. Rehearsals 1 and 2 ran in the sandbox lane's
+worktree, rehearsals 3 and 4 in this checkout after the merge. Costs use $0.75 per million input
+tokens and $4.50 per million output tokens.
+
+| Green rehearsal | Mode | Wall time | Model calls | Input tokens | Output tokens | USD |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| 1 | Docker | 21 s | 5 | 20,709 | 636 | $0.01839 |
+| 1 | Host | 24 s | 10 | 50,465 | 1,197 | $0.04324 |
+| 2 | Docker | 24 s | 9 | 39,459 | 1,133 | $0.03469 |
+| 2 | Host | 19 s | 8 | 35,273 | 968 | $0.03081 |
+| 3 | Docker | 35 s | 17 | 87,247 | 1,678 | $0.07299 |
+| 3 | Host | 17 s | 10 | 43,385 | 1,091 | $0.03745 |
+| 4 | Docker | 25 s | 10 | 50,133 | 1,148 | $0.04277 |
+| 4 | Host | 15 s | 8 | 44,752 | 923 | $0.03772 |
+
+The no-op Docker command with the same restrictions and mounts took 70 ms to
+start and exit (median of five pre-pulled runs, 64–101 ms).
+
+**WHAT'S REAL**
+
+The startup probe ran in all four green rehearsals. It showed an external TCP connection
+refused and writes refused at the container root and source mount. The boundary test
+verified the host canary was untouched. All four sandbox runs passed all eight Orders tests
+after the approved patch. The first green run also reproduced the failure with
+`dotnet test` before the patch. That run is the stage recording. The second used
+the host HTTP probe to reproduce the failure. The third used the HTTP probe too, checked it
+again after the patch and applied a second, unneeded patch (see Known risks). The fourth
+also checked it again after the patch and kept its one correct patch.
+
+Not demoed: Docker Sandboxes (`sbx`), installed on this Mac, puts the whole agent in its
+own microVM. That is the better fit when you want to isolate the agent and all its tools,
+including Git. The demo puts only its test runs in ordinary Docker containers.
+
 ## Reset between rehearsals
 
 ```bash
@@ -129,6 +182,12 @@ the last reset; without one it prints only its own usage line.
   vary. No live denial appeared in those four runs, because `http_get` removed the reason to
   reach for `curl` or `sed`; the startup policy table always shows denials. Fallback: the
   recording.
+- **Demo 5 can trip over the live API.** Orders runs a published copy of 1.4.0, so
+  `/orders/1001/total` keeps returning 500 after the patch until something redeploys it. In 15
+  `gpt-5.4-mini` runs of demo 5 on 23–24 Nov, six checked it again after the patch. Five kept
+  their one correct patch. One, a sandbox run, proposed a second, unneeded patch to
+  `Program.cs` and blamed the wrong commit. Live, decline a second patch with `n` and say the
+  tests are the proof: that is the approval gate doing its job.
 - Demo 4's report gate is stricter: every paragraph, bullet, quote and table row needs a
   citation, headings are at most 12 words, and code blocks are refused. Both rehearsals
   passed it on the first `write_report`; a refusal costs one more model call.
@@ -140,8 +199,49 @@ the last reset; without one it prints only its own usage line.
 - The model may skip the payments check in demo 2 or answer in a different shape. The
   rehearsal checks for the approval prompt and the rejection, not the wording.
 - Ports in use: 5180 (Orders), 18888 and 4317 (dashboard). `lsof -i :5180` to check.
-- LM Studio support is wired and reaches a local server, but it was not verified with a local
-  chat model (none was installed, and none was downloaded).
+- Local models were measured on 24 Nov (next section). LM Studio's gpt-oss-20b runs, but it
+  failed demos 04 and 05; LM Studio 0.4.28 can't load inkling-2-mini at all.
+
+## Other model homes (measured 24 Nov 2026)
+
+`-e AGENT_PROVIDER=…` moves any demo to another model home (README, "Where the model runs").
+Each figure below is from full rehearsals on this Mac; the raw runs, tables and caveats are in
+`benchmarks/2026-11-24/README.md`.
+
+| Home and model | Full rehearsals green | Median rehearsal | Demo 05 | Cost per rehearsal |
+| --- | ---: | ---: | --- | ---: |
+| Azure AI Foundry, gpt-5.4-mini (the talk's default) | 5 of 5 | 92 s | 16–28 s; patch passed every time | about $0.14 |
+| Azure AI Foundry, gpt-5.4 | 1 of 1 | 118 s | 26 s | about $0.43 |
+| OpenAI, gpt-6-luna and gpt-6.1-terra (Chat Completions and Responses API) | 4 of 4 | 103–140 s | 22–35 s | $0.01–0.17 |
+| Ollama, inkling-2-mini, reasoning low (local inference) | 2 of 3 | 242 s | 45–51 s; right commit, line and fix every time | $0 |
+| LM Studio, gpt-oss-20b | 0 of 2 | 70 s | stopped early or no diagnosis | $0 |
+| Foundry Local, qwen3-4b | 0 of 2 | 399 s | gave up | $0 |
+
+On gpt-5.4-mini the patch turned the tests green in all five runs, but the final answer named the
+commit in four and line 16 in three. Say "it found the change and proved the fix" rather than
+promising the exact words.
+
+**Optional offline moment, demo 05 on inkling-2-mini.** At T-30, `scripts/local-model.sh start`
+(it loads the model and prints its context size; `scripts/local-model.sh status` checks it later).
+On stage, with Wi-Fi off:
+
+```bash
+dotnet run demos/05-diagnose-harness/diagnose.cs -e AGENT_PROVIDER=ollama   # type y at 🔐
+```
+
+"Same harness, no network: a model on this laptop." It takes 45–51 s with 7–8 model calls and
+costs nothing, and in every run it named `9bfbf7d` and line 16 of `Pricing.cs` and its patch
+passed the tests. Fallback:
+`cat benchmarks/2026-11-24/runs/ollama-inkling-low-3/recordings/05-diagnose-harness.txt`.
+
+- Don't run demo 04 offline: inkling-2-mini took 116–151 s against its 150-second budget, and one
+  run in three stopped at the budget.
+- Keep demo 01 on gpt-5.4-mini: inkling-2-mini and the GPT-6 models decline to guess a root cause,
+  which takes the punch out of the opener.
+- OpenAI's GPT-6 models refuse tools with reasoning on in Chat Completions. Add
+  `-e AGENT_API=responses` to keep reasoning on; `store=false` keeps the history in the app.
+- With the 32K context, Ollama reports 37.4 GiB for inkling-2-mini while it is loaded, which this
+  128 GB Mac has room for. `scripts/local-model.sh stop` frees it after the talk.
 
 ## Where the spec and the 1.28.0 packages differ
 

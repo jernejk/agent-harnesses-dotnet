@@ -1,0 +1,9 @@
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   259 tok · restored in a new process
+pinned  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.Pricing.Total (Pricing.cs line 16) — missing 'standard' pricing tier in dictionary; unhandled exception -> 500. Service health 200 ok but canary 500.
+pinned  📌 Decision: hotfix the pricing lookup; do NOT restart the service.
+We decided to **hotfix the pricing lookup and not restart the service**.
+
+Why: the Orders 500s were traced to a `KeyNotFoundException: 'standard'` in `Orders.Api.Pricing.Total` (Pricing.cs line 16) — a missing 'standard' pricing tier in the dictionary. The exception is unhandled and produces the 500s. The health endpoint reports 200 "ok" (v1.4.0) but the canary still returns 500, so the service is up but broken at the pricing layer. Restarting wouldn't fix a missing dictionary entry; the correct fix is to make the pricing lookup handle/provide the 'standard' tier.
+── usage: inkling-2-mini · 1 model calls · 835 in / 195 out tokens · ≈ $0.000 · 0 tool calls · 5.0 s
+
+[rehearse] 03-sessions-resume: exit 0 in 6s

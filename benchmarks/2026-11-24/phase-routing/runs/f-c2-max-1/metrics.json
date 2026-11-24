@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:max",
+    "plan": "gpt-6-luna:max",
+    "dev": "gpt-6-luna:high",
+    "test": "gpt-6-luna:high"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 49.5,
+      "modelCalls": 9,
+      "toolCalls": 17,
+      "inputTokens": 60015,
+      "outputTokens": 5181,
+      "reasoningTokens": 3659,
+      "cachedInputTokens": 50796,
+      "costUsd": 0.008592,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-6-luna",
+      "effort": "max",
+      "seconds": 71.2,
+      "modelCalls": 9,
+      "toolCalls": 21,
+      "inputTokens": 71274,
+      "outputTokens": 7145,
+      "reasoningTokens": 5253,
+      "cachedInputTokens": 50633,
+      "costUsd": 0.010700,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 11.1,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "inputTokens": 18320,
+      "outputTokens": 705,
+      "reasoningTokens": 179,
+      "cachedInputTokens": 16450,
+      "costUsd": 0.002184,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 14.2,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "inputTokens": 21122,
+      "outputTokens": 1058,
+      "reasoningTokens": 558,
+      "cachedInputTokens": 18791,
+      "costUsd": 0.002641,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 146,
+    "modelCalls": 28,
+    "toolCalls": 46,
+    "inputTokens": 170731,
+    "outputTokens": 14089,
+    "reasoningTokens": 9649,
+    "cachedInputTokens": 136670,
+    "costUsd": 0.024117,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "add-standard-tier-discount"
+  ]
+}

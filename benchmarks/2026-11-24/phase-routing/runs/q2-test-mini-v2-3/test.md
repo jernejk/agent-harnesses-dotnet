@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs:16` indexed `TierDiscounts` directly with `customer.Tier`, so standard-tier customers hit `KeyNotFoundException` because the lookup table only had `gold` and `silver`.
+- Commit that introduced it: `9bfbf7d` — **Move tier discounts into a lookup table and add silver tier**.
+- Fix: applied `default-missing-tier-discount`, which changes the missing-tier lookup to default to zero instead of throwing, restoring the prior fallback behavior.
+- Test result after the fix: `dotnet test` passed, `8 passed, 0 failed`; however, the live `GET /orders/1001/total` still returned `500` in this environment, while `GET /health` returned `200` and reported version `1.4.0`.

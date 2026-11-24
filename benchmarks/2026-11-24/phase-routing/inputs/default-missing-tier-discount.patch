@@ -1,0 +1,13 @@
+diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+index 5ee439e..c304cd9 100644
+--- a/src/Orders.Api/Pricing.cs
++++ b/src/Orders.Api/Pricing.cs
+@@ -13,7 +13,7 @@ public static class Pricing
+     public static decimal Total(Order order, Customer customer)
+     {
+         var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+-        var discount = TierDiscounts[customer.Tier];
++        var discount = TierDiscounts.GetValueOrDefault(customer.Tier);
+         var total = subtotal * (1 - discount) * (1 + GstRate);
+         return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+     }

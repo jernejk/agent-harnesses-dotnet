@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs` used a direct dictionary index for `customer.Tier`, so standard-tier orders like 1001 hit a missing `"standard"` key and threw `KeyNotFoundException`, causing HTTP 500.
+- The commit that introduced it: `9bfbf7d` — **Move tier discounts into a lookup table and add silver tier**.
+- The fix: changed the discount lookup to default missing tiers to zero with `TierDiscounts.GetValueOrDefault(customer.Tier)`, preserving prior fallback behavior.
+- Test result after the fix: `dotnet test` passed with **8 passed, 0 failed**.

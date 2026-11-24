@@ -1,0 +1,12 @@
+→ bisect(from: main, to: HEAD)
+  ← git bisect: 9bfbf7d in 2.9 s, 0 tokens
+- **Cause** – The refactor moved tier discounts into a dictionary (`TierDiscounts`) but omitted an entry for the “standard” tier. `Pricing.Total` now looks up the discount with `TierDiscounts[customer.Tier]`, which throws a `KeyNotFoundException` for standard customers, breaking all tests that use the default tier.  
+- **Commit** – `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` (“Move tier discounts into a lookup table and add silver tier”).  
+- **One‑line fix** – Add a default entry for the standard tier (or use `TryGetValue`) e.g. `static readonly Dictionary<string, decimal> TierDiscounts = new() { ["gold"] = 0.05m, ["silver"] = 0.02m, ["standard"] = 0m };`.
+── usage: openai/gpt-oss-20b · 2 model calls · 1,144 in / 355 out tokens · ≈ $0.000 · 1 tool calls · 6.4 s
+
+                             time        tokens     cost            
+agent does it all (05)      3.1 s    13,660 tok   $0.000     3 tools
+CLI first (06)              6.4 s     1,499 tok   $0.000     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 7s

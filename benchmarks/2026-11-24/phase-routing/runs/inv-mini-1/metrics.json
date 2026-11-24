@@ -1,0 +1,44 @@
+{
+  "spec": {
+    "investigate": "gpt-5.4-mini:default",
+    "plan": "gpt-5.4-mini:default",
+    "dev": "gpt-5.4-mini:default",
+    "test": "gpt-5.4-mini:default"
+  },
+  "only": "investigate",
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 16.8,
+      "modelCalls": 6,
+      "toolCalls": 10,
+      "inputTokens": 23242,
+      "outputTokens": 910,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 16512,
+      "costUsd": 0.021526,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 16.8,
+    "modelCalls": 6,
+    "toolCalls": 10,
+    "inputTokens": 23242,
+    "outputTokens": 910,
+    "reasoningTokens": 0,
+    "cachedInputTokens": 16512,
+    "costUsd": 0.021526,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": []
+}

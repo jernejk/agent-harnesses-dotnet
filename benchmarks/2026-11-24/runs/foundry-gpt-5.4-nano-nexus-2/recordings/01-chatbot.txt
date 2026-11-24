@@ -1,0 +1,3 @@
+The GET `/orders/{id}/total` endpoint is failing because the post-deploy database schema/SQL mapping for the total calculation no longer matches production data, causing a server-side exception that results in HTTP 500.
+
+[rehearse] 01-chatbot: exit 0 in 2s

@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:xhigh",
+    "plan": "gpt-6-luna:xhigh",
+    "dev": "gpt-6-luna:high",
+    "test": "gpt-6-luna:high"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 37.6,
+      "modelCalls": 7,
+      "toolCalls": 14,
+      "inputTokens": 36930,
+      "outputTokens": 2359,
+      "reasoningTokens": 1180,
+      "cachedInputTokens": 31069,
+      "costUsd": 0.004872,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 35.7,
+      "modelCalls": 7,
+      "toolCalls": 21,
+      "inputTokens": 49072,
+      "outputTokens": 3587,
+      "reasoningTokens": 2016,
+      "cachedInputTokens": 39947,
+      "costUsd": 0.006701,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 9.3,
+      "modelCalls": 4,
+      "toolCalls": 5,
+      "inputTokens": 14075,
+      "outputTokens": 605,
+      "reasoningTokens": 225,
+      "cachedInputTokens": 12480,
+      "costUsd": 0.00171,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 12.8,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "inputTokens": 20322,
+      "outputTokens": 915,
+      "reasoningTokens": 469,
+      "cachedInputTokens": 18165,
+      "costUsd": 0.002490,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 95.4,
+    "modelCalls": 23,
+    "toolCalls": 44,
+    "inputTokens": 120399,
+    "outputTokens": 7466,
+    "reasoningTokens": 3890,
+    "cachedInputTokens": 101661,
+    "costUsd": 0.015773,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "default-missing-tier-discount"
+  ]
+}

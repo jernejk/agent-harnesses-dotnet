@@ -1,0 +1,1 @@
+default-missing-tier-discount — defaults null or unlisted customer tiers to a 0% discount.

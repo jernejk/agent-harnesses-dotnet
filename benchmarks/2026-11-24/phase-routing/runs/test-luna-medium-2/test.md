@@ -1,0 +1,4 @@
+- **Root cause:** `Pricing.cs` looked up a discount for every customer tier, but the table has no `standard` entry, causing a `KeyNotFoundException` and HTTP 500.
+- **Commit that introduced it:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `default-missing-tier-discount`; missing tiers now receive the default zero discount, preserving the previous fallback behavior. I couldn’t independently check `status.example.com` with the available tools.
+- **Test result after the fix:** **8 passed, 0 failed**.

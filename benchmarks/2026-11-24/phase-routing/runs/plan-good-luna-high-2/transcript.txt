@@ -1,0 +1,88 @@
+phase plan         gpt-6-luna · high
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll verify the supplied diagnosis against the current source and relevant tests/history, and check the status page if the read-only command environment permits it. Then I’ll give an implementation-ready plan with exact before/after lines; I won’t modify files.
+→ todos_add(todos: [{"title":"Check the status page and repository evidence","description…)
+→ run_command(command: curl -fsSL https://status.example.com)
+→ run_command(command: git status --short)
+→ run_command(command: git show --stat --oneline 9bfbf7d)
+  ✖ DENIED by policy: curl -fsSL https://status.example.com: No curl. Use http_get for the Orders API.
+  ← exit 0 · 
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+The status-page request was blocked by the command policy (`curl` is not permitted), and no `http_get` tool is available in this session, so I can’t verify external incident status. The working tree is clean, and the cited regression commit exists. I’ll proceed with the source/history checks and won’t retry the blocked request.
+→ run_command(command: sed -n '1,120p' src/Orders.Api/Pricing.cs)
+→ run_command(command: sed -n '1,100p' src/Orders.Api/OrderStore.cs)
+→ run_command(command: sed -n '1,220p' tests/Orders.Tests/PricingTests.cs)
+→ run_command(command: git show 9bfbf7d^:src/Orders.Api/Pricing.cs)
+  ✖ DENIED by policy: sed -n '1,120p' src/Orders.Api/Pricing.cs: 'sed' is not allow-listed.
+  ✖ DENIED by policy: sed -n '1,100p' src/Orders.Api/OrderStore.cs: 'sed' is not allow-listed.
+  ✖ DENIED by policy: sed -n '1,220p' tests/Orders.Tests/PricingTests.cs: 'sed' is not allow-listed.
+  ← exit 0 · }
+The shell allow-list also blocks `sed`, so I’m adapting to Git’s read-only file views rather than retrying it. The parent version confirms the old behavior used a gold-only conditional and defaulted all other tiers to zero discount; next I’m checking the current file contents and test expectations directly.
+→ run_command(command: git show HEAD:src/Orders.Api/Pricing.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/OrderStore.cs)
+→ run_command(command: git show HEAD:tests/Orders.Tests/PricingTests.cs)
+→ run_command(command: git grep -n "1001\|GetOrderTotal\|TierDiscounts")
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · }
+  ✖ DENIED by policy: git grep -n "1001\|GetOrderTotal\|TierDiscounts": No shell operators (; | & < > ` $), one command.
+The current pricing code matches the reported failure exactly: the dictionary has only `gold` and `silver`, while the standard customer exists and order `1001` references that customer. I’m locating the API test and project layout so the verification section names commands and expected outcomes accurately.
+→ run_command(command: git ls-files)
+  ✖ DENIED by policy: git ls-files: git ls-files is not allowed. Try log, show, diff, blame or grep.
+→ run_command(command: git grep -n 1001)
+→ run_command(command: git log --name-only -1 --oneline)
+→ run_command(command: git log --oneline -5)
+  ← exit 0 · tests/Orders.Tests/OrdersApiTests.cs:10:    [InlineData(1001)]
+  ← exit 0 · src/Orders.Api/Program.cs
+  ← exit 0 · f3419f7 Give gold customers 5% off
+→ run_command(command: git show HEAD:tests/Orders.Tests/OrdersApiTests.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/Program.cs)
+→ run_command(command: git grep -n TargetFramework)
+→ run_command(command: git show --format=fuller --stat 9bfbf7d)
+  ← exit 0 · }
+  ← exit 0 · public partial class Program;
+  ← exit 0 · Directory.Build.props:3:    <TargetFramework>net11.0</TargetFramework>
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+→ run_command(command: git blame -L 7,18 -- src/Orders.Api/Pricing.cs)
+→ todos_complete(items: [{"id": 1, "reason": "Confirmed the status-page request is blocked by …)
+  ← exit 0 · 2ec9930d (Priya Nair 2026-11-03 11:02:00 +1000 18)         return Math.Round(total, 2, MidpointRound…
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:16` indexes `TierDiscounts` using `customer.Tier`. The table at lines 7–11 has entries for `gold` and `silver`, but not `standard`, so standard-tier orders throw `KeyNotFoundException`.
+
+Order `1001` uses a standard-tier customer (`src/Orders.Api/OrderStore.cs:8,14`). Commit `9bfbf7d` introduced the lookup and removed the prior zero-discount fallback for non-gold tiers.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs`, add the standard tier to the dictionary.
+
+**Before**
+```csharp
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+```
+
+**After**
+```csharp
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+        ["standard"] = 0m,
+```
+
+## Why this is the smallest safe fix
+
+It adds one entry for a valid tier that should receive no discount. It preserves the lookup and leaves gold and silver pricing unchanged, while continuing to fail fast for unrecognized tier values rather than silently treating them as standard.
+
+## Verification (what to run and what it must show)
+
+- Run `dotnet test` from the repository root. All 8 tests should pass, including the standard-pricing, rounding, and API order-total tests.
+- Verify `GET /orders/1001/total` returns HTTP 200; its total should be `195.80 AUD`.
+
+I couldn’t check `https://status.example.com`: the read-only command policy blocked the available `curl` command, and no `http_get` tool was available.
+
+## Risks
+
+Unrecognized tier strings will still throw, intentionally. No files were changed.
+── usage: phased · 9 model calls · 48,286 in / 4,896 out tokens · ≈ $0.007 · 22 tool calls · 51.6 s
+   plan         gpt-6-luna · high      51.6 s   9 calls   48,286 in   4,896 out (3,427 reasoning) ≈ $0.0073 ok

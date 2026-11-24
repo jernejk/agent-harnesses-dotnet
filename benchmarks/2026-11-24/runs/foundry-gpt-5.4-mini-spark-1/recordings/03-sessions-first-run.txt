@@ -1,0 +1,24 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(service: orders, lines: 200)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders 500 root cause: Pricing.Total throws KeyNotFoundException becau…)
+  📌 Orders 500 root cause: Pricing.Total throws KeyNotFoundException because it looks up the 'standard' key in a dictionary where that key is missing (Pricing.cs line 16). Decision: hotfix the pricing lookup and do not restart the service.
+Investigated.
+
+- Status: service is healthy at the platform level, but the canary request `GET /orders/1001/total` returns 500.
+- Logs show repeated unhandled `KeyNotFoundException`:
+  - missing dictionary key: `'standard'`
+  - source: `Orders.Api.Pricing.Total(...)` in `Pricing.cs:line 16`
+
+Pinned decision:
+- Root cause: pricing lookup assumes `'standard'` exists, but it’s missing from the dictionary.
+- Decision: hotfix the pricing lookup and do not restart.
+history ███████████████████████████░░░░░ ≈ 2,550 tok · before compaction
+pinned  📌 Orders 500 root cause: Pricing.Total throws KeyNotFoundException because it looks up the 'standard' key in a dictionary where that key is missing (Pricing.cs line 16). Decision: hotfix the pricing lookup and do not restart the service.
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   228 tok · after compaction
+pinned  📌 Orders 500 root cause: Pricing.Total throws KeyNotFoundException because it looks up the 'standard' key in a dictionary where that key is missing (Pricing.cs line 16). Decision: hotfix the pricing lookup and do not restart the service.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: gpt-5.4-mini · 3 model calls · 5,903 in / 238 out tokens · ≈ $0.005 · 3 tool calls · 5.0 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 5s

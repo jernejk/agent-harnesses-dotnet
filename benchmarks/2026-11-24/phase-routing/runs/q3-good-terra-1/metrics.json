@@ -1,0 +1,44 @@
+{
+  "spec": {
+    "investigate": "gpt-6.1-terra:medium",
+    "plan": "gpt-6.1-terra:medium",
+    "dev": "gpt-6.1-terra:medium",
+    "test": "gpt-6.1-terra:medium"
+  },
+  "only": "plan",
+  "phases": [
+    {
+      "phase": "plan",
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 34.7,
+      "modelCalls": 8,
+      "toolCalls": 23,
+      "inputTokens": 49070,
+      "outputTokens": 2011,
+      "reasoningTokens": 503,
+      "cachedInputTokens": 43124,
+      "costUsd": 0.059125,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 34.7,
+    "modelCalls": 8,
+    "toolCalls": 23,
+    "inputTokens": 49070,
+    "outputTokens": 2011,
+    "reasoningTokens": 503,
+    "cachedInputTokens": 43124,
+    "costUsd": 0.059125,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": []
+}

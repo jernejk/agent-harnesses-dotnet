@@ -1,0 +1,14 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.9 s, 0 tokens
+- **Cause:** A pricing regression was introduced when tier discounts were moved from a simple `gold ? 5% : 0%` rule to a dictionary lookup. The code now assumes every customer tier exists in `TierDiscounts`, so any unlisted tier throws a `KeyNotFoundException` instead of defaulting to no discount.
+
+- **Commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — *“Move tier discounts into a lookup table and add silver tier”*
+
+- **One-line fix:** Change the lookup to a safe default, e.g. `TierDiscounts.TryGetValue(customer.Tier, out var discount) ? discount : 0m`.
+── usage: gpt-5.4-mini · 2 model calls · 1,139 in / 175 out tokens · ≈ $0.002 · 1 tool calls · 5.7 s
+
+                             time        tokens     cost            
+agent does it all (05)     26.7 s    72,158 tok   $0.059    18 tools
+CLI first (06)              5.7 s     1,314 tok   $0.002     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 6s

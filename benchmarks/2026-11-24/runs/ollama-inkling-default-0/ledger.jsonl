@@ -1,0 +1,7 @@
+{"at": "2026-11-23T23:40:17.871162+10:00", "app": "chatbot", "model": "inkling-2-mini", "calls": 1, "input": 69, "output": 339}
+{"at": "2026-11-23T23:40:36.849594+10:00", "app": "tools", "model": "inkling-2-mini", "calls": 4, "input": 5809, "output": 705}
+{"at": "2026-11-23T23:40:59.263017+10:00", "app": "sessions", "model": "inkling-2-mini", "calls": 3, "input": 7741, "output": 890}
+{"at": "2026-11-23T23:41:06.192165+10:00", "app": "sessions", "model": "inkling-2-mini", "calls": 1, "input": 1104, "output": 251}
+{"at": "2026-11-23T23:43:37.374795+10:00", "app": "research", "model": "inkling-2-mini", "calls": 9, "input": 69489, "output": 5906}
+{"at": "2026-11-23T23:45:37.409524+10:00", "app": "diagnose", "model": "inkling-2-mini", "calls": 16, "input": 140208, "output": 3850}
+{"at": "2026-11-23T23:46:16.557897+10:00", "app": "cli-first", "model": "inkling-2-mini", "calls": 2, "input": 1247, "output": 1662}

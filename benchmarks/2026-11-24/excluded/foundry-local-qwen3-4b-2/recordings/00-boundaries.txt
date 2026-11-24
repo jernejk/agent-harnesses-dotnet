@@ -1,0 +1,23 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  BoundaryTests -> ~/Developer/personal/repos/agent-harnesses-dotnet/tests/BoundaryTests/bin/Debug/net11.0/BoundaryTests.dll
+Test run for ~/Developer/personal/repos/agent-harnesses-dotnet/tests/BoundaryTests/bin/Debug/net11.0/BoundaryTests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net hh:mm:ss.16]     BudgetTests.The_tool_binding_passes_the_run_token_through [FAIL]
+  Failed BudgetTests.The_tool_binding_passes_the_run_token_through [5 s]
+  Error Message:
+   System.IO.FileNotFoundException : Could not find file '/var/folders/s2/286h3h4d3kj8tspq0d15p68m0000gn/T/boundary-mclcU9/parent.pid'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Processes.ReadPid(String file) in ~/Developer/personal/repos/agent-harnesses-dotnet/tests/BoundaryTests/Support.cs:line 108
+   at BudgetTests.AssertDead() in ~/Developer/personal/repos/agent-harnesses-dotnet/tests/BoundaryTests/BudgetTests.cs:line 92
+   at BudgetTests.The_tool_binding_passes_the_run_token_through() in ~/Developer/personal/repos/agent-harnesses-dotnet/tests/BoundaryTests/BudgetTests.cs:line 55
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:   118, Skipped:     0, Total:   119, Duration: 19 s - BoundaryTests.dll (net11.0)
+
+[rehearse] 00-boundaries: exit 1 in 20s

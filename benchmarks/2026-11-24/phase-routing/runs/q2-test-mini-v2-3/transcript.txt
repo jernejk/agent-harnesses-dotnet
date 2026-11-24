@@ -1,0 +1,26 @@
+phase test         gpt-5.4-mini · default
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ test ═══
+I’ll apply the approved proposal, then verify tests and the API total endpoint.
+🔐 approval needed: apply_proposal(name: default-missing-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-missing-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 90 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The tests passed; I’m checking the live order-total endpoint now.
+→ http_get(path: /orders/1001/total)
+  ← GET /orders/1001/total -> 500 
+The API still returns 500, so I’m verifying the service state against the incident details.
+→ http_get(path: /health)
+→ run_command(command: git log --oneline -1)
+→ run_command(command: git show --stat --oneline HEAD)
+  ← 2 lines · GET /health -> 200
+  ← exit 0 · f1812c8 Release 1.4.0
+  ← exit 0 · 2 files changed, 16 insertions(+), 1 deletion(-)
+- Root cause: `src/Orders.Api/Pricing.cs:16` indexed `TierDiscounts` directly with `customer.Tier`, so standard-tier customers hit `KeyNotFoundException` because the lookup table only had `gold` and `silver`.
+- Commit that introduced it: `9bfbf7d` — **Move tier discounts into a lookup table and add silver tier**.
+- Fix: applied `default-missing-tier-discount`, which changes the missing-tier lookup to default to zero instead of throwing, restoring the prior fallback behavior.
+- Test result after the fix: `dotnet test` passed, `8 passed, 0 failed`; however, the live `GET /orders/1001/total` still returned `500` in this environment, while `GET /health` returned `200` and reported version `1.4.0`.
+── usage: phased · 4 model calls · 14,792 in / 373 out tokens · ≈ $0.013 · 5 tool calls · 39.2 s
+   test         gpt-5.4-mini · default   39.2 s   4 calls   14,792 in     373 out (0 reasoning) ≈ $0.0128 ok

@@ -1,0 +1,177 @@
+phase investigate  gpt-5.4-mini · default
+phase plan         gpt-5.4-mini · default
+phase dev          gpt-5.4-mini · default
+phase test         gpt-5.4-mini · default
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ investigate ═══
+I’ll investigate the regression and reproduce it locally first.
+→ mode_get()
+→ todos_add(todos: [{"title":"Reproduce GET /orders/{id}/total 500","description":"Call t…)
+I can’t open the external status page here, so I’ll verify the issue locally and inspect the repo history.
+→ http_get(path: /orders/1001/total)
+→ run_command(command: dotnet test)
+→ run_command(command: git log --oneline v1.3.0..HEAD)
+  ← GET /orders/1001/total -> 500 
+  ← exit 1 · [xUnit.net 00:00:00.16]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← exit 0 · 9bfbf7d Move tier discounts into a lookup table and add silver tier
+The failure reproduces, and the recent release history points to a pricing change, so I’m narrowing it down in the code and diff.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1, endLine: 80)
+→ run_command(command: git show --stat --patch 9bfbf7d)
+→ run_command(command: git blame -L 1,60 src/Orders.Api/Pricing.cs)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ← exit 0 · 2ec9930d (Priya Nair 2026-11-03 11:02:00 +1000 20) }
+I’ve isolated the likely regression to the pricing lookup, and I’m checking whether the total endpoint hits a standard-tier customer.
+→ file_access_read_lines(fileName: src/Orders.Api/OrderStore.cs, startLine: 1, endLine: 80)
+→ file_access_read_lines(fileName: src/Orders.Api/OrdersController.cs, startLine: 1, endLine: 120)
+→ run_command(command: git show v1.3.0:src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+I have enough to pinpoint the regression, and I’m confirming the exact line and the affected order path.
+→ file_access_grep(regexPattern: Total\(, directory: src, globPattern: **/*.cs)
+→ file_access_grep(regexPattern: standard|silver|gold, directory: src, globPattern: **/*.cs)
+→ run_command(command: git log --oneline --decorate -n 5 -- src/Orders.Api/Pricing.cs)
+  ← exit 0 · 2ec9930 Add order totals with GST
+I’ve confirmed the endpoint routes through Pricing.Total, so I’m wrapping up the evidence and root-cause writeup.
+→ todos_complete(items: [{"id":1,"reason":"Reproduced the 500 with HTTP GET /orders/1001/total…)
+### Symptom
+`GET /orders/{id}/total` returns HTTP 500 after the 1.4.0 deploy.
+
+### Reproduction
+- Local API call: `GET /orders/1001/total -> 500`
+- Test run: `dotnet test` fails with:
+  - `Orders.Tests.OrdersApiTests.Order_totals_are_available` expected `OK`, got `InternalServerError`
+  - `Orders.Tests.PricingTests.*` fail with `KeyNotFoundException: The given key 'standard' was not present in the dictionary.`
+
+### Change that caused it (commit and subject)
+- `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0`
+- Subject: `Move tier discounts into a lookup table and add silver tier`
+
+### Root cause (file:line and why)
+- `src/Orders.Api/Pricing.cs:16`
+- The code changed from a safe fallback:
+  - old: `customer.Tier == "gold" ? 0.05m : 0m`
+- to an indexed lookup:
+  - new: `var discount = TierDiscounts[customer.Tier];`
+- `TierDiscounts` only contains `"gold"` and `"silver"` at lines 7–10, but existing orders still include a `"standard"` customer (`src/Orders.Api/OrderStore.cs:8`).
+- When `/orders/1001/total` resolves customer 2 (`"standard"`), the dictionary indexer throws `KeyNotFoundException`, which bubbles up as HTTP 500.
+
+### Evidence
+- `http_get /orders/1001/total` returned 500.
+- `dotnet test` shows `KeyNotFoundException` from `Orders.Api.Pricing.Total` at `Pricing.cs:16`.
+- `git show 9bfbf7d` shows the discount logic was changed in that commit.
+- `git blame` confirms line 16 was introduced by `9bfbf7d`.
+- `OrderStore.cs:8` still has a standard-tier customer used by order `1001` (`OrderStore.cs:14`).
+
+### Confidence
+High. The failing endpoint, exception, test failures, and the recent pricing change all point to the same root cause.
+═══ plan ═══
+I’ll verify the incident findings against the repo before I rely on them, then I’ll produce a minimal-fix plan with exact file/line references and a verification step based on `dotnet test`.
+→ mode_get()
+→ file_access_grep(regexPattern: TierDiscounts|standard|customer\.Tier ==|\[customer\.Tier\], directory: , globPattern: src/Orders.Api/*.cs)
+→ run_command(command: git show --stat --oneline 9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0)
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+The code matches the incident hypothesis: the new pricing lookup is indexed directly, and the store still contains a `standard` customer. I’m checking the exact surrounding lines so the fix plan can cite the precise before/after code, and I’ll also confirm whether the tests already expose the missing-key behavior.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1, endLine: 40)
+→ file_access_read_lines(fileName: src/Orders.Api/OrderStore.cs, startLine: 1, endLine: 30)
+→ file_access_read_lines(fileName: tests/Orders.Tests/PricingTests.cs, startLine: 1, endLine: 80)
+I’ve confirmed the root cause and the exact lines. The smallest safe fix is to restore the old behavior for unknown tiers while keeping the new lookup for known tiers. I’m going to write the implementation plan in the required format now; no code changes will be made.
+Root cause (file:line)
+- `src/Orders.Api/Pricing.cs:16`
+- The pricing logic now does `TierDiscounts[customer.Tier]`, which throws `KeyNotFoundException` for tiers not present in the lookup.
+- This is confirmed by the current code: `TierDiscounts` only contains `"gold"` and `"silver"` at lines 7–10, while `src/Orders.Api/OrderStore.cs:8` still has a `"standard"` customer used by order `1001` at line 14.
+- The tests also prove the contract: `tests/Orders.Tests/PricingTests.cs:13-15` expects standard customers to pay list price plus GST, not to fail.
+
+Change (the exact lines before and after)
+- File: `src/Orders.Api/Pricing.cs`
+
+Before:
+```csharp
+    static readonly Dictionary<string, decimal> TierDiscounts = new()
+    {
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+    };
+
+    public static decimal Total(Order order, Customer customer)
+    {
+        var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+        var discount = TierDiscounts[customer.Tier];
+        var total = subtotal * (1 - discount) * (1 + GstRate);
+        return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+    }
+```
+
+After:
+```csharp
+    static readonly Dictionary<string, decimal> TierDiscounts = new()
+    {
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+    };
+
+    public static decimal Total(Order order, Customer customer)
+    {
+        var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+        var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);
+        var total = subtotal * (1 - discount) * (1 + GstRate);
+        return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+    }
+```
+
+Why this is the smallest safe fix
+- It changes only one line in one file.
+- It preserves the new discount table for supported tiers.
+- It restores the previous safe fallback behavior for any unknown or legacy tier, which matches the existing tests and the historical behavior before commit `9bfbf7d8...`.
+- It avoids broader changes to order data, customer data, or endpoint handling.
+
+Verification (what to run and what it must show)
+- Run: `dotnet test`
+- Must show:
+  - `Orders.Tests.OrdersApiTests.Order_totals_are_available` passes, meaning `GET /orders/{id}/total` no longer returns 500 for the standard customer in order `1001`.
+  - `Orders.Tests.PricingTests.*` all pass, including the standard-customer case.
+  - No `KeyNotFoundException` from `Orders.Api.Pricing.Total`.
+
+Risks
+- Any tier that was intentionally meant to be unsupported will now silently receive 0% discount instead of failing. This matches prior behavior and the current test contract, so it is low risk.
+- If future requirements need explicit rejection of unknown tiers, that should be a separate change with API-level behavior defined first.
+═══ dev ═══
+I’ll verify the current mode and inspect the target file around the exact lines you identified, then I’ll write a single proposal with the smallest safe change.
+→ mode_get()
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1, endLine: 40)
+I confirmed the exact line to change. I’m writing one proposal now that replaces the direct dictionary index with a safe fallback for unknown tiers.
+→ write_proposal(name: fix-unknown-tier-total, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = TierDiscounts.GetValueOrDefault(customer.Tier, …, rationale: The current lookup throws KeyNotFoundException for customers whose tie…)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..4645759 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -13,7 +13,7 @@ public static class Pricing
+         public static decimal Total(Order order, Customer customer)
+         {
+             var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+    -        var discount = TierDiscounts[customer.Tier];
+    +        var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);
+             var total = subtotal * (1 - discount) * (1 + GstRate);
+             return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+         }
+  ← 15 lines · Wrote proposals/fix-unknown-tier-total.patch:
+fix-unknown-tier-total: changes `src/Orders.Api/Pricing.cs` to safely default unknown customer tiers to 0% discount instead of throwing `KeyNotFoundException`.
+═══ test ═══
+→ mode_get()
+→ todos_add(todos: [{"title":"Apply the pricing fix proposal","description":"Use apply_pr…)
+I’ll apply the proposal and then verify the test outcome.
+🔐 approval needed: apply_proposal(name: fix-unknown-tier-total)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied fix-unknown-tier-total.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 79 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+I’ve got the test result, and I’m marking the work complete.
+→ todos_complete(items: [{"id":1,"reason":"Applied proposal fix-unknown-tier-total and the app…)
+- Root cause: `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]`, which threw `KeyNotFoundException` for the existing `"standard"` tier.
+- Commit that introduced it: `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` (`Move tier discounts into a lookup table and add silver tier`).
+- Fix: `src/Orders.Api/Pricing.cs` now defaults unknown tiers to `0m` discount with `TierDiscounts.GetValueOrDefault(customer.Tier, 0m)`.
+- Test result: `dotnet test` passed after the fix — `8 passed, 0 failed`; the `OrdersApiTests.Order_totals_are_available` and pricing tests are green.
+── usage: phased · 21 model calls · 90,127 in / 3,123 out tokens · ≈ $0.082 · 28 tool calls · 97.5 s
+   investigate  gpt-5.4-mini · default   46.5 s   8 calls   40,201 in   1,316 out (0 reasoning) ≈ $0.0361 ok
+   plan         gpt-5.4-mini · default    7.4 s   4 calls   14,573 in   1,115 out (0 reasoning) ≈ $0.0159 ok
+   dev          gpt-5.4-mini · default   35.8 s   4 calls   14,101 in     303 out (0 reasoning) ≈ $0.0119 ok
+   test         gpt-5.4-mini · default    7.8 s   5 calls   21,252 in     389 out (0 reasoning) ≈ $0.0177 ok

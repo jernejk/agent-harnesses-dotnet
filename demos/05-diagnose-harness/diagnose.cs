@@ -6,6 +6,9 @@
 #:include OrdersApi.cs
 #:include Proposals.cs
 #:include RepoPath.cs
+#:include SandboxRunner.cs
+
+using System.ComponentModel;
 
 var target = Repo.PathTo("target");
 if (args.Contains("--policy"))
@@ -16,13 +19,37 @@ if (args.Contains("--policy"))
     return;
 }
 
+SandboxRunner? sandbox = null;
+if (args.Contains("--sandbox"))
+{
+    sandbox = new(target);
+    try
+    {
+        var probe = await sandbox.CheckAsync();
+        if (probe.ExitCode != 0)
+        {
+            Ui.Line(Tone.Deny, $"Sandbox startup failed: {(probe.StandardError + probe.StandardOutput).Trim()}");
+            Environment.ExitCode = 2;
+            return;
+        }
+        Ui.Line(Tone.Muted, "sandbox: each dotnet test runs in a fresh Docker container");
+        Ui.Line(Tone.Ok, probe.StandardOutput.TrimEnd());
+    }
+    catch (Exception e) when (e is Win32Exception or TimeoutException)
+    {
+        Ui.Line(Tone.Deny, $"Sandbox startup failed: {e.Message}");
+        Environment.ExitCode = 2;
+        return;
+    }
+}
+
 var budget = new Budget(MaxModelCalls: 30, MaxToolCalls: 40, TimeSpan.FromSeconds(150));
 await using var trace = new TraceLog(Repo.PathTo(".run", "05-trace.jsonl"));
 using var tracing = Telemetry.Start("diagnose-harness", "Harness.Diagnose", args);
 var client = new ToolOutputLimit(Model.CreateChatClient(), maxChars: 8_000);
 var meter = new UsageMeter(client, budget, trace);
 
-var policy = new CommandPolicy(target, TimeSpan.FromSeconds(60), trace);
+var policy = new CommandPolicy(target, TimeSpan.FromSeconds(60), trace, sandbox);
 var proposals = new Proposals(target, Repo.PathTo("proposals"), policy);
 var api = new OrdersApi("http://localhost:5180");
 policy.PrintTable("dotnet test", "git log --oneline v1.3.0..HEAD", "git revert HEAD",

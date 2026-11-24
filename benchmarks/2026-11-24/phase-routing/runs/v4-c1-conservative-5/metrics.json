@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:high",
+    "plan": "gpt-6-luna:high",
+    "dev": "gpt-6-luna:medium",
+    "test": "gpt-6-luna:medium"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 19.8,
+      "modelCalls": 7,
+      "toolCalls": 18,
+      "inputTokens": 39376,
+      "outputTokens": 2225,
+      "reasoningTokens": 877,
+      "cachedInputTokens": 32841,
+      "costUsd": 0.005050,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 43.3,
+      "modelCalls": 8,
+      "toolCalls": 21,
+      "inputTokens": 50286,
+      "outputTokens": 4332,
+      "reasoningTokens": 2751,
+      "cachedInputTokens": 41665,
+      "costUsd": 0.007195,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 5.2,
+      "modelCalls": 3,
+      "toolCalls": 2,
+      "inputTokens": 9676,
+      "outputTokens": 315,
+      "reasoningTokens": 75,
+      "cachedInputTokens": 8438,
+      "costUsd": 0.001125,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 9.1,
+      "modelCalls": 4,
+      "toolCalls": 3,
+      "inputTokens": 15712,
+      "outputTokens": 564,
+      "reasoningTokens": 147,
+      "cachedInputTokens": 14029,
+      "costUsd": 0.001853,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 77.39999999999999,
+    "modelCalls": 22,
+    "toolCalls": 44,
+    "inputTokens": 115050,
+    "outputTokens": 7436,
+    "reasoningTokens": 3850,
+    "cachedInputTokens": 96973,
+    "costUsd": 0.015223,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fallback-for-unlisted-customer-tiers"
+  ]
+}

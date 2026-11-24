@@ -1,0 +1,20 @@
+phase test         gpt-6-luna · medium
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ test ═══
+I’ll apply the named proposal, then verify the reported test outcome and note that the external status page cannot be fetched with the available tools.
+→ todos_add(todos: [{"title":"Apply the missing-tier discount proposal","description":"Ap…)
+The proposal targets precisely the reported lookup regression; I’m applying it now, which will also run the tests.
+🔐 approval needed: apply_proposal(name: default-missing-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-missing-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 77 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The proposal applied successfully and its test run reports 8 passed with 0 failures; I’m closing the two completed tracking items.
+→ todos_complete(items: [{"id":1,"reason":"Applied proposal default-missing-tier-discount succ…)
+- **Root cause:** `Pricing.cs` looked up a discount for every customer tier, but the table has no `standard` entry, causing a `KeyNotFoundException` and HTTP 500.
+- **Commit that introduced it:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `default-missing-tier-discount`; missing tiers now receive the default zero discount, preserving the previous fallback behavior. I couldn’t independently check `status.example.com` with the available tools.
+- **Test result after the fix:** **8 passed, 0 failed**.
+── usage: phased · 4 model calls · 14,907 in / 642 out tokens · ≈ $0.002 · 3 tool calls · 9.9 s
+   test         gpt-6-luna · medium     9.9 s   4 calls   14,907 in     642 out (251 reasoning) ≈ $0.0018 ok

@@ -1,0 +1,10 @@
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   232 tok · restored in a new process
+pinned  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.Pricing.Total (Pricing.cs:16) — pricing dictionary missing 'standard' key. Decision: hotfix the pricing lookup; do NOT restart the service.
+We decided to **hotfix the pricing lookup** and **not restart the service**.
+
+Why: the Orders 500s trace to an unhandled `KeyNotFoundException: 'standard'` in `Orders.Api.Pricing.Total` (Pricing.cs:16) — the pricing dictionary is missing the `'standard'` key. The service reports healthy (200/ok, v1.4.0) but canary total requests still fail with 500, so the failure is a code/data defect, not an unhealthy service. Restarting wouldn't fix a missing dictionary key; the fix is in the lookup/pricing data.
+
+Current status: decision pinned, but I have not applied the hotfix yet — say the word and I'll proceed with the code change.
+── usage: inkling-2-mini · 1 model calls · 756 in / 199 out tokens · ≈ $0.000 · 0 tool calls · 5.9 s
+
+[rehearse] 03-sessions-resume: exit 0 in 6s

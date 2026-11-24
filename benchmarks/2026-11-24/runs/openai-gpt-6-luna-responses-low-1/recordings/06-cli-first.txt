@@ -1,0 +1,12 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.8 s, 0 tokens
+- **Cause:** Pricing now indexes `TierDiscounts` directly, but the table omits `"standard"`. Standard-tier orders throw a `KeyNotFoundException`.
+- **Commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **One-line fix:** Add `["standard"] = 0m` to `TierDiscounts`.
+── usage: gpt-6-luna · 2 model calls · 979 in / 101 out tokens · ≈ $0.000 · 1 tool calls · 5.7 s
+
+                             time        tokens     cost            
+agent does it all (05)     21.6 s    41,863 tok   $0.000    14 tools
+CLI first (06)              5.7 s     1,080 tok   $0.000     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 6s

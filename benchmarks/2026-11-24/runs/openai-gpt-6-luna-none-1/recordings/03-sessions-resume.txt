@@ -1,0 +1,6 @@
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   188 tok · restored in a new process
+pinned  📌 Orders 500 root cause: Pricing.Total (Pricing.cs:16) indexes the pricing dictionary with key 'standard', which is absent, throwing KeyNotFoundException. Decision: hotfix the pricing lookup; do not restart Orders. Health check is 200 but canary GET /orders/1001/total returns 500.
+We decided to **hotfix the pricing lookup and not restart Orders**. The Orders health check returned 200, but `GET /orders/1001/total` returned 500 because `Pricing.Total` indexed the pricing dictionary with the missing key `standard`, causing a `KeyNotFoundException`.
+── usage: gpt-6-luna · 1 model calls · 528 in / 64 out tokens · ≈ $0.000 · 0 tool calls · 4.5 s
+
+[rehearse] 03-sessions-resume: exit 0 in 5s

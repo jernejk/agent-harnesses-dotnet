@@ -1,0 +1,19 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+→ get_service_status(service: payments)
+→ get_recent_logs(service: orders, lines: 100)
+→ get_recent_logs(service: payments, lines: 100)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+  ← 100 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- **Cause: Orders itself**, not evidenced as a payments outage. Orders health is `200`, but its canary `GET /orders/1001/total` returns `500`.
+- Orders logs show `KeyNotFoundException: The given key 'standard' was not present in the dictionary` in `Orders.Api.Pricing.Total` (`Pricing.cs:16`), causing the 500s.
+- Payments inspection was denied as out of scope, but Orders’ local exception is sufficient to identify the fault.
+- I requested an Orders restart, but the operation was **rejected by the approver**; I did not retry. A restart would not likely fix the missing `standard` pricing configuration/data.
+── usage: gpt-5.6-terra · 3 model calls · 5,375 in / 252 out tokens · ≈ $0.000 · 5 tool calls · 5.8 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 6s

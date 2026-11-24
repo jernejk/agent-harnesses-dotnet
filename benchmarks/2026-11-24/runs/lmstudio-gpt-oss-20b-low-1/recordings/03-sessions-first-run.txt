@@ -1,0 +1,32 @@
+→ get_service_status(service: orders)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+→ get_recent_logs(service: orders, lines: 200)
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Root cause: Pricing lookup missing 'standard' key leading to 500s. Dec…)
+  📌 Root cause: Pricing lookup missing 'standard' key leading to 500s. Decision: Hotfix pricing lookup, no restart.
+**Investigation Summary**
+
+- **Service status:** Orders service is healthy (`status: ok`), but canary requests to `/orders/1001/total` are returning 500 errors immediately.
+- **Logs (200 lines):** Repeated `KeyNotFoundException` in `Orders.Api.Pricing.Total` – the dictionary lookup for the key `'standard'` is missing. This occurs on many concurrent requests, causing continuous 500s.
+
+**Root Cause**
+
+The pricing lookup dictionary no longer contains the `'standard'` key, leading to unhandled exceptions whenever an order total is requested.
+
+**Decision**
+
+Apply a hotfix by adding the missing `'standard'` key (or restoring the original pricing data) to the lookup dictionary. No service restart is required; the change can be deployed as a quick patch.
+
+**Pinned Fact**
+
+> Root cause: Pricing lookup missing 'standard' key leading to 500s. Decision: Hotfix pricing lookup, no restart.
+
+This fact is now pinned for future reference.
+history ████████████████████████████░░░░ ≈ 2,637 tok · before compaction
+pinned  📌 Root cause: Pricing lookup missing 'standard' key leading to 500s. Decision: Hotfix pricing lookup, no restart.
+history ███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   322 tok · after compaction
+pinned  📌 Root cause: Pricing lookup missing 'standard' key leading to 500s. Decision: Hotfix pricing lookup, no restart.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: openai/gpt-oss-20b · 4 model calls · 6,149 in / 346 out tokens · ≈ $0.000 · 3 tool calls · 5.3 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 6s

@@ -1,0 +1,7 @@
+Runs set aside and rerun, not counted (infrastructure, not model behaviour):
+- e2e-c1-conservative-3: network outage: the run hung ~30 min, then failed
+- e2e-c2-max-2: network outage: the run hung ~30 min, then failed
+- e2e-c2-max-3: network outage: the run hung ~30 min, then failed
+- e2e-c2-xhigh-3: network outage: the run hung ~30 min, then failed
+- e2e-c3-hybrid-3: network outage: the run hung ~30 min, then failed
+- v4-b1-mini-phased-5: Azure connection dropped mid-investigation (HttpIOException: response ended prematurely)

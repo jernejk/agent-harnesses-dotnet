@@ -1,0 +1,15 @@
+{
+  "label": "openai-gpt-6-luna-responses-low-1",
+  "provider": "foundry",
+  "models": [
+    "gpt-6-luna"
+  ],
+  "endpoint_host": "api.openai.com",
+  "api": "responses",
+  "reasoning_effort": "low",
+  "started_at": "2026-11-23T15:10:57Z",
+  "wall_s": 103,
+  "exit_code": 0,
+  "machine": "arm64 Apple M5 Max",
+  "note": "OpenAI API, Responses API (store=false), reasoning effort low"
+}

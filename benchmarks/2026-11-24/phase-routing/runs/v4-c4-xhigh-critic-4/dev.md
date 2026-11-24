@@ -1,0 +1,1 @@
+fallback-for-unknown-customer-tiers — updates `Pricing.cs` to use a null-safe tier lookup with a 0% fallback; proposal only, not applied.

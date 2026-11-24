@@ -1,0 +1,23 @@
+phase test         gpt-5.4-mini · default
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ test ═══
+I’ll apply the proposal and then verify the test result against the plan.
+🔐 approval needed: apply_proposal(name: default-missing-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-missing-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 107 ms - Orders.Tes…
+  ← 8 lines · Applied. exit code 0
+The fix is applied and the tests passed, so I’m checking the repo history for the introducing commit details.
+→ run_command(command: git log --oneline -n 5)
+  ← exit 0 · f3419f7 Give gold customers 5% off
+I have the regression commit; I’ll grab the exact file line for the root cause and confirm the fixed behavior is covered by tests.
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1, endLine: 30)
+→ run_command(command: dotnet test)
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 85 ms - Orders.Test…
+- Root cause: `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]`, so standard-tier customers hit a `KeyNotFoundException` because the table only defined `gold` and `silver`.
+- Commit that introduced it: `9bfbf7d` — `Move tier discounts into a lookup table and add silver tier`.
+- Fix: changed the lookup to `TierDiscounts.GetValueOrDefault(customer.Tier)`, restoring the pre-1.4.0 zero-discount fallback for unlisted tiers.
+- Test result after the fix: `dotnet test` passed, with `8 passed, 0 failed`; the proposal was applied successfully.
+── usage: phased · 4 model calls · 15,418 in / 351 out tokens · ≈ $0.013 · 4 tool calls · 8.7 s
+   test         gpt-5.4-mini · default    8.7 s   4 calls   15,418 in     351 out (0 reasoning) ≈ $0.0131 ok

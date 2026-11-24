@@ -1,0 +1,17 @@
+boundary tests, no model calls…
+✔ 00-boundaries                15s  exit 0
+model provider: foundry
+resetting target/ and starting the Orders service…
+✔ 01-chatbot                    2s  exit 0
+✔ 02-tools-and-approval         8s  exit 0
+✔ 03-sessions-first-run         8s  exit 0
+✔ 03-sessions-resume            3s  exit 0
+✔ 04-research-harness          43s  exit 0
+✔ 05-diagnose-harness          26s  exit 0
+✔ 06-bisect-cli                 3s  exit 0
+✔ 06-cli-first                  7s  exit 0
+forced failures, expected to fail with a clear message:
+✔ 90-bad-endpoint               0s  exit 2
+✔ 91-rehearsal-flag-guard       1s  exit 2
+model usage: 31 calls, 144,409 in / 4,279 out tokens, ≈ $0.425
+✔ all demos green. Output is in recordings/.

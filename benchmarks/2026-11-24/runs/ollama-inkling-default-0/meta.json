@@ -1,0 +1,17 @@
+{
+  "label": "ollama-inkling-default-0",
+  "provider": "ollama",
+  "models": [
+    "inkling-2-mini"
+  ],
+  "endpoint_host": "127.0.0.1:11434",
+  "api": "chat",
+  "reasoning_effort": "default",
+  "started_at": "2026-11-23T13:40:17Z",
+  "wall_s": 387,
+  "exit_code": 1,
+  "machine": "arm64 Apple M5 Max",
+  "note": "Imported. Code before the provider presets: no reasoning parameter was sent, so inkling used its default (thinking on). The 06-bisect-cli failure is the old git-wording check, not the demo: bisect found the right commit.",
+  "partial": false,
+  "imported": true
+}

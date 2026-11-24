@@ -1,0 +1,5 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+
+✖ The endpoint 127.0.0.1:1234 returned HTTP 400.
+
+[rehearse] 04-research-harness: exit 2 in 1s

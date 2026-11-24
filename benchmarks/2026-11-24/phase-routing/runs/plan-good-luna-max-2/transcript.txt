@@ -1,0 +1,93 @@
+phase plan         gpt-6-luna · max
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll verify the live status page and inspect the current pricing code, its history, and the relevant tests before recommending a change. I’ll keep this read-only and won’t apply any fix.
+→ todos_add(todos: [{"title":"Check the status page and inspect the reported pricing code…)
+→ run_command(command: curl -fsS --max-time 10 https://status.example.com)
+→ run_command(command: nl -ba src/Orders.Api/Pricing.cs)
+→ run_command(command: nl -ba src/Orders.Api/OrderStore.cs)
+→ run_command(command: git show --format=fuller --no-ext-diff 9bfbf7d -- src/Orders.Api/Prici…)
+  ✖ DENIED by policy: curl -fsS --max-time 10 https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ DENIED by policy: nl -ba src/Orders.Api/Pricing.cs: 'nl' is not allow-listed.
+  ✖ DENIED by policy: nl -ba src/Orders.Api/OrderStore.cs: 'nl' is not allow-listed.
+  ✖ DENIED by policy: git show --format=fuller --no-ext-diff 9bfbf7d -- src/Orders.Api/Pricing.cs: git show does not allow --no-ext-diff.
+The status-page request was blocked by the read-only command policy (`curl` isn’t available there), and the first source/history commands used options the policy rejects. I won’t retry the blocked network request; I’ll adapt to the repository’s allowed read-only commands and independently verify the reported code and tests.
+→ run_command(command: sed -n '1,80p' src/Orders.Api/Pricing.cs)
+→ run_command(command: sed -n '1,80p' src/Orders.Api/OrderStore.cs)
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+  ✖ DENIED by policy: sed -n '1,80p' src/Orders.Api/Pricing.cs: 'sed' is not allow-listed.
+  ✖ DENIED by policy: sed -n '1,80p' src/Orders.Api/OrderStore.cs: 'sed' is not allow-listed.
+  ← exit 0 · }
+The regression commit is confirmed: it replaced the earlier “gold gets 5%, other tiers get 0%” behavior with a direct lookup, and added only gold/silver entries. Since shell text tools are blocked, I’m using Git’s read-only file/history output to check the current source and test coverage, and will derive the exact line numbers from that content.
+→ run_command(command: git show HEAD:src/Orders.Api/Pricing.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/OrderStore.cs)
+→ run_command(command: git ls-files)
+→ run_command(command: git log -5 --oneline)
+  ← exit 0 · }
+  ← exit 0 · }
+  ✖ DENIED by policy: git ls-files: git ls-files is not allowed. Try log, show, diff, blame or grep.
+  ← exit 0 · f3419f7 Give gold customers 5% off
+→ run_command(command: git grep -n -E 'standard|Pricing|1001' HEAD --)
+→ run_command(command: git show --stat HEAD)
+→ run_command(command: git show 9bfbf7d^:src/Orders.Api/Pricing.cs)
+  ✖ DENIED by policy: git grep -n -E 'standard|Pricing|1001' HEAD --: No shell operators (; | & < > ` $), one command.
+  ← exit 0 · 2 files changed, 16 insertions(+), 1 deletion(-)
+  ← exit 0 · }
+The current source and the pre-regression version confirm the precise behavioral change: non-`gold` tiers previously received zero discount, while the new dictionary lookup throws for absent tiers. I’m checking the test assertions and API path now so the recommendation preserves tested behavior rather than merely silencing the exception.
+→ run_command(command: git grep -n standard)
+→ run_command(command: git grep -n Pricing)
+→ run_command(command: git grep -n 1001)
+  ← exit 0 · tests/Orders.Tests/PricingTests.cs:26:        Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("sta…
+  ← exit 0 · tests/Orders.Tests/PricingTests.cs:26:        Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("sta…
+  ← exit 0 · tests/Orders.Tests/OrdersApiTests.cs:10:    [InlineData(1001)]
+→ run_command(command: git show HEAD:tests/Orders.Tests/PricingTests.cs)
+→ run_command(command: git show HEAD:tests/Orders.Tests/OrdersApiTests.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/Program.cs)
+→ run_command(command: dotnet test)
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · public partial class Program;
+  ← exit 1 · [xUnit.net 00:00:00.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+The current test run reproduces exactly the reported 3 failures and 5 passes: both standard-tier pricing tests throw at `Pricing.cs:16`, and order 1001’s API test gets 500. I’m recommending a one-line fallback restoration at that lookup, which keeps gold/silver discounts and returns zero for tiers absent from the table, as the pre-change behavior did. The external status page remains unverified because no permitted HTTP-fetch tool is available; I have not changed source files.
+→ todos_complete(items: [{"id":1,"reason":"Verified the current Pricing.cs, OrderStore.cs, and…)
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:16` directly indexes `TierDiscounts` using the customer’s tier. The table contains `gold` and `silver`, but not `standard`, so the lookup throws `KeyNotFoundException`. Order 1001 belongs to a standard-tier customer (`src/Orders.Api/OrderStore.cs:8,14`).
+
+I reproduced the reported test result: **3 failed, 5 passed**.
+
+## Change (the exact lines before and after)
+
+At `src/Orders.Api/Pricing.cs:16`:
+
+**Before**
+```cs
+var discount = TierDiscounts[customer.Tier];
+```
+
+**After**
+```cs
+var discount = TierDiscounts.GetValueOrDefault(customer.Tier);
+```
+
+## Why this is the smallest safe fix
+
+It is a one-line change that keeps the gold and silver discounts while restoring the prior zero-discount fallback for tiers not in the table. That gives standard customers list price plus GST without changing the API route or order data.
+
+## Verification (what to run and what it must show)
+
+Run:
+
+```text
+dotnet test
+```
+
+It must show **8 passed, 0 failed**, including both standard-tier pricing tests and the API test for order 1001. The API test should receive HTTP 200; the order total should be **195.80 AUD**.
+
+## Risks
+
+- Unmapped or misspelled tiers will receive a zero discount instead of failing fast. This matches the pre-1.4.0 fallback behavior; confirm that behavior remains intended.
+- I could not verify `https://status.example.com`: the available command tool blocked the network request, and no HTTP-fetch tool was available. No status-page incident state is inferred.
+- No source changes were made.
+── usage: phased · 9 model calls · 65,888 in / 12,457 out tokens · ≈ $0.013 · 23 tool calls · 124.0 s
+   plan         gpt-6-luna · max      124.0 s   9 calls   65,888 in  12,457 out (10,841 reasoning) ≈ $0.0128 ok

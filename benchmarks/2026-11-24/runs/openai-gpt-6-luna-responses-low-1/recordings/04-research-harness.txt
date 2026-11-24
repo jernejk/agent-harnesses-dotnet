@@ -1,0 +1,50 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ mode_get()
+→ todos_add(todos: [{"title":"Review official .NET 11 and C# 15 release information"},{"t…)
+→ file_memory_write(fileName: plan.md, description: Plan for researching .NET 11 and Agent Framework for C# agent builders…, content: 1. Review official .NET 11 and C# 15 release information. 2. Review Ag…)
+Plan:
+1. Review official .NET 11 and C# 15 release information.
+2. Review Agent Framework overview and .NET 1.28.0 changes.
+3. Review official agent harness and claw guidance.
+4. Synthesize what these changes mean for people building agents in C#.
+5. Write a concise, sourced report.
+  ☐ Review official .NET 11 and C# 15 release information
+  ☐ Review Agent Framework overview and .NET 1.28.0 changes
+  ☐ Review official agent harness and claw guidance
+  ☐ Synthesize implications for C# agent builders
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+I’ll check the working memory, then review the official .NET 11, C# 15, and Agent Framework sources to identify changes relevant to building agents.
+→ file_memory_ls()
+→ file_memory_grep(regexPattern: .)
+The plan is in place and there are no prior research notes. I’m fetching five primary-source pages; I’ll keep the final summary limited to claims those pages actually make.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+  ← 113 lines · [3] Microsoft Agent Framework Overview | Microsoft Learn
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+  ← 58 lines · [4] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+The sources describe C# 15 language additions, .NET 11 runtime/library changes, and Agent Framework’s agent, workflow, and harness building blocks. The requested 1.28.0 release URL returned 404, so I’ll avoid attributing any release-specific changes to it.
+→ file_memory_write(fileName: notes.md, description: Brief source-backed notes for the .NET 11 and Agent Framework report., content: - .NET 11 runtime includes Runtime Async improvements; libraries add J…)
+→ todos_complete(items: [{"id":1,"reason":"Reviewed the .NET 11 and C# 15 official Microsoft L…)
+I’ve recorded the source-backed findings and completed the research items. I’ll now write the report, emphasizing practical changes for C# developers and distinguishing framework capabilities from runtime or language features.
+→ write_report(title: What .NET 11 and Agent Framework mean for C# agents, markdown: ## In brief  - The practical shift is a stronger C# platform alongside…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 4 of 4 fetched sources.
+The report is complete. It summarizes .NET 11 and C# 15 changes, Agent Framework’s agent and harness capabilities, and how to choose between agents, workflows, and ordinary functions.
+↻ loop: You still have incomplete todo items. Continue working until every item is complete, marking each item as comp…
+→ todos_complete(items: [{"id":5,"reason":"Wrote the sourced Markdown report with write_report…)
+All todo items are now complete. The report was written to `reports/what-changed-in-net-11-and-agent.md`.
+  ✔ Review official .NET 11 and C# 15 release information
+  ✔ Review Agent Framework overview and .NET 1.28.0 changes
+  ✔ Review official agent harness and claw guidance
+  ✔ Synthesize implications for C# agent builders
+  ✔ Write the report
+── usage: gpt-6-luna · 12 model calls · 73,467 in / 2,098 out tokens · ≈ $0.000 · 14 tool calls · 33.6 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 35s

@@ -1,0 +1,4 @@
+- **Root cause:** `Pricing.cs:16` indexed the tier-discount dictionary directly; standard-tier customers weren’t in the table, causing `KeyNotFoundException` and HTTP 500.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `default-missing-tier-discount`, which uses `GetValueOrDefault` so unlisted tiers receive zero discount.
+- **Test result after the fix:** `dotnet test` reported **8 passed, 0 failed**. Note: the separately running local API still returned 500 and reported version 1.4.0; it may not be running the rebuilt fix. I couldn’t access `https://status.example.com` with the available tools.

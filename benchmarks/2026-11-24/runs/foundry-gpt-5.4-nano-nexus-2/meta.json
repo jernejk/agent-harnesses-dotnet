@@ -1,0 +1,15 @@
+{
+  "label": "foundry-gpt-5.4-nano-nexus-2",
+  "provider": "foundry",
+  "models": [
+    "gpt-5.4-nano"
+  ],
+  "endpoint_host": "*.openai.azure.com",
+  "api": "chat",
+  "reasoning_effort": "default",
+  "started_at": "2026-11-23T15:16:16Z",
+  "wall_s": 121,
+  "exit_code": 0,
+  "machine": "arm64 Apple M5 Max",
+  "note": "Azure AI Foundry, nexus resource; repeat with AGENT_DEBUG=1 to see the text of the HTTP 400"
+}

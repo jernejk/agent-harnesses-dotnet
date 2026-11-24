@@ -1,0 +1,1 @@
+fix-unknown-tier-total: changes `src/Orders.Api/Pricing.cs` to safely default unknown customer tiers to 0% discount instead of throwing `KeyNotFoundException`.

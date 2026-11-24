@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed the tier-discount dictionary directly, but it has no `standard` entry; pricing order 1001 therefore threw `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `fallback-for-unknown-customer-tiers`; unrecognized tiers now receive a zero discount.
+- **Test result:** The proposal’s test run passed **8/8**. The plan called for **9** tests, including an unknown-tier regression test and stronger API total assertions; those test changes were not included in the applied diff.

@@ -1,0 +1,62 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ mode_get()
+→ todos_add(todos: [{"title":"Research .NET 11 changes relevant to C# agent builders","de…)
+→ file_memory_write(fileName: plan.md, content: 1. Research .NET 11 changes relevant to C# agent builders. 2. Research…, description: Plan for researching .NET 11, C# 15, and Microsoft Agent Framework cha…)
+1. Review official .NET 11 changes relevant to agent development.  
+2. Review C# 15 language updates useful for agent code.  
+3. Review Microsoft Agent Framework capabilities, release notes, and announcements.  
+4. Synthesize practical implications for C# developers and identify gaps.  
+5. Write a 250–400 word cited report.
+  ☐ Research .NET 11 changes relevant to C# agent builders
+  ☐ Research C# 15 changes relevant to agents
+  ☐ Research Microsoft Agent Framework changes
+  ☐ Synthesize implications for C# agent developers
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+I’ll fetch the official .NET and C# sources first, then the Agent Framework sources, recording only concise cited notes.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/csharp/whats-new/csharp-15)
+→ fetch_url(url: https://devblogs.microsoft.com/dotnet/announcing-dotnet-11/)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← NOT FOUND: https://learn.microsoft.com/en-us/csharp/whats-new/csharp-15. HTTP 404.
+  ← 53 lines · [2] Announcing .NET 11 - .NET Blog
+The .NET sources identify direct agent-enablement areas—MEAI, MCP, Agent Framework, and agentic web tooling—while the C# URL returned 404, so I’ll rely only on the available .NET announcement for C# details and note that limitation.
+→ file_memory_write(fileName: notes.md, content: - .NET 11 adds Runtime Async, JIT/runtime optimizations, richer System…, description: Concise research notes from fetched .NET 11 and C# sources.)
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 113 lines · [3] Microsoft Agent Framework Overview | Microsoft Learn
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+  ← 58 lines · [4] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+The framework overview defines the new building blocks and decision boundary between agents and workflows; the harness article adds a practical composition model, while the requested 1.28.0 release URL is unavailable and cannot support claims.
+→ file_memory_write(fileName: notes.md, content: - Agent Framework combines agents, harness agents, workflows, and inte…, description: Concise research notes from Microsoft Agent Framework primary sources.)
+→ todos_complete(items: [{"id":1,"reason":"Fetched the official .NET 11 overview and announcem…)
+I’ve completed source collection and will now synthesize the practical changes, distinguishing platform/language improvements from Agent Framework architecture and noting unavailable pages.
+→ todos_complete(items: [{"id":4,"reason":"Synthesized the fetched sources into practical impl…)
+→ write_report(title: What changed for C# agent builders in .NET 11 and Agent Framework, markdown: ## Platform and language .NET 11 makes agent-oriented application deve…)
+  ← DENIED: report. This paragraph cites no fetched source: "For C# teams, the change is a clearer stack: .NET 11/…
+The report validator rejected one concluding paragraph because its citation was not attached to that paragraph. I’ll add citations directly to the conclusion and submit the corrected report.
+→ write_report(title: What changed for C# agent builders in .NET 11 and Agent Framework, markdown: ## Platform and language .NET 11 makes agent-oriented application deve…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 4 of 4 fetched sources.
+→ todos_complete(items: [{"id":5,"reason":"Submitted and saved the final cited 250–400 word Ma…)
+The report was completed and saved successfully:
+
+**“What changed for C# agent builders in .NET 11 and Agent Framework”**
+
+It covers:
+
+- .NET 11’s MEAI, MCP, Agent Framework, async, JSON, and validation improvements.
+- C# 15 unions and closed hierarchies for strongly typed agent outcomes.
+- Agent Framework agents, harnesses, workflows, memory, approvals, MCP, and observability.
+- Practical guidance on choosing agents versus workflows.
+- Limitations caused by the unavailable C# 15 and Agent Framework 1.28.0 URLs.
+  ✔ Research .NET 11 changes relevant to C# agent builders
+  ✔ Research C# 15 changes relevant to agents
+  ✔ Research Microsoft Agent Framework changes
+  ✔ Synthesize implications for C# agent developers
+  ✔ Write the report
+── usage: gpt-5.6-luna · 14 model calls · 93,403 in / 2,607 out tokens · ≈ $0.000 · 16 tool calls · 40.6 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 41s

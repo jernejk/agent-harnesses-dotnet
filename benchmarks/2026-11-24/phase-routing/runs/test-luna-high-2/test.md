@@ -1,0 +1,4 @@
+- **Root cause:** `Pricing.cs` looked up `TierDiscounts[customer.Tier]` directly, but the table has no `standard` entry, causing a `KeyNotFoundException` and HTTP 500.
+- **Commit that introduced it:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `default-missing-tier-discount`, changing the lookup to `TierDiscounts.GetValueOrDefault(customer.Tier)` so unlisted tiers receive zero discount.
+- **Test result:** The proposal’s test run passed **8/8 tests**. However, a separate GET to the running local `/orders/1001/total` still returned **500** (health reports version 1.4.0); that runtime discrepancy remains unresolved. I could not check `status.example.com` with the available tools.

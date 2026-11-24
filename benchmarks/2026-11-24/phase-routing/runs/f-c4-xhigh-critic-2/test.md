@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed the tier-discount table for `"standard"`, which is absent, causing `KeyNotFoundException` and HTTP 500.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied the null-safe zero-discount fallback for null or unlisted tiers in `Pricing.cs`; the diff did not include the two planned edge-case tests.
+- **Test result:** `dotnet test` passed **8/8** with exit code 0. The plan called for 10 passing cases, so that coverage target was not met; localhost was not used because it still runs deployed 1.4.0.

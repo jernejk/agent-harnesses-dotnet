@@ -1,0 +1,8 @@
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   193 tok · restored in a new process
+pinned  📌 Orders 500s root cause: Pricing.Total (Pricing.cs:16) looks up the missing dictionary key 'standard', throwing an unhandled KeyNotFoundException. Health returns 200, but the /orders/1001/total canary returns 500. Decision: hotfix the pricing lookup; do not restart the service.
+We decided to **hotfix the pricing lookup and not restart the service**.
+
+The 500s are caused by `Pricing.Total` looking up the missing dictionary key `standard`, triggering an unhandled `KeyNotFoundException` at `Pricing.cs:16`. The health check returns 200, but the `/orders/1001/total` canary returns 500.
+── usage: gpt-6.1-terra · 1 model calls · 541 in / 79 out tokens · ≈ $0.000 · 0 tool calls · 2.3 s
+
+[rehearse] 03-sessions-resume: exit 0 in 3s

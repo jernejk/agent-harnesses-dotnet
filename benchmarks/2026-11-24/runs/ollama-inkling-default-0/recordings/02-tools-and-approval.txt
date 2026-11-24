@@ -1,0 +1,17 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+→ get_service_status(service: payments)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+→ get_recent_logs(lines: 60, service: orders)
+  ← 60 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- Cause: Orders itself, not payments. Logs show unhandled `KeyNotFoundException: The given key 'standard' was not present in the dictionary` at `Orders.Api.Pricing.Total` (Pricing.cs:line 16) on every `/orders/{id}/total` request.
+- Payments check: DENIED — payments is outside this agent's scope (card data); asked a human rather than probing it. Not needed anyway since Orders' own code is throwing.
+- Restart: I called `restart_service` for orders, but it was rejected by the approver — it did not happen and I won't retry.
+- Canary still 500s (GET /orders/1001/total, 0 ms). Needs a human to restart Orders (or fix the missing 'standard' pricing-tier key).
+── usage: inkling-2-mini · 4 model calls · 5,809 in / 705 out tokens · ≈ $0.000 · 4 tool calls · 16.9 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 19s

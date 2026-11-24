@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly indexed `TierDiscounts`, which has no `standard` entry; order 1001’s customer is `standard`, causing the `KeyNotFoundException` and HTTP 500.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `handle-unlisted-customer-tiers`; unlisted tiers now receive a zero discount while configured gold and silver discounts remain unchanged.
+- **Test result:** The proposal’s test run passed: **8 passed, 0 failed**. The deployed localhost API remains on 1.4.0 and was not used to verify the repository patch.

@@ -1,0 +1,17 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(service: orders, lines: 200)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders 500 root cause: Pricing.Total (Pricing.cs:16) indexes the prici…)
+  📌 Orders 500 root cause: Pricing.Total (Pricing.cs:16) indexes the pricing dictionary with key 'standard', which is absent, throwing KeyNotFoundException. Decision: hotfix the pricing lookup; do not restart Orders. Health check is 200 but canary GET /orders/1001/total returns 500.
+Orders is healthy at the service-check level, but the canary returns 500. The logs identify the cause: `Pricing.Total` looks up the missing `standard` key and throws `KeyNotFoundException`.
+
+**Decision pinned:** hotfix the pricing lookup; do not restart Orders.
+history ██████████████████████████░░░░░░ ≈ 2,510 tok · before compaction
+pinned  📌 Orders 500 root cause: Pricing.Total (Pricing.cs:16) indexes the pricing dictionary with key 'standard', which is absent, throwing KeyNotFoundException. Decision: hotfix the pricing lookup; do not restart Orders. Health check is 200 but canary GET /orders/1001/total returns 500.
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   188 tok · after compaction
+pinned  📌 Orders 500 root cause: Pricing.Total (Pricing.cs:16) indexes the pricing dictionary with key 'standard', which is absent, throwing KeyNotFoundException. Decision: hotfix the pricing lookup; do not restart Orders. Health check is 200 but canary GET /orders/1001/total returns 500.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: gpt-6-luna · 3 model calls · 5,906 in / 196 out tokens · ≈ $0.000 · 3 tool calls · 4.4 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 5s

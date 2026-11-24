@@ -1,0 +1,77 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:xhigh",
+    "plan": "gpt-6-luna:xhigh",
+    "dev": "gpt-6-luna:xhigh",
+    "test": "gpt-6-luna:xhigh",
+    "revise": "gpt-6-luna:xhigh"
+  },
+  "only": "plan",
+  "phases": [
+    {
+      "phase": "plan",
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 41.3,
+      "modelCalls": 8,
+      "toolCalls": 25,
+      "inputTokens": 74704,
+      "outputTokens": 4083,
+      "reasoningTokens": 2300,
+      "cachedInputTokens": 53911,
+      "costUsd": 0.009512,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "critic",
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 9.1,
+      "modelCalls": 1,
+      "toolCalls": 0,
+      "inputTokens": 1014,
+      "outputTokens": 442,
+      "reasoningTokens": 372,
+      "cachedInputTokens": 0,
+      "costUsd": 0.003224,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "revise",
+      "model": "gpt-6-luna",
+      "effort": "xhigh",
+      "seconds": 43.9,
+      "modelCalls": 7,
+      "toolCalls": 18,
+      "inputTokens": 54033,
+      "outputTokens": 5782,
+      "reasoningTokens": 3795,
+      "cachedInputTokens": 42573,
+      "costUsd": 0.008294,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 94.3,
+    "modelCalls": 16,
+    "toolCalls": 43,
+    "inputTokens": 129751,
+    "outputTokens": 10307,
+    "reasoningTokens": 6467,
+    "cachedInputTokens": 96484,
+    "costUsd": 0.021030,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": []
+}

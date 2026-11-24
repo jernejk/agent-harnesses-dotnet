@@ -1,0 +1,2 @@
+- Restore the zero-discount fallback for **all unrecognized tiers**, not just `"standard"`; retain the gold and silver rates. The previous non-gold fallback covered more than standard.
+- Add regression tests for an unrecognized tier, including null if allowed, alongside the standard, gold, and silver cases. Passing the existing eight tests alone would not prove the fallback is restored.

@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly indexes the tier-discount lookup; the `standard` tier was missing, causing order 1001’s request to throw.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `add-standard-tier-discount`; `Pricing.cs` now maps `standard` to `0m`.
+- **Test result:** `dotnet test` passed all 8 tests. Orders 1002 and 1003 returned 200, but order 1001 still returned 500 from the local 1.4.0 API, so the endpoint check did not meet the plan’s expected result.

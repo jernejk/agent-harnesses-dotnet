@@ -1,0 +1,9 @@
+history ███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   338 tok · restored in a new process
+pinned  📌 Orders 500s root cause: Pricing.Total throws unhandled KeyNotFoundException when looking up pricing key 'standard' in dictionary (Pricing.cs:line 16).
+pinned  📌 Decision: Hotfix pricing lookup to handle missing/unknown key 'standard' (and return correct total) and do not restart the Orders service.
+**Decision (pinned):** We will **hotfix the pricing lookup** to handle the missing/unknown pricing key **`standard`** (so totals compute correctly) and **do not restart** the Orders service.
+
+**Why:** The Orders **500s** were caused by an **unhandled `KeyNotFoundException`** in `Pricing.Total` when it tried to look up `'standard'` in the pricing dictionary (`Pricing.cs:line 16`). Restarting wouldn’t address the code defect; a targeted hotfix fixes the exception and stops the 500s without service disruption.
+── usage: gpt-5.4-nano · 1 model calls · 699 in / 124 out tokens · ≈ $0.000 · 0 tool calls · 3.0 s
+
+[rehearse] 03-sessions-resume: exit 0 in 3s

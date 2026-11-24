@@ -1,0 +1,14 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.7 s, 0 tokens
+- **Cause:** The regression is in pricing tier handling: `Pricing.Total` now indexes `TierDiscounts[customer.Tier]` directly, so any customer tier not present in the lookup throws a `KeyNotFoundException` instead of defaulting to 0% off. That makes tests fail for standard customers.
+
+- **Commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier”.
+
+- **One-line fix:** Change the lookup to a safe default, e.g. `TierDiscounts.TryGetValue(customer.Tier, out var discount);` and use `discount` (or `GetValueOrDefault(customer.Tier, 0m)`).
+── usage: gpt-5.4-mini · 2 model calls · 1,139 in / 184 out tokens · ≈ $0.002 · 1 tool calls · 6.1 s
+
+                             time        tokens     cost            
+agent does it all (05)     19.6 s    60,040 tok   $0.049    16 tools
+CLI first (06)              6.1 s     1,323 tok   $0.002     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 7s

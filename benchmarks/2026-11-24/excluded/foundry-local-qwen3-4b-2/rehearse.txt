@@ -1,0 +1,3 @@
+boundary tests, no model calls…
+✖ 00-boundaries                20s  exit 1, wanted 0, missing [Passed!]
+✖ a boundary test failed, so no demo ran. See recordings/00-boundaries.txt.

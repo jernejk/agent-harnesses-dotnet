@@ -1,0 +1,1 @@
+restore-standard-tier-discount: adds `standard` tier at 0% discount in `src/Orders.Api/Pricing.cs`

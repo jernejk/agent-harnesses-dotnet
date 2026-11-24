@@ -1,0 +1,1 @@
+fallback-for-unlisted-customer-tier — proposes replacing direct tier dictionary indexing with a null-safe lookup that gives unlisted tiers zero discount.

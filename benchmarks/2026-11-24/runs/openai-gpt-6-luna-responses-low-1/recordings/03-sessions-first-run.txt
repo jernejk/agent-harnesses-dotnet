@@ -1,0 +1,17 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(service: orders, lines: 200)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders 500s root cause: Orders.Api.Pricing.Total (Pricing.cs:16) uses …)
+  📌 Orders 500s root cause: Orders.Api.Pricing.Total (Pricing.cs:16) uses a dictionary lookup for key 'standard' that is absent, throwing KeyNotFoundException (seen repeatedly for order 1001). Health endpoint reports 200, but canary GET /orders/1001/total returns 500. Decision: hotfix the pricing lookup; do not restart.
+Orders is healthy at the service level, but the canary `GET /orders/1001/total` returns 500. Logs identify the cause: `Pricing.Total` throws a `KeyNotFoundException` because the pricing dictionary lacks the `standard` key.
+
+Pinned the root cause and decision: **hotfix the pricing lookup; do not restart.**
+history ██████████████████████████░░░░░░ ≈ 2,531 tok · before compaction
+pinned  📌 Orders 500s root cause: Orders.Api.Pricing.Total (Pricing.cs:16) uses a dictionary lookup for key 'standard' that is absent, throwing KeyNotFoundException (seen repeatedly for order 1001). Health endpoint reports 200, but canary GET /orders/1001/total returns 500. Decision: hotfix the pricing lookup; do not restart.
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   209 tok · after compaction
+pinned  📌 Orders 500s root cause: Orders.Api.Pricing.Total (Pricing.cs:16) uses a dictionary lookup for key 'standard' that is absent, throwing KeyNotFoundException (seen repeatedly for order 1001). Health endpoint reports 200, but canary GET /orders/1001/total returns 500. Decision: hotfix the pricing lookup; do not restart.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: gpt-6-luna · 3 model calls · 5,663 in / 227 out tokens · ≈ $0.000 · 3 tool calls · 4.9 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 6s

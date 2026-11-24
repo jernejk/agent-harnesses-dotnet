@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]`, so a `"standard"` customer triggered `KeyNotFoundException` and HTTP 500.
+- Commit that introduced it: `9bfbf7d` — `Move tier discounts into a lookup table and add silver tier`.
+- Fix: changed `Pricing.Total` to use `TierDiscounts.GetValueOrDefault(customer.Tier, 0m)` so unknown/non-tiered customers fall back to no discount instead of throwing.
+- Test result after the fix: `dotnet test` passed, `Orders.Tests.dll` with `8/8` tests passing.

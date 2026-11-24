@@ -1,0 +1,50 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ mode_get()
+→ todos_add(todos: [{"title":"Review .NET 11 overview","description":"Capture the .NET 11…)
+→ file_memory_write(fileName: plan.md, content: 1. Review .NET 11 overview 2. Review C# 15 changes 3. Review Agent Fra…, description: Plan for summarizing .NET 11, C# 15, and Agent Framework changes for C…)
+Plan:
+1. Review the official .NET 11 overview and announcement for changes relevant to agent developers.
+2. Review the official C# 15 what’s-new page for language features that matter to agents.
+3. Review the Agent Framework overview, release notes, and blog post for C# agent-building updates.
+4. Write the report.
+  ☐ Review .NET 11 overview
+  ☐ Review C# 15 changes
+  ☐ Review Agent Framework docs and release
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+  ← 113 lines · [3] Microsoft Agent Framework Overview | Microsoft Learn
+I’ve got the main source material; next I’m pulling the release notes and then I’ll consolidate the actionable changes for C# agent work.
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+  ← 58 lines · [4] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+I hit a 404 on the tagged release page, so I’m using the official docs and blog that are available to capture the same practical guidance.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+I have enough to summarize the practical impact: runtime and library improvements in .NET 11, language features in C# 15, and the Agent Framework pieces that matter for harness-style agents.
+→ todos_complete(items: [{"id": 1, "reason": "Reviewed the .NET 11 overview and captured runti…)
+→ file_memory_write(fileName: notes.md, content: - .NET 11 GA includes Runtime Async, performance and reliability impro…, description: Short cited notes from official .NET 11, C# 15, and Agent Framework so…)
+I’ve finished the source review and notes; I’m writing the final report now with only claims supported by the fetched pages.
+→ write_report(title: What changed in .NET 11 and Agent Framework for C# agent builders, markdown: ## .NET 11 - .NET 11 is generally available, and the official overview…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 4 of 4 fetched sources.
+Done — I reviewed the official .NET 11, C# 15, and Agent Framework sources and wrote the report.
+↻ loop: You still have incomplete todo items. Continue working until every item is complete, marking each item as comp…
+I’ve already written the report, so I’m just syncing the todo state and then I’ll provide a brief completion note.
+→ todos_complete(items: [{"id":4,"reason":"The report was written with cited findings from the…)
+Completed — the report is written, and todo item 4 has been marked done.
+  ✔ Review .NET 11 overview
+  ✔ Review C# 15 changes
+  ✔ Review Agent Framework docs and release
+  ✔ Write the report
+── usage: gpt-5.4-mini · 12 model calls · 88,596 in / 1,760 out tokens · ≈ $0.074 · 14 tool calls · 26.1 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 27s

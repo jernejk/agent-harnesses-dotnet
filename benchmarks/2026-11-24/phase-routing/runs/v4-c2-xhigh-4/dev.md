@@ -1,0 +1,1 @@
+fallback-for-unmapped-customer-tiers — replaces direct tier indexing with a null-safe lookup that defaults unmapped tiers to 0%; proposal only, not applied.

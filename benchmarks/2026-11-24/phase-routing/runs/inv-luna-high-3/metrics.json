@@ -1,0 +1,44 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:high",
+    "plan": "gpt-6-luna:high",
+    "dev": "gpt-6-luna:high",
+    "test": "gpt-6-luna:high"
+  },
+  "only": "investigate",
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 35.5,
+      "modelCalls": 8,
+      "toolCalls": 17,
+      "inputTokens": 39776,
+      "outputTokens": 2442,
+      "reasoningTokens": 1167,
+      "cachedInputTokens": 34428,
+      "costUsd": 0.005199,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 35.5,
+    "modelCalls": 8,
+    "toolCalls": 17,
+    "inputTokens": 39776,
+    "outputTokens": 2442,
+    "reasoningTokens": 1167,
+    "cachedInputTokens": 34428,
+    "costUsd": 0.005199,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": []
+}

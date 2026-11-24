@@ -1,0 +1,18 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+→ get_service_status(service: payments)
+→ get_recent_logs(service: orders, lines: 80)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+  ← 80 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- It’s **Orders itself**, not payments: `orders` health is `200`, and the canary still returns `500` — evidence: `"health 200 {...}; canary GET /orders/1001/total -> 500"`.
+- The logs show the crash cause: `System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in the dictionary.` at `Orders.Api.Pricing.Total(...)`.
+- That points to a missing/mismatched pricing key in Orders’ own code/data path, not a payments outage. Evidence: the exception is thrown inside `/_/src/Orders.Api/Pricing.cs:line 16`.
+- I attempted to restart Orders, but the action was **rejected by the approver**: `"restart_service ... was rejected by the approver and must not be retried."`
+- If you want, I can help narrow down which customer/order path is missing the `standard` key.
+── usage: gpt-5.4-mini · 3 model calls · 4,555 in / 286 out tokens · ≈ $0.005 · 4 tool calls · 5.9 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 6s

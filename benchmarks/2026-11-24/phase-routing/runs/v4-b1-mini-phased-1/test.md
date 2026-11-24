@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs:16` in the 1.4.0 build, where `TierDiscounts[customer.Tier]` threw for the pre-1.4.0 `"standard"` tier and caused `GET /orders/{id}/total` to return 500.
+- Introduced by commit: `9bfbf7d` — `Move tier discounts into a lookup table and add silver tier`.
+- Fix: changed pricing to default missing tiers to `0m` with `TryGetValue(...) ? value : 0m`, preserving `"standard"` customers and avoiding the exception.
+- Test result: `dotnet test` passed, `8` tests passed, `0` failed.

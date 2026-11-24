@@ -1,0 +1,16 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ todos_add(todos: [{"title":"Identify .NET 11 changes relevant to C# agent builders","de…)
+1) Identify .NET 11 changes relevant to C# agent builders (runtime, language, libraries, hosting) from the provided .NET 11 overview and C# 15 pages.  
+2) Identify Agent Framework changes relevant to building agents in C# from the provided Agent Framework overview, release tag, and “build-your-own-claw” blog.  
+3) Synthesize what these changes mean for C# agent builders (what’s new and why it matters).  
+4) Write the report (250–400 words, Markdown, with citations per paragraph/bullet).
+  ☐ Identify .NET 11 changes relevant to C# agent builders
+  ☐ Identify Agent Framework changes relevant to building agents in C#
+  ☐ Synthesize actionable summary
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+
+✖ The endpoint *.openai.azure.com returned HTTP 400.
+
+[rehearse] 04-research-harness: exit 2 in 8s

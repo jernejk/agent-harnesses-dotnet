@@ -1,0 +1,1 @@
+fix-standard-tier-total-lookup: changes `Pricing.Total` to use `GetValueOrDefault(customer.Tier)` so unlisted tiers get zero discount instead of throwing, preventing HTTP 500 on standard-tier orders.

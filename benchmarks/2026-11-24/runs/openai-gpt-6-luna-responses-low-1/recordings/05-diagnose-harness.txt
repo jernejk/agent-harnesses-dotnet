@@ -1,0 +1,61 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+I’ll check the incident status and reproduce the failure first, then trace the release diff and propose the smallest fix for approval.
+→ run_command(command: dotnet test)
+→ run_command(command: git log --oneline --decorate -12)
+→ todos_add(todos: [{"title": "Check status incident and reproduce failing tests/API", "d…)
+  ← exit 1 · [xUnit.net hh:mm:ss.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← exit 0 · 2518c83 Initial Orders API with in-memory store
+The test suite reproduces the 500: pricing throws for missing tier key `standard`; I can’t reach the external status URL with the available tools, so I’m tracing the release diff and endpoint code now.
+→ run_command(command: git show --stat --oneline 9bfbf7d)
+→ run_command(command: git diff v1.3.0..v1.4.0)
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ http_get(path: /orders/1001/total)
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ← GET /orders/1001/total -> 500 
+The regression is in commit `9bfbf7d`: the new discount table has gold/silver entries but no standard fallback; I’m confirming exact changed lines before proposing a one-line fix.
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+→ file_access_read_lines(fileName: src/Orders.Api/Pricing.cs, startLine: 1, endLine: 24)
+→ run_command(command: git show --format=fuller --no-patch 9bfbf7d)
+  ← exit 0 · }
+  ← exit 0 · Move tier discounts into a lookup table and add silver tier
+I’ll preserve the existing tier-table design and add the missing zero-discount `standard` entry; this restores previous default-tier pricing and prevents the endpoint exception.
+→ write_proposal(name: restore-standard-tier-discount, file: src/Orders.Api/Pricing.cs, find:     static readonly Dictionary<string, decimal> TierDiscounts = new() …, replace:     static readonly Dictionary<string, decimal> TierDiscounts = new() …, rationale: The 1.4.0 lookup-table change omitted the standard tier, so ordinary c…)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..1ee0977 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -6,6 +6,7 @@ public static class Pricing
+     
+         static readonly Dictionary<string, decimal> TierDiscounts = new()
+         {
+    +        ["standard"] = 0m,
+             ["gold"] = 0.05m,
+             ["silver"] = 0.02m,
+         };
+  ← 13 lines · Wrote proposals/restore-standard-tier-discount.patch:
+🔐 approval needed: apply_proposal(name: restore-standard-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied restore-standard-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 84 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The approved patch is applied and all eight tests pass; I’m checking the live total endpoint once more and closing out the investigation tasks.
+→ http_get(path: /orders/1001/total)
+→ todos_complete(items: [{"id": 1, "reason": "Ran tests and reproduced the 500 via tests and G…)
+  ← GET /orders/1001/total -> 500 
+- **Root cause:** `Pricing.Total` in `src/Orders.Api/Pricing.cs:16` indexes the tier-discount dictionary directly. The 1.4.0 table omitted `standard`, so standard customers cause a `KeyNotFoundException` and the total endpoint returns HTTP 500.
+- **Commit:** `9bfbf7d` (“Move tier discounts into a lookup table and add silver tier”) introduced the regression.
+- **Fix:** Added `standard` with a `0m` discount to the table, preserving the previous no-discount behavior. The patch was applied.
+- **Test result:** All 8 tests pass after the fix. The local API check still returned HTTP 500, suggesting its running instance hasn’t picked up the change; the external status page was not accessible with the available tools.
+── usage: gpt-6-luna · 7 model calls · 40,461 in / 1,402 out tokens · ≈ $0.000 · 14 tool calls · 21.6 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 22s

@@ -1,0 +1,1 @@
+fallback-for-unknown-customer-tiers — changes `Pricing.cs` to apply a zero discount when a customer tier is unrecognized.

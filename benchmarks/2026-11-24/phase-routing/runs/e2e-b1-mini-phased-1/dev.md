@@ -1,0 +1,1 @@
+fix-standard-tier-discount: adds the missing `standard` tier discount entry in `src/Orders.Api/Pricing.cs`

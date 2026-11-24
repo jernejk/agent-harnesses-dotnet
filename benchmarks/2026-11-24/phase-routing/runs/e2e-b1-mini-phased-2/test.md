@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]`, which threw `KeyNotFoundException` for existing `standard` customers.
+- Introduced by: commit `9bfbf7d` — `Move tier discounts into a lookup table and add silver tier`.
+- Fix: changed `Pricing.Total(...)` to use `TierDiscounts.GetValueOrDefault(customer.Tier, 0m)` so legacy or unknown tiers no longer crash.
+- Test result: `dotnet test` passed; 8 tests passed, 0 failed, including the order total API coverage.

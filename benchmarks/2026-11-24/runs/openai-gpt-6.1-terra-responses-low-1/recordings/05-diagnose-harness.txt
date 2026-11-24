@@ -1,0 +1,68 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+I can’t access the external status page with the available tools, so I’ll check the service and repository directly.
+→ run_command(command: dotnet test)
+→ run_command(command: git log --oneline v1.3.0..HEAD)
+→ todos_add(todos: [{"title": "Reproduce the failure and inspect service health"}, {"titl…)
+→ http_get(path: /health)
+  ← exit 1 · [xUnit.net hh:mm:ss.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← exit 0 · 9bfbf7d Move tier discounts into a lookup table and add silver tier
+  ← 2 lines · GET /health -> 200
+Tests reproduce three failures from a missing `standard` discount key; the service health endpoint reports 1.4.0 as healthy.
+→ run_command(command: git diff v1.3.0 HEAD)
+→ run_command(command: git show 9bfbf7d)
+→ http_get(path: /orders/1001/total)
+→ todos_complete(items: [{"id": 1, "reason": "Ran tests and checked service health; three test…)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ← GET /orders/1001/total -> 500 
+The live endpoint also returns 500, and commit `9bfbf7d` replaced the zero-discount fallback with a lookup that omits standard customers.
+→ run_command(command: cat src/Orders.Api/Pricing.cs)
+→ run_command(command: cat tests/Orders.Tests/PricingTests.cs)
+→ todos_complete(items: [{"id": 2, "reason": "Compared v1.3.0 with HEAD and inspected introduc…)
+  ✖ DENIED by policy: cat src/Orders.Api/Pricing.cs: 'cat' is not allow-listed.
+  ✖ DENIED by policy: cat tests/Orders.Tests/PricingTests.cs: 'cat' is not allow-listed.
+The `cat` commands were denied by policy; I’ll use the allowed git output to inspect the files instead.
+→ run_command(command: git show HEAD:src/Orders.Api/Pricing.cs)
+→ run_command(command: git show HEAD:tests/Orders.Tests/PricingTests.cs)
+  ← exit 0 · }
+  ← exit 0 · }
+At `src/Orders.Api/Pricing.cs:16`, the direct lookup throws for `standard`; restoring the previous zero-discount fallback also preserves behavior for other unlisted tiers.
+→ write_proposal(name: restore-tier-discount-fallback, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = TierDiscounts.TryGetValue(customer.Tier, out va…, rationale: The tier discount lookup omits standard customers, so direct indexing …)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..6351469 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -13,7 +13,7 @@ public static class Pricing
+         public static decimal Total(Order order, Customer customer)
+         {
+             var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+    -        var discount = TierDiscounts[customer.Tier];
+    +        var discount = TierDiscounts.TryGetValue(customer.Tier, out var tierDiscount) ? tierDiscount : 0m;
+             var total = subtotal * (1 - discount) * (1 + GstRate);
+             return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+         }
+  ← 15 lines · Wrote proposals/restore-tier-discount-fallback.patch:
+I’ve written the one-line fallback fix and will submit it for human approval and testing.
+🔐 approval needed: apply_proposal(name: restore-tier-discount-fallback)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied restore-tier-discount-fallback.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 74 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The proposal was applied and all eight tests passed; the external incident status remains unverified.
+→ todos_complete(items: [{"id":3,"reason":"Wrote and applied the one-line proposal; all eight …)
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed a discount table that omitted the `standard` tier, causing HTTP 500.
+- **Introducing commit:** `9bfbf7d` — moved tier discounts into a lookup table.
+- **Fix:** Applied a one-line change that falls back to zero discount for unlisted tiers.
+- **Test result:** All 8 tests passed after the fix. The external incident status could not be checked with the available tools.
+── usage: gpt-6.1-terra · 8 model calls · 46,995 in / 1,028 out tokens · ≈ $0.000 · 16 tool calls · 27.1 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 28s

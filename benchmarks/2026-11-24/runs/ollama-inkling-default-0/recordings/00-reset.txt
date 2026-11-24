@@ -1,0 +1,11 @@
+f1812c8 (HEAD -> main, tag: v1.4.0) Release 1.4.0
+ab38e53 Return problem details for unknown orders
+9bfbf7d Move tier discounts into a lookup table and add silver tier
+fcded06 (tag: v1.3.0) Log order total lookups
+f3419f7 Give gold customers 5% off
+3c4235d Add pricing and API tests
+2ec9930 Add order totals with GST
+2518c83 Initial Orders API with in-memory store
+orders: running, pid 30495
+{"status":"ok","version":"1.4.0"}
+GET /orders/1001/total -> 500

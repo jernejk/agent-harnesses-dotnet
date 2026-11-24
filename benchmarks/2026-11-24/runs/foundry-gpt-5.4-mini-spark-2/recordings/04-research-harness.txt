@@ -1,0 +1,47 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ mode_get()
+→ todos_add(todos: [{"title":"Review .NET 11 overview","description":"Capture agent-relev…)
+→ file_memory_write(fileName: plan.md, content: 1. Review .NET 11 overview 2. Review C# 15 changes 3. Review Agent Fra…, description: Plan for answering what changed in .NET 11 and Agent Framework for C# …)
+Plan:
+1. Review the .NET 11 overview for agent-relevant changes.
+2. Review C# 15 changes for language features useful to agent builders.
+3. Review Agent Framework overview and release notes for capabilities and updates.
+4. Write the report.
+
+  ☐ Review .NET 11 overview
+  ☐ Review C# 15 changes
+  ☐ Review Agent Framework sources
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+I’ll gather the four sources, capture only what they state, and then draft the report.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+  ← 113 lines · [3] Microsoft Agent Framework Overview | Microsoft Learn
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+I have the overview and release-source material; next I’m checking the release notes page again via GitHub’s release tag path that works in this environment.
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+That tag isn’t available here, so I’ll use only the fetched pages and keep the report scoped to them.
+→ file_memory_write(fileName: notes.md, content: - .NET 11 runtime adds Runtime Async, NativeAOT interface dispatch imp…)
+→ todos_complete(items: [{"id":1,"reason":"Captured .NET 11 overview points relevant to agent …)
+I’ve got the source-backed notes; now I’m writing the report with only what the pages say.
+→ write_report(title: .NET 11 and Agent Framework for C# agent builders, markdown: ## .NET 11 .NET 11 is generally available, and the overview highlights…)
+  ← DENIED: report. Not fetched in this run: 4. Fix it, then write_report again.
+I need one more fetched source number for the failed release-tag page reference, so I’ll stop citing that and write the report without it.
+→ write_report(title: .NET 11 and Agent Framework for C# agent builders, markdown: ## .NET 11 .NET 11 is generally available, and the overview highlights…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 3 of 3 fetched sources.
+→ todos_complete(items: [{"id":4,"reason":"Final report written from the fetched sources with …)
+Done — I summarized the .NET 11, C# 15, and Agent Framework changes relevant to C# agent builders from the fetched primary sources only.
+  ✔ Review .NET 11 overview
+  ✔ Review C# 15 changes
+  ✔ Review Agent Framework sources
+  ✔ Write the report
+── usage: gpt-5.4-mini · 12 model calls · 69,057 in / 1,830 out tokens · ≈ $0.060 · 13 tool calls · 27.7 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 28s

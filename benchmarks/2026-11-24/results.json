@@ -1,0 +1,5594 @@
+{
+  "set": "2026-11-24",
+  "generated_at": "2026-11-23T15:28:32Z",
+  "prices_usd_per_1m": {
+    "gpt-5.4-mini": [
+      0.75,
+      4.5
+    ],
+    "gpt-5.4": [
+      2.5,
+      15.0
+    ],
+    "gpt-5.4-nano": [
+      0.2,
+      1.25
+    ],
+    "gpt-6-luna": [
+      0.1,
+      0.5
+    ],
+    "gpt-6.1-terra": [
+      1.0,
+      5.0
+    ],
+    "gpt-5.6-luna": [
+      0.2,
+      1.2
+    ],
+    "gpt-5.6-terra": [
+      2.0,
+      12.0
+    ]
+  },
+  "note": "All input tokens are priced at the uncached rate. Local homes have $0 in token charges. OpenAI API rates require an entry in the supplied prices file.",
+  "runs": [
+    {
+      "label": "foundry-gpt-5.4-mini-nexus-1",
+      "home": "Azure AI Foundry",
+      "provider": "foundry",
+      "model": "gpt-5.4-mini",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T14:51:13Z",
+      "wall_s": 97,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "Azure AI Foundry, nexus resource, Global Standard deployment gpt-5.4-mini",
+      "totals": {
+        "model_calls": 36,
+        "input_tokens": 163156,
+        "output_tokens": 4059,
+        "cost_usd": 0.1406325
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause is a deploy regression in the order-total handler where the new code is dereferencing a missing pricing/line-item field, causing an unhandled null-pointer exception on `GET /orders/{id}/total`."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4639,
+            "output_tokens": 291,
+            "tool_calls": 5,
+            "agent_s": 5.5
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5854,
+            "output_tokens": 188,
+            "tool_calls": 3,
+            "agent_s": 4.3
+          },
+          "signals": {
+            "tokens_before": 2506,
+            "tokens_after": 184,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 500,
+            "output_tokens": 56,
+            "tool_calls": 0,
+            "agent_s": 1.8
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 27.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 12,
+            "input_tokens": 75255,
+            "output_tokens": 1728,
+            "tool_calls": 14,
+            "agent_s": 25.7
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 5,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 404,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 28.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 14,
+            "input_tokens": 75714,
+            "output_tokens": 1545,
+            "tool_calls": 18,
+            "agent_s": 27.9
+          },
+          "signals": {
+            "final_answer": "- Root cause: `src/Orders.Api/Pricing.cs` line 15 (`var discount = TierDiscounts[customer.Tier];`) throws `KeyNotFoundException` for `standard` customers, which makes `GET /orders/{id}/total` return HTTP 500.\n- Commit that introduced it: `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.\n- Fix: changed the lookup to `TryGetValue(... ) ? tierDiscount : 0m` in `src/Orders.Api/Pricing.cs`, preserving the old zero-discount behavior for non-gold/silver tiers.\n- Test result after the fix: `Orders.Tests` passed locally (`8 passed, 0 failed`), but the live API still returned `500` on `GET /orders/1001/total`, which suggests the deployed runtime has not picked up the patched code yet.\n↻ loop: You still have incomplete todo items. Continue working until every item is complete, marking each item as comp…\nI’ve already completed the diagnosis and fix, so I’m marking the todos done now.\n- Root cause: `src/Orders.Api/Pricing.cs` line 15 uses `TierDiscounts[customer.Tier]`, which throws for `standard` customers and causes the 500 on `GET /orders/{id}/total`.\n- Commit that introduced it: `9bfbf7d` (“Move tier discounts into a lookup table and add silver tier”).\n- Fix: changed the lookup to `TryGetValue` with a `0m` fallback so non-discounted tiers keep working.\n- Test result after the fix: `Orders.Tests` passed (`8 passed, 0 failed`); the applied code change is in place, but the live API still showed `500` on `GET /orders/1001/total`, indicating the runtime checked by `http_get` wasn’t using the patched build.",
+            "names_commit": true,
+            "names_line": false,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 198,
+            "tool_calls": 1,
+            "agent_s": 6.3
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-gpt-5.4-mini-spark-1",
+      "home": "Azure AI Foundry",
+      "provider": "foundry",
+      "model": "gpt-5.4-mini",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T14:47:19Z",
+      "wall_s": 85,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "Azure AI Foundry, spark resource, Global Standard deployment gpt-5.4-mini",
+      "totals": {
+        "model_calls": 28,
+        "input_tokens": 100836,
+        "output_tokens": 3367,
+        "cost_usd": 0.0907785
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause is a bad deploy that introduced a null reference in the `/orders/{id}/total` code path, causing the endpoint to throw and return HTTP 500."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4667,
+            "output_tokens": 284,
+            "tool_calls": 5,
+            "agent_s": 6.0
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5903,
+            "output_tokens": 238,
+            "tool_calls": 3,
+            "agent_s": 5.0
+          },
+          "signals": {
+            "tokens_before": 2550,
+            "tokens_after": 228,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 555,
+            "output_tokens": 86,
+            "tool_calls": 0,
+            "agent_s": 3.1
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 25.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 11,
+            "input_tokens": 58926,
+            "output_tokens": 1623,
+            "tool_calls": 12,
+            "agent_s": 24.0
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 4,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 347,
+            "report_sources": 3
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 16.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 7,
+            "input_tokens": 29591,
+            "output_tokens": 921,
+            "tool_calls": 12,
+            "agent_s": 15.6
+          },
+          "signals": {
+            "final_answer": "- Root cause: `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]`, but `standard` customers are not in the lookup table, causing a `KeyNotFoundException` and a 500 on `/orders/{id}/total`.\n- Commit that introduced it: `9bfbf7d` (“Move tier discounts into a lookup table and add silver tier”).\n- Fix: changed the lookup to `TryGetValue(...)? tierDiscount : 0m` so unknown/default tiers get no discount, restoring pre-1.4.0 behavior.\n- Test result after the fix: all tests pass (`8 passed, 0 failed`), including the API total tests.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 1,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 171,
+            "tool_calls": 1,
+            "agent_s": 5.7
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-gpt-5.4-mini-spark-2",
+      "home": "Azure AI Foundry",
+      "provider": "foundry",
+      "model": "gpt-5.4-mini",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T14:49:44Z",
+      "wall_s": 89,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "Azure AI Foundry, spark resource, Global Standard deployment gpt-5.4-mini",
+      "totals": {
+        "model_calls": 30,
+        "input_tokens": 115447,
+        "output_tokens": 3635,
+        "cost_usd": 0.10294275
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause is a bad deploy that introduced a null/invalid order-total calculation path in `GET /orders/{id}/total`, causing an unhandled exception and HTTP 500s."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4555,
+            "output_tokens": 286,
+            "tool_calls": 4,
+            "agent_s": 5.9
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5850,
+            "output_tokens": 254,
+            "tool_calls": 3,
+            "agent_s": 4.4
+          },
+          "signals": {
+            "tokens_before": 2562,
+            "tokens_after": 240,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 574,
+            "output_tokens": 89,
+            "tool_calls": 0,
+            "agent_s": 2.1
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 28.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 12,
+            "input_tokens": 69057,
+            "output_tokens": 1830,
+            "tool_calls": 13,
+            "agent_s": 27.7
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 1,
+            "fetches": 5,
+            "not_found": 2,
+            "budget_hit": false,
+            "report_words": 294,
+            "report_sources": 3
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 19.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 8,
+            "input_tokens": 34217,
+            "output_tokens": 951,
+            "tool_calls": 14,
+            "agent_s": 17.8
+          },
+          "signals": {
+            "final_answer": "- root cause: `src/Orders.Api/Pricing.cs:16` looked up `TierDiscounts[customer.Tier]`, but the 1.4.0 refactor omitted the `standard` tier, causing `KeyNotFoundException` and a 500 for standard-customer orders.\n- the commit that introduced it: `9bfbf7d` (“Move tier discounts into a lookup table and add silver tier”).\n- the fix: added `[\"standard\"] = 0m` to the tier discount table in `src/Orders.Api/Pricing.cs`.\n- the test result after the fix: `dotnet test` passed, `8 passed, 0 failed`.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 178,
+            "tool_calls": 1,
+            "agent_s": 5.7
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-gpt-5.4-mini-spark-3",
+      "home": "Azure AI Foundry",
+      "provider": "foundry",
+      "model": "gpt-5.4-mini",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T15:14:39Z",
+      "wall_s": 97,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "Azure AI Foundry, spark resource; after the review fixes and Responses support",
+      "totals": {
+        "model_calls": 36,
+        "input_tokens": 159922,
+        "output_tokens": 4129,
+        "cost_usd": 0.138522
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The deploy introduced a null-order line item path in `GET /orders/{id}/total`, causing a `NullPointerException` when the service tries to sum totals for orders that contain an item with a missing price."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4567,
+            "output_tokens": 274,
+            "tool_calls": 4,
+            "agent_s": 5.8
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5880,
+            "output_tokens": 253,
+            "tool_calls": 3,
+            "agent_s": 4.9
+          },
+          "signals": {
+            "tokens_before": 2566,
+            "tokens_after": 244,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 579,
+            "output_tokens": 100,
+            "tool_calls": 0,
+            "agent_s": 2.5
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 26.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 12,
+            "input_tokens": 76956,
+            "output_tokens": 1862,
+            "tool_calls": 14,
+            "agent_s": 25.2
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 6,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 405,
+            "report_sources": 5
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 27.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 14,
+            "input_tokens": 70746,
+            "output_tokens": 1412,
+            "tool_calls": 18,
+            "agent_s": 26.7
+          },
+          "signals": {
+            "final_answer": "That was the local API, not the external status page, and I can’t access arbitrary URLs from here.\n- Root cause: `src/Orders.Api/Pricing.cs` used `TierDiscounts[customer.Tier]`, which throws for tiers not present in the lookup and caused HTTP 500 on `/orders/{id}/total`.\n- Commit that introduced it: `9bfbf7d` (`Move tier discounts into a lookup table and add silver tier`).\n- Fix: replaced the indexer with `TryGetValue(...)` and defaulted unknown tiers to `0m`; applied as proposal `fix-total-unknown-tier`.\n- Test result after the fix: `Orders.Tests` passed, `8/8` tests green.",
+            "names_commit": true,
+            "names_line": false,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 175,
+            "tool_calls": 1,
+            "agent_s": 5.7
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-gpt-5.4-mini-spark-4",
+      "home": "Azure AI Foundry",
+      "provider": "foundry",
+      "model": "gpt-5.4-mini",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T15:25:49Z",
+      "wall_s": 92,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "Azure AI Foundry, spark resource; final code after both reviews",
+      "totals": {
+        "model_calls": 31,
+        "input_tokens": 159902,
+        "output_tokens": 3597,
+        "cost_usd": 0.136113
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause is a bad deploy that introduced a null/invalid order total calculation path for `GET /orders/{id}/total`, causing the handler to throw an unhandled exception and return HTTP 500."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4643,
+            "output_tokens": 306,
+            "tool_calls": 5,
+            "agent_s": 5.8
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5869,
+            "output_tokens": 221,
+            "tool_calls": 3,
+            "agent_s": 4.7
+          },
+          "signals": {
+            "tokens_before": 2525,
+            "tokens_after": 203,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 540,
+            "output_tokens": 95,
+            "tool_calls": 0,
+            "agent_s": 2.1
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 27.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 12,
+            "input_tokens": 88596,
+            "output_tokens": 1760,
+            "tool_calls": 14,
+            "agent_s": 26.1
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 7,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 434,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 20.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 9,
+            "input_tokens": 59060,
+            "output_tokens": 980,
+            "tool_calls": 16,
+            "agent_s": 19.6
+          },
+          "signals": {
+            "final_answer": "- **Root cause:** `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]`, which throws for the `\"standard\"` tier used by order `1001`, causing `/orders/{id}/total` to return HTTP 500.\n- **Introduced by:** commit `f1812c8` (1.4.0 release), which inherited the discount lookup behavior added in the earlier pricing-table change; the breakage shows up after the 1.4.0 deploy.\n- **Fix:** changed the lookup to `TierDiscounts.GetValueOrDefault(customer.Tier)` so unmapped tiers safely get zero discount instead of an exception.\n- **Test result after fix:** all tests passed — `8 passed, 0 failed`.",
+            "names_commit": false,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 1,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 184,
+            "tool_calls": 1,
+            "agent_s": 6.1
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-gpt-5.4-nano-nexus-1",
+      "home": "Azure AI Foundry",
+      "provider": "foundry",
+      "model": "gpt-5.4-nano",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T14:54:48Z",
+      "wall_s": 79,
+      "exit_code": 1,
+      "partial": false,
+      "imported": false,
+      "note": "Azure AI Foundry, nexus resource, Global Standard deployment gpt-5.4-nano",
+      "totals": {
+        "model_calls": 25,
+        "input_tokens": 69537,
+        "output_tokens": 2224,
+        "cost_usd": 0.0166874
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "I can’t determine the root cause from the information provided (no logs, error message, commit details, or service/runtime data)."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4491,
+            "output_tokens": 327,
+            "tool_calls": 3,
+            "agent_s": 5.8
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": false
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 9.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 8707,
+            "output_tokens": 355,
+            "tool_calls": 4,
+            "agent_s": 7.7
+          },
+          "signals": {
+            "tokens_before": 2660,
+            "tokens_after": 338,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 699,
+            "output_tokens": 124,
+            "tool_calls": 0,
+            "agent_s": 3.0
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "fail",
+          "wall_s": 8.0,
+          "exit": 2,
+          "missing": [
+            "Saved reports/",
+            "── usage"
+          ],
+          "usage": null,
+          "signals": {
+            "report_saved": false,
+            "gate_denials": 0,
+            "fetches": 0,
+            "not_found": 0,
+            "budget_hit": false,
+            "report_words": null,
+            "report_sources": null
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 23.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 12,
+            "input_tokens": 49301,
+            "output_tokens": 896,
+            "tool_calls": 11,
+            "agent_s": 22.9
+          },
+          "signals": {
+            "final_answer": "Incident check: I can’t access `https://status.example.com` from this environment (no browsing tool available), so I proceeded with local diagnosis.\n\n### What I found\n- Tests are failing with `KeyNotFoundException: The given key 'standard' was not present in the dictionary.` originating from:\n  - `src/Orders.Api/Pricing.cs` **line 16** (`var discount = TierDiscounts[customer.Tier];`)\n- The failing tests expect `\"standard\"` tier to exist and apply **0%** discount.\n\n### Root cause\nIn **v1.4.0** commit `9bfbf7d` (“Move tier discounts into a lookup table and add silver tier”), the `\"standard\"` tier was removed from `TierDiscounts`, but `Pricing.Total()` still looks up `customer.Tier` and throws when it’s `\"standard\"`—leading to HTTP 500 for `GET /orders/{id}/total`.\n\n### Fix (smallest)\nReintroduced the `\"standard\"` tier to the discounts lookup table with `0.00m` in:\n- `src/Orders.Api/Pricing.cs`\n\n### Test result\n- `dotnet test` now passes: **8 passed, 0 failed**\n\n- **root cause:** Missing `\"standard\"` entry in `TierDiscounts` lookup used by `Pricing.Total()`  \n- **commit that introduced it:** `9bfbf7d` (“Move tier discounts into a lookup table and add silver tier”)  \n- **fix:** Add `[\"standard\"] = 0.00m` to `TierDiscounts` in `src/Orders.Api/Pricing.cs`  \n- **test result after fix:** all tests passing (`8 passed`)",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 1,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 8.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 204,
+            "tool_calls": 1,
+            "agent_s": 7.4
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-gpt-5.4-nano-nexus-2",
+      "home": "Azure AI Foundry",
+      "provider": "foundry",
+      "model": "gpt-5.4-nano",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T15:16:16Z",
+      "wall_s": 121,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "Azure AI Foundry, nexus resource; repeat with AGENT_DEBUG=1 to see the text of the HTTP 400",
+      "totals": {
+        "model_calls": 35,
+        "input_tokens": 145681,
+        "output_tokens": 4155,
+        "cost_usd": 0.034329950000000005
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The GET `/orders/{id}/total` endpoint is failing because the post-deploy database schema/SQL mapping for the total calculation no longer matches production data, causing a server-side exception that results in HTTP 500."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4519,
+            "output_tokens": 229,
+            "tool_calls": 3,
+            "agent_s": 5.2
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": false
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 10.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 8788,
+            "output_tokens": 387,
+            "tool_calls": 4,
+            "agent_s": 8.9
+          },
+          "signals": {
+            "tokens_before": 2687,
+            "tokens_after": 365,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 740,
+            "output_tokens": 128,
+            "tool_calls": 0,
+            "agent_s": 3.0
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 30.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 13,
+            "input_tokens": 83692,
+            "output_tokens": 2042,
+            "tool_calls": 10,
+            "agent_s": 28.9
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 5,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 401,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 41.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 11,
+            "input_tokens": 46748,
+            "output_tokens": 1135,
+            "tool_calls": 16,
+            "agent_s": 41.2
+          },
+          "signals": {
+            "final_answer": "I checked the failing tests and found the HTTP 500 is caused by a `KeyNotFoundException` for tier `\"standard\"` coming from `Pricing.Total()`. Then I compared against the 1.4.0 changes and fixed the pricing tier lookup to include `\"standard\"` again.\n\n**Status/incident check:** I can’t access `https://status.example.com` from this environment (no outbound HTTP tools are available), so I proceeded with repo diagnosis.\n\n### Diagnosis (root cause)\n- **Root cause (file/line):** `src/Orders.Api/Pricing.cs` — `TierDiscounts[customer.Tier]` on **line 16** throws when `customer.Tier` is `\"standard\"` because `\"standard\"` is not present in `TierDiscounts`.\n- **Observed failure:** tests `PricingTests.*` fail with `KeyNotFoundException: The given key 'standard' was not present in the dictionary`, and `OrdersApiTests.Order_totals_are_available` returns `InternalServerError`.\n\n### Commit that introduced it\n- `f1812c8` (Release 1.4.0) — introduced the tier discount lookup table but omitted the `\"standard\"` tier entry.\n\n### Fix (smallest change)\n- Added the missing dictionary entry in `src/Orders.Api/Pricing.cs`:\n  - `[\"standard\"] = 0.00m`\n\n### Test result after fix\n- `dotnet test` now passes: **8 passed, 0 failed**.\n\n- **root cause:** Missing `\"standard\"` tier in `TierDiscounts` used by `Pricing.Total()` (`src/Orders.Api/Pricing.cs`, line 16).\n- **commit introduced it:** `f1812c8` (Release 1.4.0).\n- **fix:** Add `[\"standard\"] = 0.00m` back to `TierDiscounts`.\n- **test result after fix:** `dotnet test` => **Passed (8/8)**.",
+            "names_commit": false,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 3,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 8.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 187,
+            "tool_calls": 1,
+            "agent_s": 7.5
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-gpt-5.4-nexus-1",
+      "home": "Azure AI Foundry",
+      "provider": "foundry",
+      "model": "gpt-5.4",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T14:52:50Z",
+      "wall_s": 118,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "Azure AI Foundry, nexus resource, Global Standard deployment gpt-5.4",
+      "totals": {
+        "model_calls": 31,
+        "input_tokens": 144409,
+        "output_tokens": 4279,
+        "cost_usd": 0.4252075
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The deploy introduced a null dereference in the order-total calculation path for orders without a discount record, causing GET `/orders/{id}/total` to throw and return HTTP 500."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 8.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4687,
+            "output_tokens": 316,
+            "tool_calls": 5,
+            "agent_s": 6.9
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 8.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5943,
+            "output_tokens": 362,
+            "tool_calls": 3,
+            "agent_s": 7.9
+          },
+          "signals": {
+            "tokens_before": 2671,
+            "tokens_after": 349,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 703,
+            "output_tokens": 112,
+            "tool_calls": 0,
+            "agent_s": 2.4
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 43.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 13,
+            "input_tokens": 91169,
+            "output_tokens": 2202,
+            "tool_calls": 15,
+            "agent_s": 42.6
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 6,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 441,
+            "report_sources": 5
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 26.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 8,
+            "input_tokens": 40713,
+            "output_tokens": 1051,
+            "tool_calls": 13,
+            "agent_s": 25.5
+          },
+          "signals": {
+            "final_answer": "I’ve applied the fix and verified the test suite, so I’m closing the last task.\nI couldn’t check `https://status.example.com` from this environment, so I proceeded with local diagnosis.\n\n- root cause: `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]` after the 1.4.0 refactor, which throws `KeyNotFoundException` for the existing `standard` tier and causes `GET /orders/{id}/total` to return 500.\n- the commit that introduced it: `9bfbf7d` — `Move tier discounts into a lookup table and add silver tier`.\n- the fix: changed `src/Orders.Api/Pricing.cs` line 16 from `TierDiscounts[customer.Tier]` to `TierDiscounts.GetValueOrDefault(customer.Tier, 0m)` so standard/unknown tiers get the previous zero-discount behavior.\n- the test result after the fix: `dotnet test` passed, `8 passed, 0 failed`; this also matches the reproduced API issue path that previously returned 500.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 1,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 190,
+            "tool_calls": 1,
+            "agent_s": 6.1
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-local-qwen3-4b-1",
+      "home": "Foundry Local (local)",
+      "provider": "foundry-local",
+      "model": "qwen3-4b-generic-gpu:2",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T14:40:01Z",
+      "wall_s": 410,
+      "exit_code": 1,
+      "partial": false,
+      "imported": false,
+      "note": "",
+      "totals": {
+        "model_calls": 9,
+        "input_tokens": 11769,
+        "output_tokens": 7403,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 16.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 11.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause is a bug in the new code deployed this morning, which incorrectly processes the order ID or total calculation, leading to a 500 error."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "fail",
+          "wall_s": 30.0,
+          "exit": 0,
+          "missing": [
+            "approval needed: restart_service",
+            "✖ rejected"
+          ],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "tool_calls": 0,
+            "agent_s": 29.5
+          },
+          "signals": {
+            "asked_restart": false,
+            "rejected": false,
+            "payments_denied": false
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 40.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1160,
+            "output_tokens": 2707,
+            "tool_calls": 3,
+            "agent_s": 39.2
+          },
+          "signals": {
+            "tokens_before": 100,
+            "tokens_after": 46,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 559,
+            "output_tokens": 254,
+            "tool_calls": 0,
+            "agent_s": 3.7
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "fail",
+          "wall_s": 151.0,
+          "exit": 3,
+          "missing": [
+            "Run this plan?",
+            "Saved reports/"
+          ],
+          "usage": {
+            "model_calls": 0,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "tool_calls": 0,
+            "agent_s": 150.0
+          },
+          "signals": {
+            "report_saved": false,
+            "gate_denials": 0,
+            "fetches": 0,
+            "not_found": 0,
+            "budget_hit": true,
+            "report_words": null,
+            "report_sources": null
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "fail",
+          "wall_s": 57.0,
+          "exit": 0,
+          "missing": [
+            "✔ applied",
+            "Passed!"
+          ],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "tool_calls": 0,
+            "agent_s": 55.3
+          },
+          "signals": {
+            "final_answer": "",
+            "names_commit": false,
+            "names_line": false,
+            "patch_applied": false,
+            "tests_green_after": false,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 96.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 5,
+            "input_tokens": 9990,
+            "output_tokens": 3641,
+            "tool_calls": 4,
+            "agent_s": 94.6
+          },
+          "signals": {
+            "names_commit": false,
+            "explains": false
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "foundry-local-qwen3-4b-3",
+      "home": "Foundry Local (local)",
+      "provider": "foundry-local",
+      "model": "qwen3-4b-generic-gpu:2",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T15:18:29Z",
+      "wall_s": 388,
+      "exit_code": 1,
+      "partial": false,
+      "imported": false,
+      "note": "",
+      "totals": {
+        "model_calls": 12,
+        "input_tokens": 16202,
+        "output_tokens": 8192,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 16.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause is a bug in the recently deployed code that is causing an unhandled exception when processing the /orders/{id}/total endpoint."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "fail",
+          "wall_s": 28.0,
+          "exit": 0,
+          "missing": [
+            "approval needed: restart_service",
+            "✖ rejected"
+          ],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 529,
+            "output_tokens": 2048,
+            "tool_calls": 0,
+            "agent_s": 27.3
+          },
+          "signals": {
+            "asked_restart": false,
+            "rejected": false,
+            "payments_denied": false
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "fail",
+          "wall_s": 17.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 1799,
+            "output_tokens": 1271,
+            "tool_calls": 3,
+            "agent_s": 16.9
+          },
+          "signals": {
+            "tokens_before": 135,
+            "tokens_after": 98,
+            "halved": false
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 647,
+            "output_tokens": 253,
+            "tool_calls": 0,
+            "agent_s": 3.7
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "fail",
+          "wall_s": 151.0,
+          "exit": 3,
+          "missing": [
+            "Run this plan?",
+            "Saved reports/"
+          ],
+          "usage": {
+            "model_calls": 0,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "tool_calls": 0,
+            "agent_s": 150.0
+          },
+          "signals": {
+            "report_saved": false,
+            "gate_denials": 0,
+            "fetches": 0,
+            "not_found": 0,
+            "budget_hit": true,
+            "report_words": null,
+            "report_sources": null
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "fail",
+          "wall_s": 64.0,
+          "exit": 0,
+          "missing": [
+            "✔ applied",
+            "Passed!"
+          ],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 6797,
+            "output_tokens": 2572,
+            "tool_calls": 2,
+            "agent_s": 63.9
+          },
+          "signals": {
+            "final_answer": "",
+            "names_commit": false,
+            "names_line": false,
+            "patch_applied": false,
+            "tests_green_after": false,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 96.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 5,
+            "input_tokens": 6370,
+            "output_tokens": 1724,
+            "tool_calls": 4,
+            "agent_s": 95.1
+          },
+          "signals": {
+            "names_commit": false,
+            "explains": false
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "lmstudio-gpt-oss-20b-low-1",
+      "home": "LM Studio (local)",
+      "provider": "lmstudio",
+      "model": "openai/gpt-oss-20b",
+      "api": "chat",
+      "reasoning_effort": "low",
+      "started_at": "2026-11-23T14:37:29Z",
+      "wall_s": 78,
+      "exit_code": 1,
+      "partial": false,
+      "imported": false,
+      "note": "",
+      "totals": {
+        "model_calls": 38,
+        "input_tokens": 70782,
+        "output_tokens": 3356,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The deployment introduced a bug that omitted the `total` column from the SELECT query, causing a null value to be passed to the JSON serializer and triggering an HTTP 500."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 3635,
+            "output_tokens": 269,
+            "tool_calls": 3,
+            "agent_s": 4.6
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": false
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 6149,
+            "output_tokens": 346,
+            "tool_calls": 3,
+            "agent_s": 5.3
+          },
+          "signals": {
+            "tokens_before": 2637,
+            "tokens_after": 322,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 601,
+            "output_tokens": 345,
+            "tool_calls": 0,
+            "agent_s": 4.2
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "fail",
+          "wall_s": 22.0,
+          "exit": 0,
+          "missing": [
+            "Saved reports/"
+          ],
+          "usage": {
+            "model_calls": 16,
+            "input_tokens": 19671,
+            "output_tokens": 1385,
+            "tool_calls": 14,
+            "agent_s": 20.7
+          },
+          "signals": {
+            "report_saved": false,
+            "gate_denials": 1,
+            "fetches": 12,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": null,
+            "report_sources": null
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 12.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 10,
+            "input_tokens": 39455,
+            "output_tokens": 628,
+            "tool_calls": 9,
+            "agent_s": 11.0
+          },
+          "signals": {
+            "final_answer": "- **Root cause:** Accessing `TierDiscounts[customer.Tier]` raised a `KeyNotFoundException` for tiers not present in the dictionary, causing 500 errors on `/orders/{id}/total`.  \n- **Commit that introduced it:** The change was made in the latest deployment (after tag v1.3.0) where tier defaults were removed.  \n- **Fix applied:** Replaced the direct index lookup with `TierDiscounts.TryGetValue(customer.Tier, out var d) ? d : 0m` in `src/Orders.Api/Pricing.cs`.  \n- **Test result after fix:** All 8 unit tests now pass (`Passed!`), confirming the issue is resolved.",
+            "names_commit": false,
+            "names_line": false,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1152,
+            "output_tokens": 308,
+            "tool_calls": 1,
+            "agent_s": 6.0
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "lmstudio-gpt-oss-20b-low-2",
+      "home": "LM Studio (local)",
+      "provider": "lmstudio",
+      "model": "openai/gpt-oss-20b",
+      "api": "chat",
+      "reasoning_effort": "low",
+      "started_at": "2026-11-23T14:38:47Z",
+      "wall_s": 63,
+      "exit_code": 1,
+      "partial": false,
+      "imported": false,
+      "note": "",
+      "totals": {
+        "model_calls": 35,
+        "input_tokens": 47048,
+        "output_tokens": 2846,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The total calculation query started hitting a N+1 join that exhausted the DB connection pool, causing a 500 on every GET /orders/{id}/total."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 2365,
+            "output_tokens": 246,
+            "tool_calls": 3,
+            "agent_s": 2.9
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": false
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 6156,
+            "output_tokens": 363,
+            "tool_calls": 3,
+            "agent_s": 4.9
+          },
+          "signals": {
+            "tokens_before": 2651,
+            "tokens_after": 336,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 617,
+            "output_tokens": 326,
+            "tool_calls": 0,
+            "agent_s": 3.4
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "fail",
+          "wall_s": 18.0,
+          "exit": 0,
+          "missing": [
+            "Saved reports/"
+          ],
+          "usage": {
+            "model_calls": 19,
+            "input_tokens": 23130,
+            "output_tokens": 1354,
+            "tool_calls": 17,
+            "agent_s": 17.4
+          },
+          "signals": {
+            "report_saved": false,
+            "gate_denials": 1,
+            "fetches": 15,
+            "not_found": 3,
+            "budget_hit": false,
+            "report_words": null,
+            "report_sources": null
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "fail",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [
+            "✔ applied",
+            "Passed!"
+          ],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 13517,
+            "output_tokens": 143,
+            "tool_calls": 3,
+            "agent_s": 3.1
+          },
+          "signals": {
+            "final_answer": "",
+            "names_commit": false,
+            "names_line": false,
+            "patch_applied": false,
+            "tests_green_after": false,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1144,
+            "output_tokens": 355,
+            "tool_calls": 1,
+            "agent_s": 6.4
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "ollama-inkling-default-0",
+      "home": "Ollama (local)",
+      "provider": "ollama",
+      "model": "inkling-2-mini",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "started_at": "2026-11-23T13:40:17Z",
+      "wall_s": 387,
+      "exit_code": 1,
+      "partial": false,
+      "imported": true,
+      "note": "Imported. Code before the provider presets: no reasoning parameter was sent, so inkling used its default (thinking on). The 06-bisect-cli failure is the old git-wording check, not the demo: bisect found the right commit.",
+      "totals": {
+        "model_calls": 36,
+        "input_tokens": 225667,
+        "output_tokens": 13603,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 14.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 8.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause isn’t verifiable from this chat—I need the deploy diff and the GET /orders/{id}/total stack trace/logs to identify it."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 19.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 5809,
+            "output_tokens": 705,
+            "tool_calls": 4,
+            "agent_s": 16.9
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 23.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 7741,
+            "output_tokens": 890,
+            "tool_calls": 4,
+            "agent_s": 21.3
+          },
+          "signals": {
+            "tokens_before": 2765,
+            "tokens_after": 443,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 1104,
+            "output_tokens": 251,
+            "tool_calls": 0,
+            "agent_s": 6.3
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "fail",
+          "wall_s": 151.0,
+          "exit": 3,
+          "missing": [
+            "Saved reports/"
+          ],
+          "usage": {
+            "model_calls": 9,
+            "input_tokens": 69489,
+            "output_tokens": 5906,
+            "tool_calls": 13,
+            "agent_s": 150.0
+          },
+          "signals": {
+            "report_saved": false,
+            "gate_denials": 1,
+            "fetches": 5,
+            "not_found": 1,
+            "budget_hit": true,
+            "report_words": null,
+            "report_sources": null
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 120.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 16,
+            "input_tokens": 140208,
+            "output_tokens": 3850,
+            "tool_calls": 22,
+            "agent_s": 118.9
+          },
+          "signals": {
+            "final_answer": "1002 (gold) and 1003 (silver) work; only 1001 (standard) still 500s — the live process appears to be running the pre-fix build. Let me check Program.cs to confirm nothing else is involved.\nDone. Summary of the diagnosis and fix:\n\n- **Root cause**: `src/Orders.Api/Pricing.cs:16` — `TierDiscounts[customer.Tier]` threw `KeyNotFoundException` for the `standard` tier, because commit `9bfbf7d` (\"Move tier discounts into a lookup table and add silver tier\") added only `gold` (0.05m) and `silver` (0.02m) to the table, dropping the implicit 0% discount for standard customers that the old `customer.Tier == \"gold\" ? 0.05m : 0m` branch handled. Every standard-tier order (e.g. order 1001) therefore 500'd on `/orders/{id}/total`.\n- **Introducing commit**: `9bfbf7d` (the other commits since v1.3.0 — `ab38e53` problem-details and `f1812c8` the 1.4.0 release — are unrelated).\n- **Fix**: added `[\"standard\"] = 0.00m` to the `TierDiscounts` table via proposal `fix-standard-tier-discount`, applied with `apply_proposal`.\n- **Test result**: `dotnet test` now passes 8/8 (was 3 failures). Gold/silver orders (1002, 1003) return 200; the live API still returns 500 for order 1001 because the running process was started before the fix — it needs a restart to pick up the corrected build.\n\nNotes: `status.example.com` was not reachable with the tools available (http_get only targets the local Orders API), so I reproduced directly against the API and tests. The 500 on 1001 via the live endpoint is expected until the process is restarted; the unit/integration tests confirm the code is fixed.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 1,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "fail",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [
+            "is the first 'bad' commit"
+          ],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 36.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1247,
+            "output_tokens": 1662,
+            "tool_calls": 1,
+            "agent_s": 35.1
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "ollama-inkling-low-0",
+      "home": "Ollama (local)",
+      "provider": "ollama",
+      "model": "inkling-2-mini",
+      "api": "chat",
+      "reasoning_effort": "low",
+      "started_at": "2026-11-23T13:53:19Z",
+      "wall_s": 242,
+      "exit_code": 0,
+      "partial": false,
+      "imported": true,
+      "note": "Imported. First run with reasoning effort low, before the presets were renamed; the requests are the same as AGENT_PROVIDER=ollama sends now.",
+      "totals": {
+        "model_calls": 31,
+        "input_tokens": 175326,
+        "output_tokens": 6574,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause cannot be determined without the deploy changes, logs, and traces."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 13.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 3706,
+            "output_tokens": 433,
+            "tool_calls": 5,
+            "agent_s": 11.4
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 12.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 7675,
+            "output_tokens": 264,
+            "tool_calls": 3,
+            "agent_s": 11.1
+          },
+          "signals": {
+            "tokens_before": 2499,
+            "tokens_after": 177,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 674,
+            "output_tokens": 144,
+            "tool_calls": 0,
+            "agent_s": 4.2
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 130.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 14,
+            "input_tokens": 123687,
+            "output_tokens": 4437,
+            "tool_calls": 15,
+            "agent_s": 128.7
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 1,
+            "fetches": 6,
+            "not_found": 2,
+            "budget_hit": false,
+            "report_words": 574,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 45.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 7,
+            "input_tokens": 38268,
+            "output_tokens": 890,
+            "tool_calls": 7,
+            "agent_s": 44.5
+          },
+          "signals": {
+            "final_answer": "- Root cause: `src/Orders.Api/Pricing.cs:16` — the tier-discount lookup table (added in commit `9bfbf7d`) omitted the \"standard\" tier, so `TierDiscounts[customer.Tier]` threw KeyNotFoundException for standard customers, returning HTTP 500 on `/orders/{id}/total`.\n- Introduced by: commit `9bfbf7d` (\"Move tier discounts into a lookup table and add silver tier\"), between v1.3.0 and the 1.4.0 release.\n- Fix: added `[\"standard\"] = 0.00m` to the dictionary (proposal `fix-standard-tier-discount`, applied).\n- Test result after fix: all 8 tests pass (previously 3 failed). Note: the status page at status.example.com was not reachable with my available tools, so the incident link could not be checked; diagnosis relied on tests and git history.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 12.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1247,
+            "output_tokens": 256,
+            "tool_calls": 1,
+            "agent_s": 10.6
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "ollama-inkling-low-1",
+      "home": "Ollama (local)",
+      "provider": "ollama",
+      "model": "inkling-2-mini",
+      "api": "chat",
+      "reasoning_effort": "low",
+      "started_at": "2026-11-23T14:32:32Z",
+      "wall_s": 276,
+      "exit_code": 1,
+      "partial": false,
+      "imported": false,
+      "note": "",
+      "totals": {
+        "model_calls": 32,
+        "input_tokens": 178702,
+        "output_tokens": 7417,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "I can’t determine the root cause without the deploy diff, logs, and traces; it needs an investigation before any single cause can be named."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 13.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 4,
+            "input_tokens": 4605,
+            "output_tokens": 374,
+            "tool_calls": 4,
+            "agent_s": 12.0
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 14.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 7703,
+            "output_tokens": 390,
+            "tool_calls": 4,
+            "agent_s": 13.4
+          },
+          "signals": {
+            "tokens_before": 2581,
+            "tokens_after": 259,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 835,
+            "output_tokens": 195,
+            "tool_calls": 0,
+            "agent_s": 5.0
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "fail",
+          "wall_s": 151.0,
+          "exit": 3,
+          "missing": [],
+          "usage": {
+            "model_calls": 13,
+            "input_tokens": 116239,
+            "output_tokens": 5044,
+            "tool_calls": 14,
+            "agent_s": 150.0
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 1,
+            "fetches": 6,
+            "not_found": 1,
+            "budget_hit": true,
+            "report_words": 665,
+            "report_sources": 5
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 51.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 8,
+            "input_tokens": 48004,
+            "output_tokens": 1030,
+            "tool_calls": 8,
+            "agent_s": 49.2
+          },
+          "signals": {
+            "final_answer": "The status page couldn't be checked — http_get only targets the local Orders API, and there's no web-fetch tool available. The diagnosis proceeded from tests/git instead.\n\n- **Root cause:** `src/Orders.Api/Pricing.cs:16` — the `TierDiscounts` lookup table added in 1.4.0 omits the `\"standard\"` tier, so `TierDiscounts[customer.Tier]` throws `KeyNotFoundException` for standard customers, returning HTTP 500 on `/orders/{id}/total`.\n- **Introducing commit:** `9bfbf7d` (\"Move tier discounts into a lookup table and add silver tier\"), part of the 1.4.0 release (`f1812c8`).\n- **Fix:** Added `[\"standard\"] = 0.00m` to the table (smallest change restoring pre-1.4.0 behavior); applied via proposal `add-standard-tier-discount`.\n- **Test result:** All 8 tests pass (was 3 failed / 5 passed before the fix).",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 1,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 12.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1247,
+            "output_tokens": 256,
+            "tool_calls": 1,
+            "agent_s": 11.4
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "ollama-inkling-low-3",
+      "home": "Ollama (local)",
+      "provider": "ollama",
+      "model": "inkling-2-mini",
+      "api": "chat",
+      "reasoning_effort": "low",
+      "started_at": "2026-11-23T15:03:38Z",
+      "wall_s": 238,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "",
+      "totals": {
+        "model_calls": 30,
+        "input_tokens": 164492,
+        "output_tokens": 5884,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The root cause can’t be determined from the information provided; I need the deploy changes and the 500 error logs/stack traces for GET /orders/{id}/total."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 13.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4004,
+            "output_tokens": 433,
+            "tool_calls": 4,
+            "agent_s": 12.0
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 14.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 7618,
+            "output_tokens": 366,
+            "tool_calls": 3,
+            "agent_s": 13.1
+          },
+          "signals": {
+            "tokens_before": 2554,
+            "tokens_after": 232,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 756,
+            "output_tokens": 199,
+            "tool_calls": 0,
+            "agent_s": 5.9
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 116.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 13,
+            "input_tokens": 109475,
+            "output_tokens": 3378,
+            "tool_calls": 13,
+            "agent_s": 115.3
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 6,
+            "not_found": 2,
+            "budget_hit": false,
+            "report_words": 466,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 48.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 7,
+            "input_tokens": 41323,
+            "output_tokens": 970,
+            "tool_calls": 9,
+            "agent_s": 47.4
+          },
+          "signals": {
+            "final_answer": "Done. Note: I could not reach https://status.example.com (no browser/web tool available; http_get only targets the local Orders API), so the incident check was skipped — the failure was reproduced locally instead.\n\n- Root cause: `src/Orders.Api/Pricing.cs` line 16 — the `TierDiscounts` lookup table (introduced in 9bfbf7d) is missing the `\"standard\"` key, so `TierDiscounts[customer.Tier]` throws `KeyNotFoundException` for standard customers, yielding HTTP 500 on `GET /orders/{id}/total`.\n- Commit: 9bfbf7d \"Move tier discounts into a lookup table and add silver tier\" (part of the 1.4.0 deploy).\n- Fix: added `[\"standard\"] = 0m` to the table (proposal `add-standard-tier-discount`, applied).\n- Test result: `dotnet test` now passes 8/8 (was 5 passed / 3 failed).",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 13.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1247,
+            "output_tokens": 339,
+            "tool_calls": 1,
+            "agent_s": 12.1
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "ollama-inkling-none-partial",
+      "home": "Ollama (local)",
+      "provider": "ollama",
+      "model": "inkling-2-mini",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "started_at": "2026-11-23T13:59:40Z",
+      "wall_s": 223,
+      "exit_code": 3,
+      "partial": true,
+      "imported": true,
+      "note": "Imported. Demos 05 and 04 only, reasoning effort none.",
+      "totals": {
+        "model_calls": 24,
+        "input_tokens": 191659,
+        "output_tokens": 7915,
+        "cost_usd": 0
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "02-tools-and-approval": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "03-sessions-first-run": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "03-sessions-resume": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "04-research-harness": {
+          "status": "fail",
+          "wall_s": 151.0,
+          "exit": 3,
+          "missing": [
+            "Saved reports/"
+          ],
+          "usage": {
+            "model_calls": 11,
+            "input_tokens": 86348,
+            "output_tokens": 5413,
+            "tool_calls": 15,
+            "agent_s": 150.0
+          },
+          "signals": {
+            "report_saved": false,
+            "gate_denials": 1,
+            "fetches": 6,
+            "not_found": 2,
+            "budget_hit": true,
+            "report_words": null,
+            "report_sources": null
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 72.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 13,
+            "input_tokens": 105311,
+            "output_tokens": 2502,
+            "tool_calls": 16,
+            "agent_s": 71.5
+          },
+          "signals": {
+            "final_answer": "The live API still returns 500 — the running server appears to be serving a pre-fix build (the tests, which compile fresh, pass 8/8). The fix itself is applied and verified by the test suite.\n\n- **Root cause**: `src/Orders.Api/Pricing.cs:16` — the 1.4.0 refactor (commit `9bfbf7d`) introduced a `TierDiscounts` lookup table with only `gold` and `silver`, omitting `standard`. Any standard-tier customer (e.g. order 1001 → customer 2) threw `KeyNotFoundException`, surfacing as HTTP 500 on `/orders/{id}/total`.\n- **Commit that introduced it**: `9bfbf7d` \"Move tier discounts into a lookup table and add silver tier\" (part of the 1.4.0 release, `f1812c8`).\n- **Fix**: Added `[\"standard\"] = 0.00m` to the dictionary (restoring the pre-1.4.0 behavior where only gold received a discount). Applied via `proposals/add-standard-tier-discount.patch`.\n- **Test result after fix**: `dotnet test` → Passed: 8, Failed: 0. Note: the local API still returns 500 for `/orders/1001/total` because the running server is serving the pre-fix build — it needs a restart/redeploy to pick up the fix. Also note: I could not actually browse https://status.example.com (no web-fetch tool available); the failure was reproduced and diagnosed locally instead.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "06-cli-first": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "90-bad-endpoint": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "not run",
+          "wall_s": null,
+          "exit": null,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "openai-gpt-5.6-luna-none-1",
+      "home": "OpenAI API",
+      "provider": "foundry",
+      "model": "gpt-5.6-luna",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "started_at": "2026-11-23T15:00:14Z",
+      "wall_s": 104,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "OpenAI API, Chat Completions, reasoning_effort none (tools need none on this API)",
+      "totals": {
+        "model_calls": 33,
+        "input_tokens": 149152,
+        "output_tokens": 4456,
+        "cost_usd": 0.0351776
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "I can’t determine the root cause without access to the deployment diff, logs, or traces."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 4611,
+            "output_tokens": 215,
+            "tool_calls": 5,
+            "agent_s": 4.7
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5827,
+            "output_tokens": 225,
+            "tool_calls": 3,
+            "agent_s": 4.5
+          },
+          "signals": {
+            "tokens_before": 2537,
+            "tokens_after": 215,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 546,
+            "output_tokens": 86,
+            "tool_calls": 0,
+            "agent_s": 1.8
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 41.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 14,
+            "input_tokens": 93403,
+            "output_tokens": 2607,
+            "tool_calls": 16,
+            "agent_s": 40.6
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 1,
+            "fetches": 6,
+            "not_found": 2,
+            "budget_hit": false,
+            "report_words": 398,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 22.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 9,
+            "input_tokens": 43571,
+            "output_tokens": 1178,
+            "tool_calls": 18,
+            "agent_s": 21.4
+          },
+          "signals": {
+            "final_answer": "- **Root cause:** `Pricing.Total` indexed `TierDiscounts` with `\"standard\"`, but the 1.4.0 table omitted that tier, causing `KeyNotFoundException` at `src/Orders.Api/Pricing.cs:16` and HTTP 500.\n- **Commit introduced:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”\n- **Fix:** Added `[\"standard\"] = 0m` to the discount table via the approved proposal `fix-standard-tier-discount`.\n- **Test result:** `dotnet test` passes all **8 tests**. Health endpoint reports version **1.4.0** and status OK.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 1,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 123,
+            "tool_calls": 1,
+            "agent_s": 5.6
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "openai-gpt-5.6-terra-none-1",
+      "home": "OpenAI API",
+      "provider": "foundry",
+      "model": "gpt-5.6-terra",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "started_at": "2026-11-23T15:01:58Z",
+      "wall_s": 100,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "OpenAI API, Chat Completions, reasoning_effort none (tools need none on this API)",
+      "totals": {
+        "model_calls": 28,
+        "input_tokens": 118654,
+        "output_tokens": 4340,
+        "cost_usd": 0.289388
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "The deploy introduced a null-handling regression in the order total calculation, causing requests for orders with missing line-item pricing data to throw an unhandled exception."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5375,
+            "output_tokens": 252,
+            "tool_calls": 5,
+            "agent_s": 5.8
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5897,
+            "output_tokens": 260,
+            "tool_calls": 3,
+            "agent_s": 5.8
+          },
+          "signals": {
+            "tokens_before": 2560,
+            "tokens_after": 238,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 619,
+            "output_tokens": 158,
+            "tool_calls": 0,
+            "agent_s": 2.9
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 36.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 11,
+            "input_tokens": 71967,
+            "output_tokens": 2412,
+            "tool_calls": 16,
+            "agent_s": 35.3
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 5,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 463,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 18.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 7,
+            "input_tokens": 33602,
+            "output_tokens": 1082,
+            "tool_calls": 14,
+            "agent_s": 17.5
+          },
+          "signals": {
+            "final_answer": "The approved patch is applied and the full test suite passes; I’ll mark verification complete.\n- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed `TierDiscounts` with `customer.Tier`; `standard` is not a dictionary key, causing `KeyNotFoundException` and HTTP 500.\n- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier” (included in the 1.4.0 release).\n- **Fix:** Applied approved proposal `default-unknown-tiers-to-no-discount`, replacing the indexer with `TierDiscounts.GetValueOrDefault(customer.Tier)` so standard/unlisted tiers receive zero discount.\n- **Test result after fix:** `dotnet test` passes: **8 passed, 0 failed**. The local `GET /orders/1001/total` had reproduced the 500 before the fix; external status-page retrieval was not available through the provided tools.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 1,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 142,
+            "tool_calls": 1,
+            "agent_s": 6.5
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "openai-gpt-6-luna-none-1",
+      "home": "OpenAI API",
+      "provider": "foundry",
+      "model": "gpt-6-luna",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "started_at": "2026-11-23T14:56:07Z",
+      "wall_s": 106,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "OpenAI API, Chat Completions, reasoning_effort none (tools need none on this API)",
+      "totals": {
+        "model_calls": 32,
+        "input_tokens": 139964,
+        "output_tokens": 3612,
+        "cost_usd": 0.0158024
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "I don’t have access to your deployment or service logs, so I can’t determine the root cause."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 9.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 3963,
+            "output_tokens": 217,
+            "tool_calls": 5,
+            "agent_s": 8.6
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5906,
+            "output_tokens": 196,
+            "tool_calls": 3,
+            "agent_s": 4.4
+          },
+          "signals": {
+            "tokens_before": 2510,
+            "tokens_after": 188,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 5.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 528,
+            "output_tokens": 64,
+            "tool_calls": 0,
+            "agent_s": 4.5
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 34.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 14,
+            "input_tokens": 84530,
+            "output_tokens": 1802,
+            "tool_calls": 16,
+            "agent_s": 33.5
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 6,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 448,
+            "report_sources": 5
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 25.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 8,
+            "input_tokens": 43843,
+            "output_tokens": 1185,
+            "tool_calls": 17,
+            "agent_s": 23.8
+          },
+          "signals": {
+            "final_answer": "The human-approved fix is applied, and all 8 tests pass; I’ll close out the investigation and fix tasks with the incident-check limitation noted.\n- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed the tier-discount dictionary directly. Since `standard` was not a key, pricing threw `KeyNotFoundException` and the endpoint returned HTTP 500.\n- **Introducing commit:** `9bfbf7d` (`Move tier discounts into a lookup table and add silver tier`).\n- **Fix:** Applied the approved change to use `GetValueOrDefault`, preserving zero discount for tiers without an explicit discount. The status URL couldn’t be checked: the available HTTP tool only permits local Orders API paths.\n- **Test result after fix:** All 8 tests passed.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 124,
+            "tool_calls": 1,
+            "agent_s": 5.5
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "openai-gpt-6-luna-responses-low-1",
+      "home": "OpenAI API",
+      "provider": "foundry",
+      "model": "gpt-6-luna",
+      "api": "responses",
+      "reasoning_effort": "low",
+      "started_at": "2026-11-23T15:10:57Z",
+      "wall_s": 103,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "OpenAI API, Responses API (store=false), reasoning effort low",
+      "totals": {
+        "model_calls": 29,
+        "input_tokens": 123930,
+        "output_tokens": 4185,
+        "cost_usd": 0.014485500000000002
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "I can’t determine the root cause without the deploy diff or error logs."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 2815,
+            "output_tokens": 224,
+            "tool_calls": 5,
+            "agent_s": 7.1
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5663,
+            "output_tokens": 227,
+            "tool_calls": 3,
+            "agent_s": 4.9
+          },
+          "signals": {
+            "tokens_before": 2531,
+            "tokens_after": 209,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 490,
+            "output_tokens": 76,
+            "tool_calls": 0,
+            "agent_s": 1.7
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 35.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 12,
+            "input_tokens": 73467,
+            "output_tokens": 2098,
+            "tool_calls": 14,
+            "agent_s": 33.6
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 5,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 438,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 22.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 7,
+            "input_tokens": 40461,
+            "output_tokens": 1402,
+            "tool_calls": 14,
+            "agent_s": 21.6
+          },
+          "signals": {
+            "final_answer": "- **Root cause:** `Pricing.Total` in `src/Orders.Api/Pricing.cs:16` indexes the tier-discount dictionary directly. The 1.4.0 table omitted `standard`, so standard customers cause a `KeyNotFoundException` and the total endpoint returns HTTP 500.\n- **Commit:** `9bfbf7d` (“Move tier discounts into a lookup table and add silver tier”) introduced the regression.\n- **Fix:** Added `standard` with a `0m` discount to the table, preserving the previous no-discount behavior. The patch was applied.\n- **Test result:** All 8 tests pass after the fix. The local API check still returned HTTP 500, suggesting its running instance hasn’t picked up the change; the external status page was not accessible with the available tools.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 0,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 979,
+            "output_tokens": 101,
+            "tool_calls": 1,
+            "agent_s": 5.7
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "openai-gpt-6.1-terra-none-1",
+      "home": "OpenAI API",
+      "provider": "foundry",
+      "model": "gpt-6.1-terra",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "started_at": "2026-11-23T14:57:54Z",
+      "wall_s": 140,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "OpenAI API, Chat Completions, reasoning_effort none (tools need none on this API)",
+      "totals": {
+        "model_calls": 32,
+        "input_tokens": 142414,
+        "output_tokens": 4510,
+        "cost_usd": 0.164964
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 15.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "I don’t have access to the deploy or error logs, so I can’t determine the root cause."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5399,
+            "output_tokens": 211,
+            "tool_calls": 5,
+            "agent_s": 6.8
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5895,
+            "output_tokens": 208,
+            "tool_calls": 3,
+            "agent_s": 5.8
+          },
+          "signals": {
+            "tokens_before": 2515,
+            "tokens_after": 193,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 541,
+            "output_tokens": 79,
+            "tool_calls": 0,
+            "agent_s": 2.3
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 57.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 13,
+            "input_tokens": 79135,
+            "output_tokens": 2765,
+            "tool_calls": 21,
+            "agent_s": 57.0
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 5,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 397,
+            "report_sources": 4
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 35.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 9,
+            "input_tokens": 50250,
+            "output_tokens": 1092,
+            "tool_calls": 20,
+            "agent_s": 34.4
+          },
+          "signals": {
+            "final_answer": "The proposal was applied, and all eight tests now pass.\n- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed a discount table missing the `standard` tier, causing an exception and HTTP 500.\n- **Introduced by:** commit `9bfbf7d` in the 1.4.0 changes.\n- **Fix:** Applied a zero-discount fallback for tiers absent from the table.\n- **Tests after fix:** All 8 passed. The external incident status could not be checked because the HTTP tool only reaches the local API.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 3,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 9.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 1139,
+            "output_tokens": 131,
+            "tool_calls": 1,
+            "agent_s": 8.4
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 1.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    },
+    {
+      "label": "openai-gpt-6.1-terra-responses-low-1",
+      "home": "OpenAI API",
+      "provider": "foundry",
+      "model": "gpt-6.1-terra",
+      "api": "responses",
+      "reasoning_effort": "low",
+      "started_at": "2026-11-23T15:12:40Z",
+      "wall_s": 118,
+      "exit_code": 0,
+      "partial": false,
+      "imported": false,
+      "note": "OpenAI API, Responses API (store=false), reasoning effort low",
+      "totals": {
+        "model_calls": 27,
+        "input_tokens": 116840,
+        "output_tokens": 3672,
+        "cost_usd": 0.1352
+      },
+      "demos": {
+        "00-boundaries": {
+          "status": "pass",
+          "wall_s": 16.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "01-chatbot": {
+          "status": "pass",
+          "wall_s": 2.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "answer": "I can’t determine the root cause without the error logs or the deploy changes."
+          }
+        },
+        "02-tools-and-approval": {
+          "status": "pass",
+          "wall_s": 6.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5175,
+            "output_tokens": 208,
+            "tool_calls": 5,
+            "agent_s": 5.6
+          },
+          "signals": {
+            "asked_restart": true,
+            "rejected": true,
+            "payments_denied": true
+          }
+        },
+        "03-sessions-first-run": {
+          "status": "pass",
+          "wall_s": 7.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 3,
+            "input_tokens": 5608,
+            "output_tokens": 183,
+            "tool_calls": 3,
+            "agent_s": 6.6
+          },
+          "signals": {
+            "tokens_before": 2493,
+            "tokens_after": 171,
+            "halved": true
+          }
+        },
+        "03-sessions-resume": {
+          "status": "pass",
+          "wall_s": 4.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 1,
+            "input_tokens": 411,
+            "output_tokens": 75,
+            "tool_calls": 0,
+            "agent_s": 3.8
+          },
+          "signals": {
+            "restored": true
+          }
+        },
+        "04-research-harness": {
+          "status": "pass",
+          "wall_s": 42.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 9,
+            "input_tokens": 57617,
+            "output_tokens": 1991,
+            "tool_calls": 16,
+            "agent_s": 41.5
+          },
+          "signals": {
+            "report_saved": true,
+            "gate_denials": 0,
+            "fetches": 6,
+            "not_found": 1,
+            "budget_hit": false,
+            "report_words": 425,
+            "report_sources": 5
+          }
+        },
+        "05-diagnose-harness": {
+          "status": "pass",
+          "wall_s": 28.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 8,
+            "input_tokens": 46995,
+            "output_tokens": 1028,
+            "tool_calls": 16,
+            "agent_s": 27.1
+          },
+          "signals": {
+            "final_answer": "The proposal was applied and all eight tests passed; the external incident status remains unverified.\n- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed a discount table that omitted the `standard` tier, causing HTTP 500.\n- **Introducing commit:** `9bfbf7d` — moved tier discounts into a lookup table.\n- **Fix:** Applied a one-line change that falls back to zero discount for unlisted tiers.\n- **Test result:** All 8 tests passed after the fix. The external incident status could not be checked with the available tools.",
+            "names_commit": true,
+            "names_line": true,
+            "patch_applied": true,
+            "tests_green_after": true,
+            "live_denials": 2,
+            "budget_hit": false
+          }
+        },
+        "06-bisect-cli": {
+          "status": "pass",
+          "wall_s": 3.0,
+          "exit": 0,
+          "missing": [],
+          "usage": null,
+          "signals": {
+            "found": true
+          }
+        },
+        "06-cli-first": {
+          "status": "pass",
+          "wall_s": 8.0,
+          "exit": 0,
+          "missing": [],
+          "usage": {
+            "model_calls": 2,
+            "input_tokens": 979,
+            "output_tokens": 128,
+            "tool_calls": 1,
+            "agent_s": 6.8
+          },
+          "signals": {
+            "names_commit": true,
+            "explains": true
+          }
+        },
+        "90-bad-endpoint": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        },
+        "91-rehearsal-flag-guard": {
+          "status": "pass",
+          "wall_s": 0.0,
+          "exit": 2,
+          "missing": [],
+          "usage": null,
+          "signals": {}
+        }
+      }
+    }
+  ],
+  "groups": [
+    {
+      "home": "Azure AI Foundry",
+      "model": "gpt-5.4",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "runs": [
+        "foundry-gpt-5.4-nexus-1"
+      ],
+      "full_runs": 1,
+      "all_green_runs": 1,
+      "median_total_wall_s": 118,
+      "cost_usd_per_full_run": 0.4252075,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 2.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 8.0,
+          "median_agent_s": 6.9,
+          "median_model_calls": 3,
+          "median_tokens": 5003
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 8.0,
+          "median_agent_s": 7.9,
+          "median_model_calls": 3,
+          "median_tokens": 6305
+        },
+        "03-sessions-resume": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": 2.4,
+          "median_model_calls": 1,
+          "median_tokens": 815
+        },
+        "04-research-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 43.0,
+          "median_agent_s": 42.6,
+          "median_model_calls": 13,
+          "median_tokens": 93371
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 26.0,
+          "median_agent_s": 25.5,
+          "median_model_calls": 8,
+          "median_tokens": 41764
+        },
+        "06-bisect-cli": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 7.0,
+          "median_agent_s": 6.1,
+          "median_model_calls": 2,
+          "median_tokens": 1329
+        },
+        "90-bad-endpoint": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "Azure AI Foundry",
+      "model": "gpt-5.4-mini",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "runs": [
+        "foundry-gpt-5.4-mini-nexus-1",
+        "foundry-gpt-5.4-mini-spark-1",
+        "foundry-gpt-5.4-mini-spark-2",
+        "foundry-gpt-5.4-mini-spark-3",
+        "foundry-gpt-5.4-mini-spark-4"
+      ],
+      "full_runs": 5,
+      "all_green_runs": 5,
+      "median_total_wall_s": 92,
+      "cost_usd_per_full_run": 0.136113,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 2.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.8,
+          "median_model_calls": 3,
+          "median_tokens": 4930
+        },
+        "03-sessions-first-run": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 5.0,
+          "median_agent_s": 4.7,
+          "median_model_calls": 3,
+          "median_tokens": 6104
+        },
+        "03-sessions-resume": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 3.0,
+          "median_agent_s": 2.1,
+          "median_model_calls": 1,
+          "median_tokens": 641
+        },
+        "04-research-harness": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 27.0,
+          "median_agent_s": 25.7,
+          "median_model_calls": 12,
+          "median_tokens": 76983
+        },
+        "05-diagnose-harness": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 20.0,
+          "median_agent_s": 19.6,
+          "median_model_calls": 9,
+          "median_tokens": 60040
+        },
+        "06-bisect-cli": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.7,
+          "median_model_calls": 2,
+          "median_tokens": 1317
+        },
+        "90-bad-endpoint": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 5,
+          "runs": 5,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "Azure AI Foundry",
+      "model": "gpt-5.4-nano",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "runs": [
+        "foundry-gpt-5.4-nano-nexus-1",
+        "foundry-gpt-5.4-nano-nexus-2"
+      ],
+      "full_runs": 2,
+      "all_green_runs": 1,
+      "median_total_wall_s": 100.0,
+      "cost_usd_per_full_run": 0.025508675,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 2.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.5,
+          "median_model_calls": 3.0,
+          "median_tokens": 4783.0
+        },
+        "03-sessions-first-run": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 9.5,
+          "median_agent_s": 8.3,
+          "median_model_calls": 4.0,
+          "median_tokens": 9118.5
+        },
+        "03-sessions-resume": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 3.0,
+          "median_agent_s": 3.0,
+          "median_model_calls": 1.0,
+          "median_tokens": 845.5
+        },
+        "04-research-harness": {
+          "passes": 1,
+          "runs": 2,
+          "median_wall_s": 19.0,
+          "median_agent_s": 28.9,
+          "median_model_calls": 13,
+          "median_tokens": 85734
+        },
+        "05-diagnose-harness": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 32.0,
+          "median_agent_s": 32.05,
+          "median_model_calls": 11.5,
+          "median_tokens": 49040.0
+        },
+        "06-bisect-cli": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 2.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 8.0,
+          "median_agent_s": 7.45,
+          "median_model_calls": 2.0,
+          "median_tokens": 1334.5
+        },
+        "90-bad-endpoint": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 0.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 0.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "Foundry Local (local)",
+      "model": "qwen3-4b-generic-gpu:2",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "runs": [
+        "foundry-local-qwen3-4b-1",
+        "foundry-local-qwen3-4b-3"
+      ],
+      "full_runs": 2,
+      "all_green_runs": 0,
+      "median_total_wall_s": 399.0,
+      "cost_usd_per_full_run": 0.0,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 16.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 7.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 0,
+          "runs": 2,
+          "median_wall_s": 29.0,
+          "median_agent_s": 28.4,
+          "median_model_calls": 1.0,
+          "median_tokens": 1288.5
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 2,
+          "median_wall_s": 28.5,
+          "median_agent_s": 28.05,
+          "median_model_calls": 2.5,
+          "median_tokens": 3468.5
+        },
+        "03-sessions-resume": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 4.5,
+          "median_agent_s": 3.7,
+          "median_model_calls": 1.0,
+          "median_tokens": 856.5
+        },
+        "04-research-harness": {
+          "passes": 0,
+          "runs": 2,
+          "median_wall_s": 151.0,
+          "median_agent_s": 150.0,
+          "median_model_calls": 0.0,
+          "median_tokens": 0.0
+        },
+        "05-diagnose-harness": {
+          "passes": 0,
+          "runs": 2,
+          "median_wall_s": 60.5,
+          "median_agent_s": 59.599999999999994,
+          "median_model_calls": 1.5,
+          "median_tokens": 4684.5
+        },
+        "06-bisect-cli": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 3.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 96.0,
+          "median_agent_s": 94.85,
+          "median_model_calls": 5.0,
+          "median_tokens": 10862.5
+        },
+        "90-bad-endpoint": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 0.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "LM Studio (local)",
+      "model": "openai/gpt-oss-20b",
+      "api": "chat",
+      "reasoning_effort": "low",
+      "runs": [
+        "lmstudio-gpt-oss-20b-low-1",
+        "lmstudio-gpt-oss-20b-low-2"
+      ],
+      "full_runs": 2,
+      "all_green_runs": 0,
+      "median_total_wall_s": 70.5,
+      "cost_usd_per_full_run": 0.0,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 0.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 4.0,
+          "median_agent_s": 3.75,
+          "median_model_calls": 4.0,
+          "median_tokens": 3257.5
+        },
+        "03-sessions-first-run": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.1,
+          "median_model_calls": 4.0,
+          "median_tokens": 6507.0
+        },
+        "03-sessions-resume": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 4.5,
+          "median_agent_s": 3.8,
+          "median_model_calls": 1.0,
+          "median_tokens": 944.5
+        },
+        "04-research-harness": {
+          "passes": 0,
+          "runs": 2,
+          "median_wall_s": 20.0,
+          "median_agent_s": 19.049999999999997,
+          "median_model_calls": 17.5,
+          "median_tokens": 22770.0
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 2,
+          "median_wall_s": 7.5,
+          "median_agent_s": 7.05,
+          "median_model_calls": 7.0,
+          "median_tokens": 26871.5
+        },
+        "06-bisect-cli": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 6.5,
+          "median_agent_s": 6.2,
+          "median_model_calls": 2.0,
+          "median_tokens": 1479.5
+        },
+        "90-bad-endpoint": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 0.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 2,
+          "runs": 2,
+          "median_wall_s": 0.5,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "Ollama (local)",
+      "model": "inkling-2-mini",
+      "api": "chat",
+      "reasoning_effort": "default",
+      "runs": [
+        "ollama-inkling-default-0"
+      ],
+      "full_runs": 1,
+      "all_green_runs": 0,
+      "median_total_wall_s": 387,
+      "cost_usd_per_full_run": 0,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 14.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 8.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 19.0,
+          "median_agent_s": 16.9,
+          "median_model_calls": 4,
+          "median_tokens": 6514
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 23.0,
+          "median_agent_s": 21.3,
+          "median_model_calls": 3,
+          "median_tokens": 8631
+        },
+        "03-sessions-resume": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 7.0,
+          "median_agent_s": 6.3,
+          "median_model_calls": 1,
+          "median_tokens": 1355
+        },
+        "04-research-harness": {
+          "passes": 0,
+          "runs": 1,
+          "median_wall_s": 151.0,
+          "median_agent_s": 150.0,
+          "median_model_calls": 9,
+          "median_tokens": 75395
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 120.0,
+          "median_agent_s": 118.9,
+          "median_model_calls": 16,
+          "median_tokens": 144058
+        },
+        "06-bisect-cli": {
+          "passes": 0,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 36.0,
+          "median_agent_s": 35.1,
+          "median_model_calls": 2,
+          "median_tokens": 2909
+        },
+        "90-bad-endpoint": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "Ollama (local)",
+      "model": "inkling-2-mini",
+      "api": "chat",
+      "reasoning_effort": "low",
+      "runs": [
+        "ollama-inkling-low-0",
+        "ollama-inkling-low-1",
+        "ollama-inkling-low-3"
+      ],
+      "full_runs": 3,
+      "all_green_runs": 2,
+      "median_total_wall_s": 242,
+      "cost_usd_per_full_run": 0,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 4.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 13.0,
+          "median_agent_s": 12.0,
+          "median_model_calls": 3,
+          "median_tokens": 4437
+        },
+        "03-sessions-first-run": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 14.0,
+          "median_agent_s": 13.1,
+          "median_model_calls": 3,
+          "median_tokens": 7984
+        },
+        "03-sessions-resume": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.0,
+          "median_model_calls": 1,
+          "median_tokens": 955
+        },
+        "04-research-harness": {
+          "passes": 2,
+          "runs": 3,
+          "median_wall_s": 130.0,
+          "median_agent_s": 128.7,
+          "median_model_calls": 13,
+          "median_tokens": 121283
+        },
+        "05-diagnose-harness": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 48.0,
+          "median_agent_s": 47.4,
+          "median_model_calls": 7,
+          "median_tokens": 42293
+        },
+        "06-bisect-cli": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 4.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 12.0,
+          "median_agent_s": 11.4,
+          "median_model_calls": 2,
+          "median_tokens": 1503
+        },
+        "90-bad-endpoint": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 3,
+          "runs": 3,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "Ollama (local)",
+      "model": "inkling-2-mini",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "runs": [
+        "ollama-inkling-none-partial"
+      ],
+      "full_runs": 0,
+      "all_green_runs": 0,
+      "median_total_wall_s": null,
+      "cost_usd_per_full_run": null,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "03-sessions-first-run": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "03-sessions-resume": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "04-research-harness": {
+          "passes": 0,
+          "runs": 1,
+          "median_wall_s": 151.0,
+          "median_agent_s": 150.0,
+          "median_model_calls": 11,
+          "median_tokens": 91761
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 72.0,
+          "median_agent_s": 71.5,
+          "median_model_calls": 13,
+          "median_tokens": 107813
+        },
+        "06-bisect-cli": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "90-bad-endpoint": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 0,
+          "runs": 0,
+          "median_wall_s": null,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "OpenAI API",
+      "model": "gpt-5.6-luna",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "runs": [
+        "openai-gpt-5.6-luna-none-1"
+      ],
+      "full_runs": 1,
+      "all_green_runs": 1,
+      "median_total_wall_s": 104,
+      "cost_usd_per_full_run": 0.0351776,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 2.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 5.0,
+          "median_agent_s": 4.7,
+          "median_model_calls": 3,
+          "median_tokens": 4826
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 6.0,
+          "median_agent_s": 4.5,
+          "median_model_calls": 3,
+          "median_tokens": 6052
+        },
+        "03-sessions-resume": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 2.0,
+          "median_agent_s": 1.8,
+          "median_model_calls": 1,
+          "median_tokens": 632
+        },
+        "04-research-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 41.0,
+          "median_agent_s": 40.6,
+          "median_model_calls": 14,
+          "median_tokens": 96010
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 22.0,
+          "median_agent_s": 21.4,
+          "median_model_calls": 9,
+          "median_tokens": 44749
+        },
+        "06-bisect-cli": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.6,
+          "median_model_calls": 2,
+          "median_tokens": 1262
+        },
+        "90-bad-endpoint": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "OpenAI API",
+      "model": "gpt-5.6-terra",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "runs": [
+        "openai-gpt-5.6-terra-none-1"
+      ],
+      "full_runs": 1,
+      "all_green_runs": 1,
+      "median_total_wall_s": 100,
+      "cost_usd_per_full_run": 0.289388,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 2.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.8,
+          "median_model_calls": 3,
+          "median_tokens": 5627
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.8,
+          "median_model_calls": 3,
+          "median_tokens": 6157
+        },
+        "03-sessions-resume": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": 2.9,
+          "median_model_calls": 1,
+          "median_tokens": 777
+        },
+        "04-research-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 36.0,
+          "median_agent_s": 35.3,
+          "median_model_calls": 11,
+          "median_tokens": 74379
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 18.0,
+          "median_agent_s": 17.5,
+          "median_model_calls": 7,
+          "median_tokens": 34684
+        },
+        "06-bisect-cli": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 7.0,
+          "median_agent_s": 6.5,
+          "median_model_calls": 2,
+          "median_tokens": 1281
+        },
+        "90-bad-endpoint": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "OpenAI API",
+      "model": "gpt-6-luna",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "runs": [
+        "openai-gpt-6-luna-none-1"
+      ],
+      "full_runs": 1,
+      "all_green_runs": 1,
+      "median_total_wall_s": 106,
+      "cost_usd_per_full_run": 0.0158024,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 9.0,
+          "median_agent_s": 8.6,
+          "median_model_calls": 3,
+          "median_tokens": 4180
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 5.0,
+          "median_agent_s": 4.4,
+          "median_model_calls": 3,
+          "median_tokens": 6102
+        },
+        "03-sessions-resume": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 5.0,
+          "median_agent_s": 4.5,
+          "median_model_calls": 1,
+          "median_tokens": 592
+        },
+        "04-research-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 34.0,
+          "median_agent_s": 33.5,
+          "median_model_calls": 14,
+          "median_tokens": 86332
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 25.0,
+          "median_agent_s": 23.8,
+          "median_model_calls": 8,
+          "median_tokens": 45028
+        },
+        "06-bisect-cli": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.5,
+          "median_model_calls": 2,
+          "median_tokens": 1263
+        },
+        "90-bad-endpoint": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "OpenAI API",
+      "model": "gpt-6-luna",
+      "api": "responses",
+      "reasoning_effort": "low",
+      "runs": [
+        "openai-gpt-6-luna-responses-low-1"
+      ],
+      "full_runs": 1,
+      "all_green_runs": 1,
+      "median_total_wall_s": 103,
+      "cost_usd_per_full_run": 0.014485500000000002,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 4.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 7.0,
+          "median_agent_s": 7.1,
+          "median_model_calls": 3,
+          "median_tokens": 3039
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 6.0,
+          "median_agent_s": 4.9,
+          "median_model_calls": 3,
+          "median_tokens": 5890
+        },
+        "03-sessions-resume": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 2.0,
+          "median_agent_s": 1.7,
+          "median_model_calls": 1,
+          "median_tokens": 566
+        },
+        "04-research-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 35.0,
+          "median_agent_s": 33.6,
+          "median_model_calls": 12,
+          "median_tokens": 75565
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 22.0,
+          "median_agent_s": 21.6,
+          "median_model_calls": 7,
+          "median_tokens": 41863
+        },
+        "06-bisect-cli": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.7,
+          "median_model_calls": 2,
+          "median_tokens": 1080
+        },
+        "90-bad-endpoint": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "OpenAI API",
+      "model": "gpt-6.1-terra",
+      "api": "chat",
+      "reasoning_effort": "none",
+      "runs": [
+        "openai-gpt-6.1-terra-none-1"
+      ],
+      "full_runs": 1,
+      "all_green_runs": 1,
+      "median_total_wall_s": 140,
+      "cost_usd_per_full_run": 0.164964,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 15.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 2.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 7.0,
+          "median_agent_s": 6.8,
+          "median_model_calls": 3,
+          "median_tokens": 5610
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 7.0,
+          "median_agent_s": 5.8,
+          "median_model_calls": 3,
+          "median_tokens": 6103
+        },
+        "03-sessions-resume": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": 2.3,
+          "median_model_calls": 1,
+          "median_tokens": 620
+        },
+        "04-research-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 57.0,
+          "median_agent_s": 57.0,
+          "median_model_calls": 13,
+          "median_tokens": 81900
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 35.0,
+          "median_agent_s": 34.4,
+          "median_model_calls": 9,
+          "median_tokens": 51342
+        },
+        "06-bisect-cli": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 9.0,
+          "median_agent_s": 8.4,
+          "median_model_calls": 2,
+          "median_tokens": 1270
+        },
+        "90-bad-endpoint": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 1.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    },
+    {
+      "home": "OpenAI API",
+      "model": "gpt-6.1-terra",
+      "api": "responses",
+      "reasoning_effort": "low",
+      "runs": [
+        "openai-gpt-6.1-terra-responses-low-1"
+      ],
+      "full_runs": 1,
+      "all_green_runs": 1,
+      "median_total_wall_s": 118,
+      "cost_usd_per_full_run": 0.1352,
+      "per_demo": {
+        "00-boundaries": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 16.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "01-chatbot": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 2.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "02-tools-and-approval": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 6.0,
+          "median_agent_s": 5.6,
+          "median_model_calls": 3,
+          "median_tokens": 5383
+        },
+        "03-sessions-first-run": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 7.0,
+          "median_agent_s": 6.6,
+          "median_model_calls": 3,
+          "median_tokens": 5791
+        },
+        "03-sessions-resume": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 4.0,
+          "median_agent_s": 3.8,
+          "median_model_calls": 1,
+          "median_tokens": 486
+        },
+        "04-research-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 42.0,
+          "median_agent_s": 41.5,
+          "median_model_calls": 9,
+          "median_tokens": 59608
+        },
+        "05-diagnose-harness": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 28.0,
+          "median_agent_s": 27.1,
+          "median_model_calls": 8,
+          "median_tokens": 48023
+        },
+        "06-bisect-cli": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 3.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "06-cli-first": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 8.0,
+          "median_agent_s": 6.8,
+          "median_model_calls": 2,
+          "median_tokens": 1107
+        },
+        "90-bad-endpoint": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        },
+        "91-rehearsal-flag-guard": {
+          "passes": 1,
+          "runs": 1,
+          "median_wall_s": 0.0,
+          "median_agent_s": null,
+          "median_model_calls": null,
+          "median_tokens": null
+        }
+      }
+    }
+  ]
+}

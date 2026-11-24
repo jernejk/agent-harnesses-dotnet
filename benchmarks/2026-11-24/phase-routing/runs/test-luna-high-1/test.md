@@ -1,0 +1,4 @@
+- **Root cause:** `Pricing.cs` indexed the discount table directly; because `standard` was absent, order 1001’s pricing lookup threw `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied the approved proposal, changing the lookup to `TierDiscounts.GetValueOrDefault(customer.Tier)` so unlisted tiers receive a zero discount.
+- **Test result after the fix:** `dotnet test` passed: **8 passed, 0 failed**, including the order-1001 API test. However, the live `GET /orders/1001/total` check still returned **500** while `/health` reported version 1.4.0. The external status page could not be independently checked with the available tools.

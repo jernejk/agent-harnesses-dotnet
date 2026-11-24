@@ -1,0 +1,1 @@
+fix-pricing-tier-default: changes `src/Orders.Api/Pricing.cs` to use `TierDiscounts.GetValueOrDefault(customer.Tier)` instead of the unsafe indexer lookup.

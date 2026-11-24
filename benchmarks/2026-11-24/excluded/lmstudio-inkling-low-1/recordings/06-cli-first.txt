@@ -1,0 +1,4 @@
+
+✖ The endpoint 127.0.0.1:1234 returned HTTP 400.
+
+[rehearse] 06-cli-first: exit 2 in 1s

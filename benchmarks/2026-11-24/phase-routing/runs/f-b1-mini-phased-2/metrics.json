@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-5.4-mini:default",
+    "plan": "gpt-5.4-mini:default",
+    "dev": "gpt-5.4-mini:default",
+    "test": "gpt-5.4-mini:default"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 46.5,
+      "modelCalls": 8,
+      "toolCalls": 15,
+      "inputTokens": 40201,
+      "outputTokens": 1316,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 32768,
+      "costUsd": 0.036073,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 7.4,
+      "modelCalls": 4,
+      "toolCalls": 6,
+      "inputTokens": 14573,
+      "outputTokens": 1115,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 10240,
+      "costUsd": 0.015947,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 35.8,
+      "modelCalls": 4,
+      "toolCalls": 3,
+      "inputTokens": 14101,
+      "outputTokens": 303,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 8576,
+      "costUsd": 0.011939,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 7.8,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "inputTokens": 21252,
+      "outputTokens": 389,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 15488,
+      "costUsd": 0.017690,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 97.49999999999999,
+    "modelCalls": 21,
+    "toolCalls": 28,
+    "inputTokens": 90127,
+    "outputTokens": 3123,
+    "reasoningTokens": 0,
+    "cachedInputTokens": 67072,
+    "costUsd": 0.081649,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fix-unknown-tier-total"
+  ]
+}

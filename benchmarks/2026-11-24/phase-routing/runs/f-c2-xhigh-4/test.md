@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` looks up the customer tier in a dictionary that lacked `standard`, causing `KeyNotFoundException` and HTTP 500.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `add-standard-tier-discount`, adding an explicit zero discount for `standard`.
+- **Test result:** All 8 tests passed (0 failed). The live API was not used for verification because it still runs the deployed 1.4.0 build.

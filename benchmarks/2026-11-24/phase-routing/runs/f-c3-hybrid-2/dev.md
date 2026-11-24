@@ -1,0 +1,1 @@
+fallback-unknown-customer-tiers — proposes a zero-discount fallback for missing or null tiers in `Pricing.cs`; it does not include the test changes.

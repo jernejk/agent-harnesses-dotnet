@@ -1,0 +1,38 @@
+Bisecting: 0 revisions left to test after this (roughly 1 step)
+[ab38e539de6f2cfc15ffa471f13078dfe9e6bdd7] Return problem details for unknown orders
+running 'dotnet' 'test' '--nologo' '-v' 'q'
+Test run for ~/Developer/personal/repos/agent-harnesses-dotnet/target/tests/Orders.Tests/bin/Debug/net11.0/Orders.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net hh:mm:ss.07]     Orders.Tests.PricingTests.Totals_round_to_cents [FAIL]
+[xUnit.net hh:mm:ss.07]     Orders.Tests.PricingTests.Standard_customers_pay_list_price_plus_gst [FAIL]
+[xUnit.net hh:mm:ss.15]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [FAIL]
+
+Failed!  - Failed:     3, Passed:     5, Skipped:     0, Total:     8, Duration: 88 ms - Orders.Tests.dll (net11.0)
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0] Move tier discounts into a lookup table and add silver tier
+running 'dotnet' 'test' '--nologo' '-v' 'q'
+Test run for ~/Developer/personal/repos/agent-harnesses-dotnet/target/tests/Orders.Tests/bin/Debug/net11.0/Orders.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net hh:mm:ss.06]     Orders.Tests.PricingTests.Totals_round_to_cents [FAIL]
+[xUnit.net hh:mm:ss.06]     Orders.Tests.PricingTests.Standard_customers_pay_list_price_plus_gst [FAIL]
+[xUnit.net hh:mm:ss.12]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [FAIL]
+
+Failed!  - Failed:     3, Passed:     5, Skipped:     0, Total:     8, Duration: 72 ms - Orders.Tests.dll (net11.0)
+9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0 is the first bad commit
+commit 9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0
+Author: Priya Nair <priya@example.com>
+Date:   Fri Nov 13 hh:mm:ss 2026 +1000
+
+    Move tier discounts into a lookup table and add silver tier
+
+ src/Orders.Api/OrderStore.cs       | 2 +-
+ src/Orders.Api/Pricing.cs          | 8 +++++++-
+ tests/Orders.Tests/PricingTests.cs | 4 ++++
+ 3 files changed, 12 insertions(+), 2 deletions(-)
+bisect found first bad commit
+
+real	0m2.584s
+user	0m1.381s
+sys	0m0.278s
+
+[rehearse] 06-bisect-cli: exit 0 in 3s

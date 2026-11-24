@@ -1,0 +1,18 @@
+boundary tests, no model calls…
+✔ 00-boundaries                15s  exit 0
+model provider: ollama
+starting the local model…
+resetting target/ and starting the Orders service…
+✔ 01-chatbot                    4s  exit 0
+✔ 02-tools-and-approval        13s  exit 0
+✔ 03-sessions-first-run        14s  exit 0
+✔ 03-sessions-resume            6s  exit 0
+✖ 04-research-harness         151s  exit 3, wanted 0
+✔ 05-diagnose-harness          51s  exit 0
+✔ 06-bisect-cli                 4s  exit 0
+✔ 06-cli-first                 12s  exit 0
+forced failures, expected to fail with a clear message:
+✔ 90-bad-endpoint               0s  exit 2
+✔ 91-rehearsal-flag-guard       1s  exit 2
+model usage: 32 calls, 178,702 in / 7,417 out tokens, ≈ $0.000
+✖ 1 check(s) failed. Output is in recordings/.

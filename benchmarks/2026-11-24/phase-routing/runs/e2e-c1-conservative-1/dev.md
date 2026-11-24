@@ -1,0 +1,1 @@
+Proposal `add-standard-tier-discount` adds an explicit zero discount for standard-tier customers in `src/Orders.Api/Pricing.cs`. It was not applied or tested.

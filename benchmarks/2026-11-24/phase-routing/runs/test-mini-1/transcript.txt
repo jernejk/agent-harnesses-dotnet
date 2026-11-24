@@ -1,0 +1,18 @@
+phase test         gpt-5.4-mini · default
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ test ═══
+I’ll verify the mode, then apply the approved proposal and run the test check.
+→ mode_get()
+I’m in execute mode, so I’ll apply the fix proposal now.
+🔐 approval needed: apply_proposal(name: default-missing-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-missing-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 81 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+- Root cause: `src/Orders.Api/Pricing.cs` used a direct dictionary index for `customer.Tier`, so standard-tier orders like 1001 hit a missing `"standard"` key and threw `KeyNotFoundException`, causing HTTP 500.
+- The commit that introduced it: `9bfbf7d` — **Move tier discounts into a lookup table and add silver tier**.
+- The fix: changed the discount lookup to default missing tiers to zero with `TierDiscounts.GetValueOrDefault(customer.Tier)`, preserving prior fallback behavior.
+- Test result after the fix: `dotnet test` passed with **8 passed, 0 failed**.
+── usage: phased · 3 model calls · 10,409 in / 224 out tokens · ≈ $0.009 · 2 tool calls · 7.7 s
+   test         gpt-5.4-mini · default    7.7 s   3 calls   10,409 in     224 out (0 reasoning) ≈ $0.0088 ok

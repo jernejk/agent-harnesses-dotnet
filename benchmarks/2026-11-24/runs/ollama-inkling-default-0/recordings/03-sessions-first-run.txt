@@ -1,0 +1,29 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(lines: 200, service: orders)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders 500s root cause: KeyNotFoundException for key 'standard' in pri…)
+→ pin_fact(fact: Decision: hotfix the pricing lookup (fix the 'standard' key miss in Pr…)
+  📌 Orders 500s root cause: KeyNotFoundException for key 'standard' in pricing lookup (Orders.Api.Pricing.Total, Pricing.cs line 16) — unhandled exception -> 500 on /orders/{id}/total (e.g. order 1001). Status health 200 but canary 500s.
+  📌 Decision: hotfix the pricing lookup (fix the 'standard' key miss in Pricing.cs); do NOT restart the service.
+Investigated and pinned. Summary:
+
+**Status:** `/health` returns 200 `{"status":"ok","version":"1.4.0"}`, but the canary `GET /orders/1001/total` returns 500 in 0 ms.
+
+**Logs:** Every `/orders/{id}/total` request throws an unhandled `System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in the dictionary` at `Orders.Api.Pricing.Total` (Pricing.cs line 16), surfaced by Kestrel as a 500. This is consistent across orders 1001/1002/1003 (order 9999 correctly logs "not found"). It's a pricing-dictionary lookup miss, not a crash/restart issue — the app stays up, so a restart would not help.
+
+**Pinned facts:**
+1. Root cause: `KeyNotFoundException` for key `'standard'` in the pricing lookup (`Pricing.cs:16`), causing 500s on order total requests.
+2. Decision: hotfix the pricing lookup; do **not** restart the service.
+
+Note: I don't have a code-editing/deploy tool in this session, so the hotfix itself hasn't been applied — the pinned decision records what to do. To execute, fix the `'standard'` lookup in `Pricing.cs` (e.g., add the missing tier or handle the miss gracefully), rebuild, and redeploy. Happy to draft the patch if you want.
+history █████████████████████████████░░░ ≈ 2,765 tok · before compaction
+pinned  📌 Orders 500s root cause: KeyNotFoundException for key 'standard' in pricing lookup (Orders.Api.Pricing.Total, Pricing.cs line 16) — unhandled exception -> 500 on /orders/{id}/total (e.g. order 1001). Status health 200 but canary 500s.
+pinned  📌 Decision: hotfix the pricing lookup (fix the 'standard' key miss in Pricing.cs); do NOT restart the service.
+history ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   443 tok · after compaction
+pinned  📌 Orders 500s root cause: KeyNotFoundException for key 'standard' in pricing lookup (Orders.Api.Pricing.Total, Pricing.cs line 16) — unhandled exception -> 500 on /orders/{id}/total (e.g. order 1001). Status health 200 but canary 500s.
+pinned  📌 Decision: hotfix the pricing lookup (fix the 'standard' key miss in Pricing.cs); do NOT restart the service.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: inkling-2-mini · 3 model calls · 7,741 in / 890 out tokens · ≈ $0.000 · 4 tool calls · 21.3 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 23s

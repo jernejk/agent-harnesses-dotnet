@@ -1,0 +1,18 @@
+
+→ get_service_status(service: Orders 500s)
+→ get_recent_logs(service: Orders 500s, lines: 200)
+  ← NOT FOUND: Orders 500s. Known services: orders, payments.
+  ← NOT FOUND: Orders 500s. Known services: orders, payments.
+
+→ pin_fact(fact: Service Orders 500s not found. Known services: orders, payments.)
+  📌 Service Orders 500s not found. Known services: orders, payments.
+
+"Service 'Orders 500s' not found. Known services: orders, payments. Cannot check status or logs for non-existent service."
+history █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   135 tok · before compaction
+pinned  📌 Service Orders 500s not found. Known services: orders, payments.
+history █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈    98 tok · after compaction
+pinned  📌 Service Orders 500s not found. Known services: orders, payments.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: qwen3-4b-generic-gpu:2 · 3 model calls · 1,799 in / 1,271 out tokens · ≈ $0.000 · 3 tool calls · 16.9 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 17s

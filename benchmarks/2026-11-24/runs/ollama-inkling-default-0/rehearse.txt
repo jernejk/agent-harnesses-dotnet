@@ -1,0 +1,17 @@
+scripts/rehearse.sh: line 13: .run/usage-ledger.jsonl: No such file or directory
+boundary tests, no model calls…
+✔ 00-boundaries                14s  exit 0
+resetting target/ and starting the Orders service…
+✔ 01-chatbot                    8s  exit 0
+✔ 02-tools-and-approval        19s  exit 0
+✔ 03-sessions-first-run        23s  exit 0
+✔ 03-sessions-resume            7s  exit 0
+✖ 04-research-harness         151s  exit 3, wanted 0, missing [Saved reports/]
+✔ 05-diagnose-harness         120s  exit 0
+✖ 06-bisect-cli                 3s  exit 0, wanted 0, missing [is the first 'bad' commit]
+✔ 06-cli-first                 36s  exit 0
+forced failures, expected to fail with a clear message:
+✔ 90-bad-endpoint               0s  exit 2
+✔ 91-rehearsal-flag-guard       1s  exit 2
+model usage: 36 calls, 225,667 in / 13,603 out tokens, ≈ $0.000
+✖ 2 check(s) failed. Output is in recordings/.

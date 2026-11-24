@@ -1,0 +1,91 @@
+phase plan         gpt-6-luna · max
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll verify the reported response path against the checked-in code and its 1.4.0 change, check whether the requested status page is reachable, and then give an implementation-ready plan without changing files. I’ll also distinguish what the repository confirms from what remains unverified (notably the missing stack trace).
+→ todos_add(todos: [{"title":"Check the status page and inspect the reported source chang…)
+→ run_command(command: curl -fsSL --max-time 10 https://status.example.com)
+→ run_command(command: git status --short)
+→ run_command(command: git show ab38e53 -- src/Orders.Api/Program.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/Program.cs)
+  ✖ DENIED by policy: curl -fsSL --max-time 10 https://status.example.com: No curl. Use http_get for the Orders API.
+  ← exit 0 · 
+  ← exit 0 · public partial class Program;
+  ← exit 0 · public partial class Program;
+The source check does not support the stated root cause: commit `ab38e53` adds `builder.Services.AddProblemDetails()` as well as the helper, and that registration is present in the current `Program.cs`. I’m treating the finding as unverified and checking the actual test failures and relevant test/configuration code before choosing any fix. The status-page fetch was denied by the read-only command policy (`curl`); no `http_get` tool is exposed here, so I won’t retry it.
+→ run_command(command: dotnet test)
+→ run_command(command: git grep -n -E 'AddProblemDetails|Results\.Problem|NotFound|Order_tota…)
+→ run_command(command: git log --oneline --decorate -6)
+→ run_command(command: git ls-files)
+  ← exit 1 · [xUnit.net 00:00:00.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ✖ DENIED by policy: git grep -n -E 'AddProblemDetails|Results\.Problem|NotFound|Order_totals_are_available' HEAD: No shell operators (; | & < > ` $), one command.
+  ← exit 0 · 3c4235d Add pricing and API tests
+  ✖ DENIED by policy: git ls-files: git ls-files is not allowed. Try log, show, diff, blame or grep.
+`dotnet test` reproduces the endpoint failure, but its stack trace points to `Pricing.Total` (`Pricing.cs:16`), not problem-details serialization. It also exposes two direct pricing-test failures with the same missing-key error (`'standard'`). I’ll inspect the pricing lookup, customer fixture, and the introducing commit now; that should establish the minimal repair and exact edit lines.
+→ run_command(command: git show HEAD:src/Orders.Api/Pricing.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/OrderStore.cs)
+→ run_command(command: git show HEAD:tests/Orders.Tests/PricingTests.cs)
+→ run_command(command: git show HEAD:tests/Orders.Tests/OrdersApiTests.cs)
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · }
+The failure is now clear from the fixtures and implementation: order 1001 belongs to the `standard` customer, while `Pricing.Total` indexes a discount table containing only `gold` and `silver`. That throws `KeyNotFoundException` and produces the HTTP 500; the old ternary treated every non-gold tier as zero discount. I’m confirming the exact current line numbers and historical behavior for the plan.
+→ run_command(command: git blame -L 5,20 -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git show fcded06:src/Orders.Api/Pricing.cs)
+→ run_command(command: git status --short)
+→ run_command(command: git show ab38e53:src/Orders.Api/Program.cs)
+  ← exit 0 · 2ec9930d (Priya Nair 2026-11-03 11:02:00 +1000 20) }
+  ← exit 0 · }
+  ← exit 0 · 
+  ← exit 0 · public partial class Program;
+The historical 1.3.0 code confirms `standard` previously received a zero discount; the new lookup table dropped that valid tier. The targeted one-line repair is to add an explicit `standard` entry with `0m`. The working tree remains clean, and I have not applied any changes. I’ll now summarize the plan and verification criteria, noting that the external status page could not be queried.
+→ todos_complete(items: [{"id":1,"reason":"Inspected Program.cs and commit ab38e53; the status…)
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:16` indexes `TierDiscounts` with `customer.Tier`, but the table at lines 7–11 has entries only for `"gold"` and `"silver"`. Order `1001` belongs to a `"standard"` customer (`src/Orders.Api/OrderStore.cs`), so the lookup throws `KeyNotFoundException`; that exception causes the HTTP 500.
+
+The test run confirms this: the endpoint failure and both standard-tier pricing failures point to `Pricing.Total` line 16. The supplied problem-details diagnosis is not supported by the code: `ab38e53` registers `AddProblemDetails()` in `Program.cs`.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs`, add an explicit zero-discount entry:
+
+**Before**
+```csharp
+    static readonly Dictionary<string, decimal> TierDiscounts = new()
+    {
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+    };
+```
+
+**After**
+```csharp
+    static readonly Dictionary<string, decimal> TierDiscounts = new()
+    {
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+        ["standard"] = 0m,
+    };
+```
+
+## Why this is the smallest safe fix
+
+It restores the existing `"standard"` tier behavior from 1.3.0—no discount—without changing the calculation, endpoint response path, or handling of unrecognized tiers. Existing tests already cover standard-tier pricing and the affected endpoint.
+
+## Verification (what to run and what it must show)
+
+- Run `dotnet test`. It must pass all 8 tests, including standard-tier pricing and `Order_totals_are_available(orderId: 1001)`.
+- Smoke-test `GET /orders/1001/total`: it must return HTTP 200. With the current order data and pricing formula, the total should be 195.80 AUD.
+- Confirm the unknown-order test still returns 404.
+
+The unchanged repository currently reports 3 failed and 5 passed tests.
+
+## Risks
+
+- The lookup remains case-sensitive and will still throw for an unknown or misspelled tier; this preserves visibility of invalid tier data rather than silently assigning a discount.
+- I could not verify `https://status.example.com`: the status-page request was blocked by the command policy, and no HTTP fetch tool is available here. I made no code changes.
+── usage: phased · 7 model calls · 54,480 in / 8,540 out tokens · ≈ $0.010 · 19 tool calls · 80.2 s
+   plan         gpt-6-luna · max       80.2 s   7 calls   54,480 in   8,540 out (6,809 reasoning) ≈ $0.0097 ok

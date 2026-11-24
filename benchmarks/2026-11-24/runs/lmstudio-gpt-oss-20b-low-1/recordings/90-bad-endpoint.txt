@@ -1,0 +1,4 @@
+
+✖ Cannot reach the model endpoint 127.0.0.1:9: Connection refused (127.0.0.1:9)
+
+[rehearse] 90-bad-endpoint: exit 2 in 0s

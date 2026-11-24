@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs` looked up `TierDiscounts[customer.Tier]` directly, so standard-tier customers like order 1001 hit a `KeyNotFoundException` because only `gold` and `silver` were present.
+- The commit that introduced it: `9bfbf7d` — **Move tier discounts into a lookup table and add silver tier**.
+- The fix: applied `default-missing-tier-discount`, changing the lookup to default missing tiers to zero instead of throwing.
+- The test result after the fix: `dotnet test` passed, with **8 passed, 0 failed**.

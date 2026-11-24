@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed the tier-discount dictionary directly; `standard` was not a key, causing `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `restore-zero-discount-tier-fallback`; null and unrecognized tiers now receive a zero discount, while gold and silver retain their discounts.
+- **Test result:** **8 passed, 0 failed.** The plan expected 10 cases, but the proposal diff changed only `Pricing.cs` and did not add the planned regression tests, so those additional cases were not verified.

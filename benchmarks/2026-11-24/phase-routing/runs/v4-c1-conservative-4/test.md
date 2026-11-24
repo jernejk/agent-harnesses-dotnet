@@ -1,0 +1,4 @@
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` indexed `TierDiscounts` with the customer tier; order 1001’s `standard` tier was absent, causing an unhandled `KeyNotFoundException`.
+- **Regression commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `default-unknown-tier-discount`, which defaults null or unlisted tiers to a zero discount while preserving listed rates.
+- **Test result:** `dotnet test` passed **8/8**. The live API was not used for verification; it remains on the deployed 1.4.0 build.

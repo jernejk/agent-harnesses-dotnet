@@ -1,0 +1,2 @@
+- Establish which tiers can reach `Pricing.Total` and handle all of them safely; adding only `"standard"` still throws for any unlisted tier.
+- Add tests for the remaining reachable tiers and invalid or null tiers where applicable, verifying the intended behavior and unchanged gold and silver pricing.

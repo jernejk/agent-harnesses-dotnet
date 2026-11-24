@@ -1,0 +1,46 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+→ run_command(command: git log --oneline -10)
+→ http_get(path: /orders/1001/total)
+  ← exit 0 · 2518c83 Initial Orders API with in-memory store
+  ← GET /orders/1001/total -> 500 
+→ run_command(command: dotnet test)
+  ← exit 1 · [xUnit.net hh:mm:ss.15]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ run_command(command: git diff v1.3.0..HEAD -- src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+The status page isn't reachable via my tools, so I'll rely on the repo/tests. Root cause is clear.
+→ write_proposal(file: src/Orders.Api/Pricing.cs, name: fix-standard-tier-discount, rationale: The lookup table dropped the implicit 0% discount for standard custome…, replace:         ["silver"] = 0.02m,         ["standard"] = 0.00m,     };, find:         ["silver"] = 0.02m,     };)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..396890a 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -8,6 +8,7 @@ public static class Pricing
+         {
+             ["gold"] = 0.05m,
+             ["silver"] = 0.02m,
+    +        ["standard"] = 0.00m,
+         };
+     
+         public static decimal Total(Order order, Customer customer)
+  ← 13 lines · Wrote proposals/fix-standard-tier-discount.patch:
+🔐 approval needed: apply_proposal(name: fix-standard-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied fix-standard-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 113 ms - Orders.Tes…
+  ← 8 lines · Applied. exit code 0
+- Root cause: `src/Orders.Api/Pricing.cs:16` — the tier-discount lookup table (added in commit `9bfbf7d`) omitted the "standard" tier, so `TierDiscounts[customer.Tier]` threw KeyNotFoundException for standard customers, returning HTTP 500 on `/orders/{id}/total`.
+- Introduced by: commit `9bfbf7d` ("Move tier discounts into a lookup table and add silver tier"), between v1.3.0 and the 1.4.0 release.
+- Fix: added `["standard"] = 0.00m` to the dictionary (proposal `fix-standard-tier-discount`, applied).
+- Test result after fix: all 8 tests pass (previously 3 failed). Note: the status page at status.example.com was not reachable with my available tools, so the incident link could not be checked; diagnosis relied on tests and git history.
+── usage: inkling-2-mini · 7 model calls · 38,268 in / 890 out tokens · ≈ $0.000 · 7 tool calls · 44.5 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 45s

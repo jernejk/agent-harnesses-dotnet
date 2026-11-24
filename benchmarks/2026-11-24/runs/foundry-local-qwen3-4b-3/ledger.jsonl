@@ -1,0 +1,6 @@
+{"at":"2026-11-24T01:18:50.397526+10:00","app":"chatbot","model":"qwen3-4b-generic-gpu:2","calls":1,"input":60,"output":324}
+{"at":"2026-11-24T01:19:18.379432+10:00","app":"tools","model":"qwen3-4b-generic-gpu:2","calls":1,"input":529,"output":2048}
+{"at":"2026-11-24T01:19:35.845704+10:00","app":"sessions","model":"qwen3-4b-generic-gpu:2","calls":3,"input":1799,"output":1271}
+{"at":"2026-11-24T01:19:40.27937+10:00","app":"sessions","model":"qwen3-4b-generic-gpu:2","calls":1,"input":647,"output":253}
+{"at":"2026-11-24T01:23:15.889857+10:00","app":"diagnose","model":"qwen3-4b-generic-gpu:2","calls":2,"input":6797,"output":2572}
+{"at":"2026-11-24T01:24:55.680536+10:00","app":"cli-first","model":"qwen3-4b-generic-gpu:2","calls":4,"input":6370,"output":1724}

@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly indexed the discount table with `customer.Tier`; standard was absent, causing `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `default-missing-tier-discount`, using `TierDiscounts.GetValueOrDefault(customer.Tier)` so unlisted tiers receive zero discount.
+- **Verification:** Tests passed: **8 passed, 0 failed**. However, `GET /orders/1001/total` still returned **HTTP 500** from the local service, so the endpoint verification did not pass.

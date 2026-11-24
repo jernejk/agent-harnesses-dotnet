@@ -1,0 +1,63 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+I’ll verify the incident status, reproduce the failure, then trace changes from v1.3.0 and prepare the smallest approved fix.
+→ todos_add(todos: [{"title": "Check incident status and reproduce total endpoint failure…)
+→ mode_get()
+I’ll check the public status page and the affected local endpoint in parallel.
+→ run_command(command: git status --short)
+→ run_command(command: dotnet test)
+→ run_command(command: git log --oneline v1.3.0..HEAD)
+→ http_get(path: /orders/1001/total)
+  ← exit 0 · 
+  ← exit 1 · [xUnit.net hh:mm:ss.13]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← exit 0 · 9bfbf7d Move tier discounts into a lookup table and add silver tier
+  ← GET /orders/1001/total -> 500 
+The endpoint and test suite reproduce the 500 via a missing `standard` discount lookup; I’ll inspect the introducing commit and current pricing implementation.
+→ run_command(command: git show --stat 9bfbf7d)
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git diff v1.3.0..HEAD -- src/Orders.Api/Pricing.cs tests/Orders.Tests/…)
+→ run_command(command: sed -n '1,120p' src/Orders.Api/Pricing.cs)
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+  ← exit 0 · }
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+  ✖ DENIED by policy: sed -n '1,120p' src/Orders.Api/Pricing.cs: 'sed' is not allow-listed.
+The direct file-read command was denied by policy; the commit diff already identifies the faulty line, so I’ll record diagnosis and prepare the minimal safe lookup fallback.
+→ todos_complete(items: [{"id": 1, "reason": "Local GET /orders/1001/total returned HTTP 500 a…)
+→ write_proposal(name: default-unknown-tiers-to-no-discount, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = TierDiscounts.GetValueOrDefault(customer.Tier);, rationale: Commit 9bfbf7d replaced the prior gold-or-zero conditional with a dict…)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..c304cd9 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -13,7 +13,7 @@ public static class Pricing
+         public static decimal Total(Order order, Customer customer)
+         {
+             var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+    -        var discount = TierDiscounts[customer.Tier];
+    +        var discount = TierDiscounts.GetValueOrDefault(customer.Tier);
+             var total = subtotal * (1 - discount) * (1 + GstRate);
+             return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+         }
+  ← 15 lines · Wrote proposals/default-unknown-tiers-to-no-discount.patch:
+The proposal changes only the unsafe lookup and preserves the legacy zero-discount behavior; I’ll submit it through the approval-gated apply workflow.
+🔐 approval needed: apply_proposal(name: default-unknown-tiers-to-no-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-unknown-tiers-to-no-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 81 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The approved patch is applied and the full test suite passes; I’ll mark verification complete.
+→ todos_complete(items: [{"id":3,"reason":"Applied proposal default-unknown-tiers-to-no-discou…)
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed `TierDiscounts` with `customer.Tier`; `standard` is not a dictionary key, causing `KeyNotFoundException` and HTTP 500.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier” (included in the 1.4.0 release).
+- **Fix:** Applied approved proposal `default-unknown-tiers-to-no-discount`, replacing the indexer with `TierDiscounts.GetValueOrDefault(customer.Tier)` so standard/unlisted tiers receive zero discount.
+- **Test result after fix:** `dotnet test` passes: **8 passed, 0 failed**. The local `GET /orders/1001/total` had reproduced the 500 before the fix; external status-page retrieval was not available through the provided tools.
+── usage: gpt-5.6-terra · 7 model calls · 33,602 in / 1,082 out tokens · ≈ $0.000 · 14 tool calls · 17.5 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 18s

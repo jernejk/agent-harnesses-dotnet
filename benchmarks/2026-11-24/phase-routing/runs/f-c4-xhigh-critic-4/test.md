@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed the discount dictionary, which contains only gold and silver rates; a standard-tier customer caused a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied the proposal’s `TryGetValue` lookup with a zero-discount fallback for unknown or null tiers.
+- **Test result:** `dotnet test` passed **8/8** tests, including the order-1001 API case. The planned unknown-tier and null-tier regression tests were not added by the proposal, so the expected 10-test verification remains incomplete.

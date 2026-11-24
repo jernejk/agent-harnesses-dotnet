@@ -1,0 +1,16 @@
+→ bisect(repo: Orders, start: 1.3.0, end: HEAD)
+  ← git bisect: 9bfbf7d in 2.8 s, 0 tokens
+- **Cause** – The new `TierDiscounts` lookup throws a `KeyNotFoundException` for customers whose tier isn’t present (e.g., “standard”), breaking the test that expects no discount.  
+- **Commit** – `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` (“Move tier discounts into a lookup table and add silver tier”).  
+- **One‑line fix** – Replace the discount calculation with a safe lookup:  
+
+```csharp
+var discount = TierDiscounts.TryGetValue(customer.Tier, out var d) ? d : 0m;
+```
+── usage: openai/gpt-oss-20b · 2 model calls · 1,152 in / 308 out tokens · ≈ $0.000 · 1 tool calls · 6.0 s
+
+                             time        tokens     cost            
+agent does it all (05)     11.0 s    40,083 tok   $0.000     9 tools
+CLI first (06)              6.0 s     1,460 tok   $0.000     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 6s

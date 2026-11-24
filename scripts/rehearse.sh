@@ -6,11 +6,13 @@ set -uo pipefail
 source "$(dirname "$0")/lib.sh"
 cd "$root"
 export HARNESS_REHEARSAL=1 NO_COLOR=1
-out="$root/recordings"
+# REHEARSE_OUT sends the recordings elsewhere (scripts/bench.sh does), leaving the stage fallbacks alone.
+out="${REHEARSE_OUT:-$root/recordings}"
+shown=${out#"$root"/}
 mkdir -p "$out"
 failures=0
 ledger=.run/usage-ledger.jsonl
-ledger_start=$(wc -l < "$ledger" 2>/dev/null || echo 0)
+ledger_start=$([ -f "$ledger" ] && wc -l < "$ledger" || echo 0)
 
 sanitize() { perl -pe "s|\Q$HOME\E|~|g; s/\b\d{2}:\d{2}:\d{2}\b/hh:mm:ss/g"; }
 
@@ -39,13 +41,54 @@ check() {
 echo "boundary tests, no model calls…"
 check 00-boundaries 0 "Passed!" -- dotnet test tests/BoundaryTests --nologo
 if [ "$failures" -gt 0 ]; then
-  echo "✖ a boundary test failed, so no demo ran. See recordings/00-boundaries.txt."
+  echo "✖ a boundary test failed, so no demo ran. See $shown/00-boundaries.txt."
   exit 1
+fi
+
+# The same default as demos/shared/Model.cs: foundry when AGENT_ENDPOINT is set, otherwise ollama.
+provider=${AGENT_PROVIDER:-$([ -n "${AGENT_ENDPOINT:-}" ] && echo foundry || echo ollama)}
+provider=$(printf '%s' "$provider" | tr '[:upper:]' '[:lower:]')
+echo "model provider: $provider"
+# Start Ollama only for the preset server; with LOCAL_ENDPOINT you run your own.
+if [ "$provider" = ollama ] && [ -z "${LOCAL_ENDPOINT:-}" ]; then
+  echo "starting the local model…"
+  mkdir -p .run
+  if ! scripts/local-model.sh start > .run/local-model.txt 2>&1; then
+    echo "✖ scripts/local-model.sh start failed, see .run/local-model.txt"
+    exit 1
+  fi
+  grep '^warning' .run/local-model.txt || true
+fi
+
+# Demo 05 in the Docker sandbox. The marker line is printed only when the tests that ran after
+# the last approved patch passed, so an earlier "Passed!" can't stand in for them.
+sandbox_demo() {
+  dotnet run demos/05-diagnose-harness/diagnose.cs -- --sandbox --auto-approve-for-rehearsal 2>&1 |
+    awk '{ print }
+         /✔ applied/ { applied = 1; green = 0 }
+         applied && /Passed!.*Failed: +0, Passed: +8,/ { green = 1 }
+         END { if (green) print "[rehearse] tests green after the last approved patch" }'
+  return "${PIPESTATUS[0]}"
+}
+
+# The optional Docker sandbox run of demo 05 calls the model, so it comes after the start above.
+if docker image inspect mcr.microsoft.com/dotnet/sdk:11.0 >/dev/null 2>&1; then
+  echo "resetting target/ for the optional Docker sandbox…"
+  mkdir -p .run
+  if scripts/reset-target.sh 2>&1 | sanitize > .run/05-sandbox-reset.txt; then
+    check 05-diagnose-sandbox 0 "external TCP refused|root write refused|source write refused|✔ applied|tests green after the last approved patch|── usage" -- \
+      sandbox_demo
+  else
+    echo "✖ sandbox reset failed, see .run/05-sandbox-reset.txt"
+    failures=$((failures + 1))
+  fi
+else
+  echo "↷ 05-diagnose-sandbox skipped (Docker or the .NET 11 SDK image is unavailable)"
 fi
 
 echo "resetting target/ and starting the Orders service…"
 if ! scripts/reset-target.sh 2>&1 | sanitize > "$out/00-reset.txt"; then
-  echo "✖ scripts/reset-target.sh failed, see recordings/00-reset.txt"
+  echo "✖ scripts/reset-target.sh failed, see $shown/00-reset.txt"
   exit 1
 fi
 bad=$(git -C target log -1 --format=%h --grep='lookup table')
@@ -70,14 +113,16 @@ check 04-research-harness 0 "Run this plan?|Saved reports/|── usage" -- \
   dotnet run demos/04-research-harness/research.cs -- --auto-approve-for-rehearsal
 check 05-diagnose-harness 0 "✖ deny|✔ applied|Passed!|── usage" -- \
   dotnet run demos/05-diagnose-harness/diagnose.cs -- --auto-approve-for-rehearsal
-check 06-bisect-cli 0 "is the first 'bad' commit|$bad" -- demos/06-cli-first/bisect.sh
+# Git 2.54 (Apple) prints "first bad commit"; newer builds quote the term: "first 'bad' commit".
+check 06-bisect-cli 0 "bisect found first|$bad" -- demos/06-cli-first/bisect.sh
 check 06-cli-first 0 "git bisect: $bad|CLI first (06)" -- \
   dotnet run demos/06-cli-first/cli-first.cs
 
 echo "forced failures, expected to fail with a clear message:"
 dead=http://127.0.0.1:9/v1/
 check 90-bad-endpoint 2 "Cannot reach the model endpoint" -- bash -c \
-  'echo hi | dotnet run demos/01-chatbot/chatbot.cs -e AGENT_ENDPOINT="$1"' _ "$dead"
+  'echo hi | dotnet run demos/01-chatbot/chatbot.cs -e AGENT_PROVIDER=foundry -e AGENT_ENDPOINT="$1" \
+    -e AGENT_API_KEY=unused -e AGENT_API=chat -e AGENT_REASONING_EFFORT=default' _ "$dead"
 check 91-rehearsal-flag-guard 2 "is for scripts/rehearse.sh only" -- \
   env -u HARNESS_REHEARSAL dotnet run demos/05-diagnose-harness/diagnose.cs \
   -- --auto-approve-for-rehearsal
@@ -96,7 +141,7 @@ print(f"model usage: {calls} calls, {tokens_in:,} in / {tokens_out:,} out tokens
 PY
 
 if [ "$failures" -gt 0 ]; then
-  echo "✖ $failures check(s) failed. Output is in recordings/."
+  echo "✖ $failures check(s) failed. Output is in $shown/."
   exit 1
 fi
-echo "✔ all demos green. Output is in recordings/."
+echo "✔ all demos green. Output is in $shown/."

@@ -1,0 +1,3 @@
+✔ 05-diagnose-harness          72s  exit 0
+✖ 04-research-harness         151s  exit 3, wanted 0, missing [Saved reports/]
+(partial run: demos 05 and 04 only, run directly with --auto-approve-for-rehearsal)

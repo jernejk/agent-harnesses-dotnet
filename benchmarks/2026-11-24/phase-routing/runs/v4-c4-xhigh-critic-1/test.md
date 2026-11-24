@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` in the failing 1.4.0 build directly indexed the discount table with the customer tier; `standard` was absent, causing `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `fix-null-tier-discount`; unmapped or null tiers now receive zero discount. The proposal did **not** add the planned null-tier regression test.
+- **Test result:** `dotnet test` passed **8, failed 0**. The plan called for 9 passing tests, including the null-tier test, so that verification target was not fully met.

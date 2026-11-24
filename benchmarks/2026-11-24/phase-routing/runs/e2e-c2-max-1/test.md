@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:7–11,16` omitted the `standard` tier from the discount lookup, so pricing order 1001 threw a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Added `"standard" = 0m` to the tier discount table; left the lookup and pricing calculations unchanged.
+- **Test result:** All 8 tests passed; 0 failed, 0 skipped.

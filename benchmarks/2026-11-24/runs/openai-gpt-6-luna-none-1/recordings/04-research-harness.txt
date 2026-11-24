@@ -1,0 +1,48 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+→ mode_get()
+→ file_memory_ls(globPattern: *.md)
+→ file_memory_grep(regexPattern: ., globPattern: *.md)
+→ todos_add(todos: [{"title":"Review .NET 11 platform and C# 15 updates relevant to agent…)
+→ file_memory_write(fileName: plan.md, description: Plan for research report on .NET 11, C# 15, and Agent Framework change…, content: 1. Review .NET 11 platform and C# 15 updates relevant to agent builder…)
+Plan:
+1. Review .NET 11 and C# 15 updates relevant to agent development.
+2. Review Agent Framework’s overview, 1.28.0 release, and agent-harness guidance.
+3. Synthesize what the changes mean for building agents in C#.
+4. Write a concise, cited report.
+  ☐ Review .NET 11 platform and C# 15 updates relevant to agent builders
+  ☐ Review Agent Framework overview, release 1.28.0, and agent harness guidance
+  ☐ Synthesize practical implications for building agents in C# with cited sources
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+I’ll start with the official .NET 11 overview and C# 15 page, then focus on framework capabilities and the recent release.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+The two language/platform references show several capabilities, but the agent-specific changes need the framework overview and release notes; I’ll retrieve those next.
+→ fetch_url(url: https://devblogs.microsoft.com/dotnet/announcing-dotnet-11/)
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+  ← 53 lines · [3] Announcing .NET 11 - .NET Blog
+  ← 113 lines · [4] Microsoft Agent Framework Overview | Microsoft Learn
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+The framework overview describes agent, workflow, and harness building blocks; the supplied 1.28.0 release URL returns 404, so I’ll use the official harness article for concrete developer workflow details.
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 58 lines · [5] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+I have the source set now; I’ll record only brief findings in working notes, mark the research stages complete, and then write the requested report.
+→ file_memory_write(fileName: notes.md, description: Concise source-indexed findings for report on .NET 11 and Agent Framew…, content: - .NET 11 runtime async lowers overhead and improves stack traces; lib…)
+→ todos_complete(items: [{"id": 1, "reason": "Reviewed official .NET 11 overview and C# 15 ref…)
+→ todos_get_remaining()
+→ write_report(title: Building C# Agents: What’s New in .NET 11 and Agent Framework, markdown: ## The short version .NET 11 gives C# agent builders improvements at t…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 5 of 5 fetched sources.
+→ todos_complete(items: [{"id":4,"reason":"Wrote the final cited report using the required rep…)
+Report written: **“Building C# Agents: What’s New in .NET 11 and Agent Framework.”** It covers C# 15 and runtime changes, Agent Framework’s agents/workflows and harness capabilities, and notes that the supplied 1.28.0 release URL returned 404.
+  ✔ Review .NET 11 platform and C# 15 updates relevant to agent builders
+  ✔ Review Agent Framework overview, release 1.28.0, and agent harness guidance
+  ✔ Synthesize practical implications for building agents in C# with cited sources
+  ✔ Write the report
+── usage: gpt-6-luna · 14 model calls · 84,530 in / 1,802 out tokens · ≈ $0.000 · 16 tool calls · 33.5 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 34s

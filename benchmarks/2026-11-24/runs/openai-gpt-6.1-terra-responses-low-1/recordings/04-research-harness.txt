@@ -1,0 +1,54 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+I’ll prepare a research plan focused on changes that matter to C# agent builders.
+→ mode_get()
+→ file_memory_ls()
+→ file_memory_grep(regexPattern: \.NET 11|Agent Framework|C# 15)
+I’ll organize the work around .NET and C# changes, Agent Framework updates, and their practical relevance.
+→ todos_add(todos: [{"title": "Research .NET 11 and C# 15 changes relevant to agent build…)
+→ file_memory_write(fileName: plan.md, content: # Plan 1. Research .NET 11 and C# 15 changes relevant to C# agent buil…, description: Research plan for .NET 11 and Agent Framework changes for C# agent bui…)
+## Plan
+
+1. Review .NET 11 and C# 15 changes relevant to agent builders.
+2. Review Agent Framework’s .NET release and agent-building guidance.
+3. Summarize practical implications and note gaps in the sources.
+4. Write a cited report.
+  ☐ Research .NET 11 and C# 15 changes relevant to agent builders
+  ☐ Research Agent Framework .NET releases and agent-building guidance
+  ☐ Synthesize practical implications and identify source gaps
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+I’ll start with the .NET and C# primary sources, then check the Agent Framework release and guidance.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+→ fetch_url(url: https://devblogs.microsoft.com/dotnet/announcing-dotnet-11/)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+  ← 53 lines · [3] Announcing .NET 11 - .NET Blog
+The .NET sources highlight language, async, JSON, and web changes; I’ll now check the framework-specific details.
+→ file_memory_write(fileName: notes.md, content: - .NET 11 runtime async reduces overhead; net11.0 no longer requires p…, description: Short cited research notes on .NET 11 and Agent Framework.)
+→ todos_complete(items: [{"id": 1, "reason": "Reviewed the .NET 11 overview, C# 15 reference, …)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+  ← 113 lines · [4] Microsoft Agent Framework Overview | Microsoft Learn
+The requested .NET release tag returned 404, so I’ll use the framework’s harness article rather than infer release-specific changes.
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 58 lines · [5] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+The framework sources describe the current harness and orchestration model, but the unavailable tag prevents a verified 1.28.0 changelog.
+→ file_memory_write(fileName: notes.md, content: - .NET 11 runtime async reduces overhead; net11.0 no longer requires p…, description: Short cited research notes on .NET 11 and Agent Framework.)
+→ todos_complete(items: [{"id": 2, "reason": "Reviewed Agent Framework overview and harness ar…)
+I’ll separate platform improvements from framework capabilities and flag what the sources cannot establish.
+→ write_report(title: .NET 11 and Agent Framework for C# agents, markdown: ## Bottom line  .NET 11 improves the C# language and runtime around ag…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 5 of 5 fetched sources.
+The report is ready: [What changed in .NET 11 and Agent Framework](reports/what-changed-in-net-11-and-agent.md).
+
+The .NET 1.28.0 release URL returned 404, so the report distinguishes verified framework capabilities from release-specific changes that could not be confirmed.
+  ✔ Research .NET 11 and C# 15 changes relevant to agent builders
+  ✔ Research Agent Framework .NET releases and agent-building guidance
+  ✔ Synthesize practical implications and identify source gaps
+  ✔ Write the report
+── usage: gpt-6.1-terra · 9 model calls · 57,617 in / 1,991 out tokens · ≈ $0.000 · 16 tool calls · 41.5 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 42s

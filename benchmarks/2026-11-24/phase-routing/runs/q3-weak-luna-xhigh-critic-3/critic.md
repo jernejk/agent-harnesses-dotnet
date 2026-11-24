@@ -1,0 +1,2 @@
+- Handle every unmapped tier safely, not just `"standard"`; other missing keys still throw. Preserve known discounts and define the appropriate behavior for unknown tiers.
+- Add tests for unknown tiers as well as standard, gold, and silver tiers; the existing suite alone does not prove the lookup is safe for all inputs.

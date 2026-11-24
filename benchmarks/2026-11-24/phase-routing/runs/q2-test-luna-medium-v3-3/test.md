@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly indexed `TierDiscounts` with the customer tier; `standard` was absent, causing `KeyNotFoundException`.
+- **Regression commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Replaced `TierDiscounts[customer.Tier]` with `TierDiscounts.GetValueOrDefault(customer.Tier)`, so unlisted tiers receive a zero discount.
+- **Test result:** `dotnet test` passed: **8 passed, 0 failed**. The live API remains on 1.4.0: `/health` returned 200, but `/orders/1001/total` still returns 500 until redeployment.

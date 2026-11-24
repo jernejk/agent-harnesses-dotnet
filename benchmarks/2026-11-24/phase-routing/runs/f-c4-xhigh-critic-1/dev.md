@@ -1,0 +1,1 @@
+default-unlisted-tier-discount — updates `Pricing.Total` to give unlisted or null tiers no discount; proposal only, not applied, and the regression test is not included in this single-file proposal.

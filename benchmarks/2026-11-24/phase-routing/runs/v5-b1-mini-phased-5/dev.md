@@ -1,0 +1,1 @@
+fix-order-total-tier-lookup: changes the tier discount lookup in `src/Orders.Api/Pricing.cs` to safely default unknown tiers to `0m` instead of throwing.

@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs:16` in the 1.4.0 build, where `TierDiscounts[customer.Tier]` throws `KeyNotFoundException` for existing `"standard"` customers.
+- Introduced by commit `9bfbf7d` — `Move tier discounts into a lookup table and add silver tier`.
+- Fix: changed the lookup to `TierDiscounts.TryGetValue(customer.Tier, out var tierDiscount) ? tierDiscount : 0m` so unknown tiers fall back safely to no discount.
+- Test result: `dotnet test` passed after the fix, with `8` tests passed, `0` failed.

@@ -1,0 +1,36 @@
+→ get_service_status(service: orders)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+→ get_recent_logs(service: orders, lines: 200)
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Root cause: pricing lookup missing 'standard' key leading to 500. Deci…)
+  📌 Root cause: pricing lookup missing 'standard' key leading to 500. Decision: hotfix pricing dictionary, no restart.
+**Investigation Summary**
+
+- **Service status:** Orders service is healthy (`200 OK`) but a canary request to `/orders/1001/total` immediately returns **500**.
+- **Logs (200 lines):** Repeated `KeyNotFoundException` for the key `'standard'` in `Orders.Api.Pricing.Total`. This occurs on every request that needs pricing, causing the 500 errors.
+
+**Root Cause**
+
+The pricing lookup dictionary is missing the `'standard'` key, which is required for calculating order totals. This omission triggers a `KeyNotFoundException`, resulting in 500 responses.
+
+**Decision**
+
+Apply a hot‑fix to add the missing `'standard'` key (and any other necessary defaults) directly in the pricing logic. No service restart is required; the change will be applied on next request cycle.
+
+**Pinned Fact**
+
+```json
+{
+  "fact":"Root cause: pricing lookup missing 'standard' key leading to 500. Decision: hotfix pricing dictionary, no restart."
+}
+```
+
+The fact has been pinned and will survive compaction/restarts.
+history ████████████████████████████░░░░ ≈ 2,651 tok · before compaction
+pinned  📌 Root cause: pricing lookup missing 'standard' key leading to 500. Decision: hotfix pricing dictionary, no restart.
+history ███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   336 tok · after compaction
+pinned  📌 Root cause: pricing lookup missing 'standard' key leading to 500. Decision: hotfix pricing dictionary, no restart.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: openai/gpt-oss-20b · 4 model calls · 6,156 in / 363 out tokens · ≈ $0.000 · 3 tool calls · 4.9 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 6s

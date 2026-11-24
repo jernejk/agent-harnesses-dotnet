@@ -1,0 +1,1 @@
+`add-standard-tier-discount` — adds a zero-discount mapping for standard-tier customers in `Pricing.cs`.

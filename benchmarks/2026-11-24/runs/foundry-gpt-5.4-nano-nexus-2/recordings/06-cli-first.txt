@@ -1,0 +1,12 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.8 s, 0 tokens
+- **Cause:** `Pricing.Total()` started indexing `TierDiscounts[customer.Tier]`; in 1.4.0 the new “silver” tier (and tier discount lookup) changed expected totals, but the test expectations (and/or data setup) for the tier mapping didn’t fully align with the new “silver” behavior.  
+- **Commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` (“Move tier discounts into a lookup table and add silver tier”).  
+- **One-line fix:** In `Pricing.Total`, change the discount lookup to handle unknown/missing tiers safely (e.g., `var discount = TierDiscounts.TryGetValue(customer.Tier, out var d) ? d : 0m;`).
+── usage: gpt-5.4-nano · 2 model calls · 1,139 in / 187 out tokens · ≈ $0.000 · 1 tool calls · 7.5 s
+
+                             time        tokens     cost            
+agent does it all (05)     41.2 s    47,883 tok   $0.011    16 tools
+CLI first (06)              7.5 s     1,326 tok   $0.001     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 8s

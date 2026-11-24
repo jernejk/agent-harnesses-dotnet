@@ -1,0 +1,8 @@
+history █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   177 tok · restored in a new process
+pinned  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Pricing.Total (Pricing.cs line 16); pricing lookup missing 'standard' tier. Decision: hotfix the pricing lookup; do NOT restart the service.
+We decided: hotfix the pricing lookup, and do NOT restart the service.
+
+Why: the 500s trace to a single root cause — `KeyNotFoundException: 'standard'` in `Pricing.Total` (Pricing.cs line 16) because the pricing lookup is missing the `standard` tier. Restarting wouldn't fix the missing tier and could disrupt healthy traffic, so the fix is to repair the pricing lookup itself.
+── usage: inkling-2-mini · 1 model calls · 674 in / 144 out tokens · ≈ $0.000 · 0 tool calls · 4.2 s
+
+[rehearse] 03-sessions-resume: exit 0 in 5s

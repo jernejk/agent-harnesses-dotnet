@@ -1,0 +1,1 @@
+restore-unknown-tier-zero-discount — proposes a zero-discount fallback for unknown or null tiers in `Pricing.cs`; not applied.

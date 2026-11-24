@@ -1,0 +1,1 @@
+`fallback-zero-for-unknown-tier-discounts` — defaults missing or null customer tiers to a zero discount.

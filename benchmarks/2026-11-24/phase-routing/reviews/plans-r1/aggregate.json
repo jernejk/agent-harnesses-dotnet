@@ -1,0 +1,102 @@
+{
+ "plan-weak-terra-medium": {
+  "mean": 8.666666666666666,
+  "per_reviewer": {
+   "opus": 8.5,
+   "sol": 8.5,
+   "neon": 9
+  },
+  "wrong": 0,
+  "judged": 6
+ },
+ "plan-weak-luna-max": {
+  "mean": 7.166666666666667,
+  "per_reviewer": {
+   "opus": 7,
+   "sol": 7.5,
+   "neon": 7
+  },
+  "wrong": 0,
+  "judged": 6
+ },
+ "plan-good-luna-max": {
+  "mean": 8.833333333333334,
+  "per_reviewer": {
+   "opus": 9,
+   "sol": 9,
+   "neon": 8.5
+  },
+  "wrong": 1,
+  "judged": 6
+ },
+ "plan-weak-luna-xhigh": {
+  "mean": 7.333333333333333,
+  "per_reviewer": {
+   "opus": 7,
+   "sol": 7.5,
+   "neon": 7.5
+  },
+  "wrong": 0,
+  "judged": 6
+ },
+ "plan-good-luna-xhigh": {
+  "mean": 9.0,
+  "per_reviewer": {
+   "opus": 9,
+   "sol": 9.5,
+   "neon": 8.5
+  },
+  "wrong": 0,
+  "judged": 6
+ },
+ "plan-good-mini": {
+  "mean": 6.5,
+  "per_reviewer": {
+   "opus": 6.5,
+   "sol": 7.5,
+   "neon": 5.5
+  },
+  "wrong": 0,
+  "judged": 6
+ },
+ "plan-weak-mini": {
+  "mean": 1.6666666666666667,
+  "per_reviewer": {
+   "opus": 1.5,
+   "sol": 2.5,
+   "neon": 1
+  },
+  "wrong": 6,
+  "judged": 6
+ },
+ "plan-good-luna-high": {
+  "mean": 6.833333333333333,
+  "per_reviewer": {
+   "opus": 7,
+   "sol": 7,
+   "neon": 6.5
+  },
+  "wrong": 0,
+  "judged": 6
+ },
+ "plan-weak-luna-high": {
+  "mean": 7.333333333333333,
+  "per_reviewer": {
+   "opus": 7,
+   "sol": 8,
+   "neon": 7
+  },
+  "wrong": 0,
+  "judged": 6
+ },
+ "plan-good-terra-medium": {
+  "mean": 8.333333333333334,
+  "per_reviewer": {
+   "opus": 8,
+   "sol": 8.5,
+   "neon": 8.5
+  },
+  "wrong": 0,
+  "judged": 6
+ }
+}

@@ -1,0 +1,20 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+→ get_service_status(service: payments)
+→ get_recent_logs(service: orders, lines: 80)
+→ get_recent_logs(service: payments, lines: 80)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+  ← 80 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- It looks like **Orders itself**, not payments. Evidence: Orders health is `"status":"ok","version":"1.4.0"` but its canary fails: `GET /orders/1001/total -> 500 in 0 ms`.
+- The Orders logs show the direct cause: `System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in the dictionary` in `Orders.Api.Pricing.Total(...)` at `Pricing.cs:line 16`.
+- That points to an internal Orders pricing/config bug, not a downstream timeout/error; the failure is immediate (`500 in 0 ms`) and the stack trace is fully inside Orders code.
+- I could not verify payments directly because the tooling returned: `DENIED: payments. Outside this agent's scope (card data). Ask a human.`
+- I attempted the requested restart, but it was blocked: `restart_service(orders)` was `rejected by the approver`. A human/operator will need to perform the restart.
+── usage: gpt-5.4 · 3 model calls · 4,687 in / 316 out tokens · ≈ $0.016 · 5 tool calls · 6.9 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 8s

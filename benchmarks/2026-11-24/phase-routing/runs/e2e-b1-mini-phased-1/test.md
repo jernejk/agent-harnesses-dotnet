@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs:16` used `TierDiscounts[customer.Tier]`, and the lookup table introduced in `9bfbf7d` omitted the existing `standard` tier, causing `KeyNotFoundException` and HTTP 500 for `/orders/{id}/total`.
+- Introduced by commit: `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` (`Move tier discounts into a lookup table and add silver tier`).
+- Fix: added `["standard"] = 0m` to the tier discount table in `src/Orders.Api/Pricing.cs`.
+- Test result after fix: `dotnet test` passed — `8` tests passed, `0` failed, `0` skipped.

@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed the discount dictionary with customer tier `standard`, which is not a key, causing a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d8` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `default-unknown-tier-discount`, using `GetValueOrDefault` so unlisted tiers receive no discount.
+- **Test result:** All 8 tests passed (0 failed). The localhost API was not used for verification because it still runs the deployed 1.4.0 build.

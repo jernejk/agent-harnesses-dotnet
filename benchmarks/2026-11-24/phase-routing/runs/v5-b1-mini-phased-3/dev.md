@@ -1,0 +1,1 @@
+fix-order-total-tier-fallback: changes `src/Orders.Api/Pricing.cs` to use a safe tier discount fallback (`TryGetValue` with `0m`) instead of crashing on unknown tiers.

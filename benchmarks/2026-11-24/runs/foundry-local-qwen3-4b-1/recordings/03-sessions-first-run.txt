@@ -1,0 +1,15 @@
+
+→ get_service_status(service: Orders 500s)
+→ get_recent_logs(service: Orders 500s, lines: 200)
+→ pin_fact(fact: We hotfix the pricing lookup and do not restart.)
+  ← NOT FOUND: Orders 500s. Known services: orders, payments.
+  ← NOT FOUND: Orders 500s. Known services: orders, payments.
+  📌 We hotfix the pricing lookup and do not restart.
+history █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   100 tok · before compaction
+pinned  📌 We hotfix the pricing lookup and do not restart.
+history ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈    46 tok · after compaction
+pinned  📌 We hotfix the pricing lookup and do not restart.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: qwen3-4b-generic-gpu:2 · 2 model calls · 1,160 in / 2,707 out tokens · ≈ $0.000 · 3 tool calls · 39.2 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 40s

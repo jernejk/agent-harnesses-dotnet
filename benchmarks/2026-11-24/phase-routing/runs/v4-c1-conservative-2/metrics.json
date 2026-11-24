@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:high",
+    "plan": "gpt-6-luna:high",
+    "dev": "gpt-6-luna:medium",
+    "test": "gpt-6-luna:medium"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 23.6,
+      "modelCalls": 8,
+      "toolCalls": 19,
+      "inputTokens": 44492,
+      "outputTokens": 2500,
+      "reasoningTokens": 1048,
+      "cachedInputTokens": 38199,
+      "costUsd": 0.005699,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 42,
+      "modelCalls": 7,
+      "toolCalls": 16,
+      "inputTokens": 48195,
+      "outputTokens": 4363,
+      "reasoningTokens": 2804,
+      "cachedInputTokens": 39682,
+      "costUsd": 0.007001,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 6.6,
+      "modelCalls": 3,
+      "toolCalls": 2,
+      "inputTokens": 9723,
+      "outputTokens": 421,
+      "reasoningTokens": 128,
+      "cachedInputTokens": 8443,
+      "costUsd": 0.001183,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 9.6,
+      "modelCalls": 4,
+      "toolCalls": 3,
+      "inputTokens": 15959,
+      "outputTokens": 632,
+      "reasoningTokens": 187,
+      "cachedInputTokens": 14184,
+      "costUsd": 0.001912,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 81.79999999999998,
+    "modelCalls": 22,
+    "toolCalls": 40,
+    "inputTokens": 118369,
+    "outputTokens": 7916,
+    "reasoningTokens": 4167,
+    "cachedInputTokens": 100508,
+    "costUsd": 0.015795,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fallback-for-missing-tier-discounts"
+  ]
+}

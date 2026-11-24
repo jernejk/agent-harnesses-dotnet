@@ -1,0 +1,15 @@
+{
+  "label": "openai-gpt-6.1-terra-responses-low-1",
+  "provider": "foundry",
+  "models": [
+    "gpt-6.1-terra"
+  ],
+  "endpoint_host": "api.openai.com",
+  "api": "responses",
+  "reasoning_effort": "low",
+  "started_at": "2026-11-23T15:12:40Z",
+  "wall_s": 118,
+  "exit_code": 0,
+  "machine": "arm64 Apple M5 Max",
+  "note": "OpenAI API, Responses API (store=false), reasoning effort low"
+}

@@ -1,0 +1,16 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 1 ms
+→ get_recent_logs(service: orders, lines: 50)
+  ← 50 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- The health check shows **orders** is “ok”, but the canary request returns a 500.  
+- Log entries reveal a **KeyNotFoundException** for the key `'standard'` in `Orders.Api.Pricing.Total`, indicating a missing pricing rule.  
+- The error originates inside the Orders service itself (not a payment‑service call), so the 500s are due to internal logic.  
+- The failure is isolated to a dictionary lookup; it does not involve the payments dependency.  
+- A restart would clear any in‑memory cache but first update or reload the pricing dictionary to include `'standard'`.
+── usage: openai/gpt-oss-20b · 4 model calls · 3,635 in / 269 out tokens · ≈ $0.000 · 3 tool calls · 4.6 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 5s

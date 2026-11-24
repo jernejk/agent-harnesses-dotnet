@@ -1,0 +1,1 @@
+add-standard-tier-discount — adds the standard tier’s zero discount to `Pricing.cs`.

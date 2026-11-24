@@ -1,0 +1,1 @@
+fix-standard-tier-total: changes `src/Orders.Api/Pricing.cs` to use `TierDiscounts.GetValueOrDefault(customer.Tier)` instead of throwing on missing tiers.

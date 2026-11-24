@@ -1,0 +1,1 @@
+fix-order-total-legacy-tier-discount: changes `src/Orders.Api/Pricing.cs` to default missing customer tiers to `0m` instead of throwing on dictionary lookup.

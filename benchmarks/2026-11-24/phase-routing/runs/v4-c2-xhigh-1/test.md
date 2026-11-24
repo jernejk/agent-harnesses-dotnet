@@ -1,0 +1,4 @@
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` directly indexed the discount table. The table lacked the `standard` tier, so the lookup threw `KeyNotFoundException` and caused the HTTP 500.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `default-missing-tier-discount`; null or unlisted tiers now receive a 0% discount while gold and silver keep their configured discounts.
+- **Test result:** `dotnet test` passed: **8 passed, 0 failed**. The localhost service remains on the deployed 1.4.0 build; redeployment and live API verification were out of scope.

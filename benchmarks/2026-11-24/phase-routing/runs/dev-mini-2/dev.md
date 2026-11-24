@@ -1,0 +1,1 @@
+fix-standard-tier-total-lookup: changes `Pricing.cs` to use `GetValueOrDefault` for tier discounts, avoiding the missing-key 500 for standard-tier orders.

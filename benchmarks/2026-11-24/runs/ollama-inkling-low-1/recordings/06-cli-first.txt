@@ -1,0 +1,12 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.9 s, 0 tokens
+- Cause: `Pricing.Total` now does `TierDiscounts[customer.Tier]`, but the new lookup table only contains "gold" and "silver" — a "standard" customer (e.g. Noah Patel / default tier) throws `KeyNotFoundException` instead of getting 0% discount.
+- Commit: 9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0 ("Move tier discounts into a lookup table and add silver tier")
+- Fix: add `["standard"] = 0m` to `TierDiscounts` (or use a safe lookup defaulting to 0m).
+── usage: inkling-2-mini · 2 model calls · 1,247 in / 256 out tokens · ≈ $0.000 · 1 tool calls · 11.4 s
+
+                             time        tokens     cost            
+agent does it all (05)     49.2 s    49,034 tok   $0.000     8 tools
+CLI first (06)             11.4 s     1,503 tok   $0.000     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 12s

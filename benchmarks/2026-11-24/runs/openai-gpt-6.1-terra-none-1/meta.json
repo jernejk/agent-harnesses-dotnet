@@ -1,0 +1,15 @@
+{
+  "label": "openai-gpt-6.1-terra-none-1",
+  "provider": "foundry",
+  "models": [
+    "gpt-6.1-terra"
+  ],
+  "endpoint_host": "api.openai.com",
+  "api": "chat",
+  "reasoning_effort": "none",
+  "started_at": "2026-11-23T14:57:54Z",
+  "wall_s": 140,
+  "exit_code": 0,
+  "machine": "arm64 Apple M5 Max",
+  "note": "OpenAI API, Chat Completions, reasoning_effort none (tools need none on this API)"
+}

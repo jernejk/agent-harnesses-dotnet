@@ -1,0 +1,2 @@
+- Handle a null tier as zero discount unless it is guaranteed impossible; `TryGetValue` throws for null, so the prior fallback is not fully restored.
+- Add tests for an unlisted tier and, if permitted, a null tier, plus checks that gold and silver discounts remain unchanged. The reported tests do not establish these behaviors.

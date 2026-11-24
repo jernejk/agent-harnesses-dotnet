@@ -1,0 +1,96 @@
+phase plan         gpt-6-luna · xhigh
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ plan ═══
+I’ll verify the reported change against the current code and inspect the relevant tests/configuration before recommending a minimal patch. I’ll also check whether the repo tooling can reach the supplied status page; I won’t modify files.
+→ todos_add(todos: [{"title":"Check status page and repository context","description":"At…)
+→ run_command(command: git log --oneline -6)
+→ run_command(command: git status --short)
+→ run_command(command: curl -I --max-time 10 https://status.example.com)
+  ← exit 0 · 3c4235d Add pricing and API tests
+  ← exit 0 · 
+  ✖ DENIED by policy: curl -I --max-time 10 https://status.example.com: No curl. Use http_get for the Orders API.
+The repo is clean, and its history confirms `ab38e53` immediately precedes the 1.4.0 release commit. The status-page check was blocked by command policy (`curl` is not permitted); there’s no status-page fetch tool exposed here, so I’ll treat the supplied incident finding as unverified external context and continue with the code. Next I’m checking the commit diff, current endpoint, and how the app registers HTTP response services.
+→ run_command(command: git show --format=fuller --stat ab38e53)
+→ run_command(command: git show ab38e53 -- src/Orders.Api/Program.cs)
+→ run_command(command: git ls-files)
+  ← exit 0 · 1 file changed, 6 insertions(+), 2 deletions(-)
+  ← exit 0 · public partial class Program;
+  ✖ DENIED by policy: git ls-files: git ls-files is not allowed. Try log, show, diff, blame or grep.
+→ run_command(command: git show HEAD:src/Orders.Api/Program.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/Orders.Api.csproj)
+→ run_command(command: git grep -n "ProblemDetails\|NotFound\|Order_totals_are_available" HEA…)
+→ run_command(command: git show ab38e53^:src/Orders.Api/Program.cs)
+  ← exit 0 · public partial class Program;
+  ← exit 0 · </Project>
+  ✖ DENIED by policy: git grep -n "ProblemDetails\|NotFound\|Order_totals_are_available" HEAD --: No shell operators (; | & < > ` $), one command.
+  ← exit 0 · public partial class Program;
+The current code contradicts the supplied root-cause explanation: `Program.cs` already calls `builder.Services.AddProblemDetails()` before building the app. The commit diff also shows that registration was added in the same change as the `NotFound` helper, so “problem details are not registered” is not a safe basis for the fix. I’m checking actual test output and test expectations now to identify what the smallest defensible change should target.
+→ run_command(command: dotnet test)
+→ run_command(command: git grep -n Order_totals_are_available HEAD)
+→ run_command(command: git grep -n AddProblemDetails HEAD)
+  ← exit 1 · [xUnit.net 00:00:00.14]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← exit 0 · HEAD:tests/Orders.Tests/OrdersApiTests.cs:13:    public async Task Order_totals_are_available(int or…
+  ← exit 0 · HEAD:src/Orders.Api/Program.cs:5:builder.Services.AddProblemDetails();
+The test run reproduces the HTTP 500, but its stack trace points to `Pricing.Total` line 16: a `KeyNotFoundException` for `"standard"`—not a problem-details response write. Two pricing unit tests fail for the same reason, while five other tests pass. I’m tracing the tier lookup and fixture/customer data so the proposed patch addresses that actual regression, and I’ll distinguish it from the inaccurate supplied finding.
+→ run_command(command: git show HEAD:src/Orders.Api/Pricing.cs)
+→ run_command(command: git show HEAD:tests/Orders.Tests/PricingTests.cs)
+→ run_command(command: git show HEAD:tests/Orders.Tests/OrdersApiTests.cs)
+→ run_command(command: git show HEAD:src/Orders.Api/OrderStore.cs)
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · }
+  ← exit 0 · }
+→ run_command(command: git show 9bfbf7d -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git blame -L 5,18 HEAD -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git status --short)
+  ← exit 0 · }
+  ← exit 0 · 2ec9930d (Priya Nair 2026-11-03 11:02:00 +1000 18)         return Math.Round(total, 2, MidpointRound…
+  ← exit 0 · 
+The regression is in the pricing-table change, not the problem-details change: commit `9bfbf7d` replaced the prior “gold gets a discount, otherwise zero” logic with a dictionary indexer but omitted `"standard"`. Order 1001 belongs to a standard-tier customer, so the lookup throws and the endpoint returns 500. Adding an explicit zero discount for the known standard tier is the narrowest fix; I’m recording the implementation and verification plan without applying it.
+→ todos_complete(items: [{"id":1,"reason":"Inspected repo history/status; the external status …)
+## Root cause (file:line)
+
+`src/Orders.Api/Pricing.cs:16`: `Pricing.Total` indexes `TierDiscounts` using the customer tier, but the table at lines 7–11 has entries only for `"gold"` and `"silver"`. Order 1001 belongs to a `"standard"` customer, so the lookup throws `KeyNotFoundException`, producing the HTTP 500.
+
+The `dotnet test` run reproduced this: three failures, including the 1001 API test and two standard-tier pricing tests. The supplied problem-details explanation does not match the code: `src/Orders.Api/Program.cs:5` registers `AddProblemDetails()`, and the unknown-order test passes. The omitted standard-tier entry was introduced in commit `9bfbf7d`.
+
+## Change (the exact lines before and after)
+
+In `src/Orders.Api/Pricing.cs`, add the standard tier with no discount:
+
+**Before**
+```csharp
+    static readonly Dictionary<string, decimal> TierDiscounts = new()
+    {
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+    };
+```
+
+**After**
+```csharp
+    static readonly Dictionary<string, decimal> TierDiscounts = new()
+    {
+        ["standard"] = 0.00m,
+        ["gold"] = 0.05m,
+        ["silver"] = 0.02m,
+    };
+```
+
+## Why this is the smallest safe fix
+
+It restores the existing zero-discount behavior for the known `"standard"` tier while preserving the current gold and silver discounts. It avoids changing the unrelated not-found response path or silently assigning a default discount to unknown tier names.
+
+## Verification (what to run and what it must show)
+
+Run `dotnet test`. After the change, it should show **8 passed, 0 failed**, including:
+
+- Both standard-tier pricing tests.
+- `OrdersApiTests.Order_totals_are_available(orderId: 1001)` passing with HTTP 200.
+- `OrdersApiTests.Unknown_orders_return_404` still passing.
+
+## Risks
+
+Unknown or misspelled tier names will still throw at the dictionary lookup; the proposed change intentionally covers the known standard tier rather than broadening fallback behavior. I could not verify `https://status.example.com`: the available command policy blocked `curl`, and no HTTP fetch tool was exposed. No files were modified.
+── usage: phased · 9 model calls · 56,181 in / 4,828 out tokens · ≈ $0.008 · 22 tool calls · 80.4 s
+   plan         gpt-6-luna · xhigh     80.4 s   9 calls   56,181 in   4,828 out (3,033 reasoning) ≈ $0.0080 ok

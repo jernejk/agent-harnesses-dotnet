@@ -1,0 +1,7 @@
+{"at":"2026-11-24T00:50:01.989285+10:00","app":"chatbot","model":"gpt-5.4-mini","calls":1,"input":55,"output":47}
+{"at":"2026-11-24T00:50:08.51838+10:00","app":"tools","model":"gpt-5.4-mini","calls":3,"input":4555,"output":286}
+{"at":"2026-11-24T00:50:13.538745+10:00","app":"sessions","model":"gpt-5.4-mini","calls":3,"input":5850,"output":254}
+{"at":"2026-11-24T00:50:16.340307+10:00","app":"sessions","model":"gpt-5.4-mini","calls":1,"input":574,"output":89}
+{"at":"2026-11-24T00:50:44.691738+10:00","app":"research","model":"gpt-5.4-mini","calls":12,"input":69057,"output":1830}
+{"at":"2026-11-24T00:51:03.262777+10:00","app":"diagnose","model":"gpt-5.4-mini","calls":8,"input":34217,"output":951}
+{"at":"2026-11-24T00:51:12.343737+10:00","app":"cli-first","model":"gpt-5.4-mini","calls":2,"input":1139,"output":178}

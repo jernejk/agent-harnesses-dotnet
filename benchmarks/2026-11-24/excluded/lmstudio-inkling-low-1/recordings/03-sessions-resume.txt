@@ -1,0 +1,4 @@
+
+✖ The endpoint 127.0.0.1:1234 returned HTTP 400.
+
+[rehearse] 03-sessions-resume: exit 2 in 0s

@@ -1,0 +1,14 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.7 s, 0 tokens
+- **Cause:** 1.4.0 changed pricing from `customer.Tier == "gold" ? 0.05m : 0m` to `TierDiscounts[customer.Tier]`, but the new lookup only defines `"gold"` and `"silver"`. `"standard"` customers now throw a `KeyNotFoundException` instead of getting 0% discount, so tests fail.
+
+- **Commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — **“Move tier discounts into a lookup table and add silver tier”**
+
+- **One-line fix:** Replace `var discount = TierDiscounts[customer.Tier];` with `var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);`
+── usage: gpt-5.4 · 2 model calls · 1,139 in / 190 out tokens · ≈ $0.006 · 1 tool calls · 6.1 s
+
+                             time        tokens     cost            
+agent does it all (05)     25.5 s    41,764 tok   $0.118    13 tools
+CLI first (06)              6.1 s     1,329 tok   $0.006     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 7s

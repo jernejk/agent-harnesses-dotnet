@@ -1,0 +1,12 @@
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   238 tok · restored in a new process
+pinned  📌 Orders incident: service health endpoint is OK (version 1.4.0), but canary GET /orders/1001/total returns HTTP 500. Root cause is an unhandled KeyNotFoundException for pricing key 'standard' in Orders.Api.Pricing.Total (Pricing.cs:16), repeatedly triggered by order 1001. Decision: hotfix the pricing lookup (handle/provide the 'standard' tier); do not restart the service.
+We decided to **hotfix the pricing lookup**—specifically, handle or provide the missing `standard` pricing tier—and **not restart the Orders service**.
+
+Why:
+- The service itself is healthy: its health endpoint reports OK on version `1.4.0`.
+- The failure is isolated to the canary request `GET /orders/1001/total`, which returns HTTP 500.
+- Logs identify the root cause as an unhandled `KeyNotFoundException` for pricing key `standard` in `Orders.Api.Pricing.Total` at `Pricing.cs:16`, repeatedly triggered by order `1001`.
+- A restart would not add the missing pricing key or fix the unhandled lookup; correcting the lookup/data handling is the required remedy.
+── usage: gpt-5.6-terra · 1 model calls · 619 in / 158 out tokens · ≈ $0.000 · 0 tool calls · 2.9 s
+
+[rehearse] 03-sessions-resume: exit 0 in 3s

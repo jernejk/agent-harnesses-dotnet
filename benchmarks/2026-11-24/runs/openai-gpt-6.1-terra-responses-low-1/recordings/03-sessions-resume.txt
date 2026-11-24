@@ -1,0 +1,8 @@
+history █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   171 tok · restored in a new process
+pinned  📌 Orders 500s root cause: Pricing.Total in Pricing.cs line 16 looks up missing dictionary key 'standard', throwing an unhandled KeyNotFoundException. Decision: hotfix the pricing lookup; do not restart.
+We decided to **hotfix the pricing lookup and not restart**.
+
+The Orders 500s are caused by `Pricing.Total` looking up the missing dictionary key `standard`, which throws an unhandled `KeyNotFoundException` in `Pricing.cs` line 16. The service health check passed, but the order-total canary returned 500.
+── usage: gpt-6.1-terra · 1 model calls · 411 in / 75 out tokens · ≈ $0.000 · 0 tool calls · 3.8 s
+
+[rehearse] 03-sessions-resume: exit 0 in 4s

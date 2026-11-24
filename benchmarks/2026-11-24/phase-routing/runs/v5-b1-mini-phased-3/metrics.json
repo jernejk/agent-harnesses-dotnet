@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-5.4-mini:default",
+    "plan": "gpt-5.4-mini:default",
+    "dev": "gpt-5.4-mini:default",
+    "test": "gpt-5.4-mini:default"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 16.1,
+      "modelCalls": 9,
+      "toolCalls": 14,
+      "inputTokens": 38517,
+      "outputTokens": 1270,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 33408,
+      "costUsd": 0.034603,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 7,
+      "modelCalls": 3,
+      "toolCalls": 3,
+      "inputTokens": 10502,
+      "outputTokens": 613,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 8064,
+      "costUsd": 0.010635,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 4.4,
+      "modelCalls": 3,
+      "toolCalls": 2,
+      "inputTokens": 10004,
+      "outputTokens": 318,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 8064,
+      "costUsd": 0.008934,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-5.4-mini",
+      "effort": "default",
+      "seconds": 36.7,
+      "modelCalls": 3,
+      "toolCalls": 2,
+      "inputTokens": 11687,
+      "outputTokens": 290,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 10112,
+      "costUsd": 0.010070,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 64.2,
+    "modelCalls": 18,
+    "toolCalls": 21,
+    "inputTokens": 70710,
+    "outputTokens": 2491,
+    "reasoningTokens": 0,
+    "cachedInputTokens": 59648,
+    "costUsd": 0.064242,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fix-order-total-tier-fallback"
+  ]
+}

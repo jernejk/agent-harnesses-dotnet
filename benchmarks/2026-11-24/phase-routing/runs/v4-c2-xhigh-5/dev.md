@@ -1,0 +1,1 @@
+fallback-unknown-tier-discount — proposes a zero-discount fallback for unknown or null customer tiers; not applied.

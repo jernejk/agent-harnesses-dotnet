@@ -1,0 +1,9 @@
+history ███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   365 tok · restored in a new process
+pinned  📌 Orders 500 root cause: Orders.Api.Pricing.Total throws unhandled KeyNotFoundException for missing pricing tier key 'standard' (Pricing.cs line 16), causing request failures for /orders/{id}/total.
+pinned  📌 Decision: apply hotfix to pricing lookup to handle missing 'standard' tier and prevent KeyNotFoundException; do NOT restart Orders service.
+We decided to **hotfix the pricing lookup to handle a missing `standard` tier (preventing the `KeyNotFoundException`) and not restart the Orders service**.
+
+**Why:** Orders 500s for **`/orders/{id}/total`** are caused by **`Orders.Api.Pricing.Total`** throwing an unhandled **`KeyNotFoundException`** when the pricing tier key **`'standard'`** is absent (at **`Pricing.cs` line 16**). A hotfix directly addresses the code path causing the crash; restarting isn’t needed to stop the exception.
+── usage: gpt-5.4-nano · 1 model calls · 740 in / 128 out tokens · ≈ $0.000 · 0 tool calls · 3.0 s
+
+[rehearse] 03-sessions-resume: exit 0 in 3s

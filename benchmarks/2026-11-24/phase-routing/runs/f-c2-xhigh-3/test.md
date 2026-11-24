@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` looked up the customer tier in a table without a `standard` entry, causing a `KeyNotFoundException` for order 1001.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `add-standard-tier-discount`, adding `["standard"] = 0m`; the diff matches the plan.
+- **Test result:** All 8 tests passed (0 failed, 0 skipped). The live API was not used for verification; it remains on deployed 1.4.0 until redeployed.

@@ -1,0 +1,4 @@
+- Root cause: `src/Orders.Api/Pricing.cs:16` does `TierDiscounts[customer.Tier]`, but the lookup table lacks `standard` while `src/Orders.Api/OrderStore.cs:8` still has a `standard` customer, causing `KeyNotFoundException`.
+- Commit that introduced it: `9bfbf7d` — `Move tier discounts into a lookup table and add silver tier`.
+- Fix: add `["standard"] = 0.00m` to the tier discount lookup in `src/Orders.Api/Pricing.cs` so existing standard customers price successfully.
+- Test result after the fix: I could not apply the proposal because the patch artifact was missing (`NOT FOUND ... Call write_proposal first`), so `dotnet test` still fails and `GET /orders/1001/total` still returns `500` with the same `KeyNotFoundException`.

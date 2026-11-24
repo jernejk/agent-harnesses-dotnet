@@ -1,0 +1,1 @@
+fix-orders-total-tier-lookup: replaces the unsafe tier dictionary lookup in `src/Orders.Api/Pricing.cs` with a safe `TryGetValue` fallback to `0m`.

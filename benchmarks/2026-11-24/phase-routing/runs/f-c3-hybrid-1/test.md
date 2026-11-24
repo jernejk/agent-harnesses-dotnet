@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed a tier-discount map that lacked `"standard"`; order 1001 uses that tier (`src/Orders.Api/OrderStore.cs:8,14`), causing the total route to throw.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied a zero-discount fallback for null or unrecognized tiers, preserving the gold and silver discounts.
+- **Test result:** **8 passed, 0 failed.** The plan expected 12 tests, but the proposal added only the production change; the specified regression tests were not present, so that verification target was not met.

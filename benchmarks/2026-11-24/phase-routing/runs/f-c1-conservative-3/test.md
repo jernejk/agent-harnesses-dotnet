@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:17` looks up the customer tier in `TierDiscounts`; the dictionary lacked `"standard"`, causing a `KeyNotFoundException` for order 1001.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Added `["standard"] = 0m` to `TierDiscounts` in `src/Orders.Api/Pricing.cs`, preserving zero-discount pricing for standard customers.
+- **Test result:** The proposal’s test run passed all 8 tests (0 failed). The localhost API was not used for verification because it still runs the deployed 1.4.0 build.

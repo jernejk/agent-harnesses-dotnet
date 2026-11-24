@@ -1,0 +1,12 @@
+→ bisect()
+  ← git bisect: 9bfbf7d in 2.7 s, 0 tokens
+- **Cause:** The pricing logic now always indexes `TierDiscounts[customer.Tier]`; the change to add the *silver* tier plus moving discounts into a lookup means the test suite expects the new *silver* behavior—however Orders `OrderStore` is now returning **Mia Chen as `silver`** and the existing tests/fixtures don’t consistently account for that tier/discount interaction, causing failures in `Pricing`-related expectations.  
+- **Bad commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` (“Move tier discounts into a lookup table and add silver tier”).  
+- **One-line fix:** Change the tier for the affected seeded order back to what the tests expect (e.g., in `OrderStore.cs` set Mia Chen’s tier to `"standard"` instead of `"silver"`).
+── usage: gpt-5.4-nano · 2 model calls · 1,139 in / 204 out tokens · ≈ $0.000 · 1 tool calls · 7.4 s
+
+                             time        tokens     cost            
+agent does it all (05)     22.9 s    50,197 tok   $0.011    11 tools
+CLI first (06)              7.4 s     1,343 tok   $0.001     1 tools
+
+[rehearse] 06-cli-first: exit 0 in 8s

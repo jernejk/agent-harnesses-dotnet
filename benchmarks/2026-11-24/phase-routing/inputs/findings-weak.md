@@ -1,0 +1,18 @@
+### Symptom
+GET /orders/{id}/total returns HTTP 500 since the 1.4.0 deploy. `dotnet test`: 3 failed, 5 passed.
+
+### Reproduction
+- `dotnet test`: 3 failed, including `OrdersApiTests.Order_totals_are_available(orderId: 1001)`.
+- `GET /orders/1001/total`: HTTP 500.
+
+### Change that caused it (commit and subject)
+`ab38e53` — **Return problem details for unknown orders**.
+
+### Root cause (file:line and why)
+`src/Orders.Api/Program.cs:30`: the `NotFound` helper now returns `Results.Problem(...)` with status 404. Problem details are not registered with `AddProblemDetails`, so writing the response throws and the endpoint returns 500 instead of a plain 404.
+
+### Evidence
+v1.3.0 returned `Results.NotFound()`. The switch to `Results.Problem` in 1.4.0 is the change to the endpoint's response path between the two releases.
+
+### Confidence
+Medium. The 500 matches a failing problem-details write; I did not capture the stack trace.

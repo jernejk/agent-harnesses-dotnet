@@ -1,0 +1,78 @@
+> What changed in .NET 11 and Agent Framework for people building agents in C#?
+I’ll outline a research plan covering .NET 11, C# 15, and Microsoft Agent Framework, then connect the findings to C# agent development.
+→ mode_get()
+→ file_memory_ls()
+→ file_memory_grep(regexPattern: \.NET 11|Agent Framework|C# 15)
+There are no existing research notes, and the current mode is planning only.
+→ todos_add(todos: [{"title":"Review .NET 11 and C# 15 changes","description":"Identify r…)
+I’ll save the plan for the research phase.
+→ file_memory_write(fileName: plan.md, description: Research plan for .NET 11 and Agent Framework changes relevant to C# a…, content: # Plan 1. Review .NET 11 and C# 15 changes relevant to agent builders …)
+## Research plan
+
+1. Review .NET 11 and C# 15 changes relevant to agent builders.
+2. Examine Agent Framework documentation, release notes, and agent-harness material, within the five-page source limit.
+3. Connect documented changes to C# agent development and identify any gaps in the sources.
+4. Write a concise, cited report.
+  ☐ Review .NET 11 and C# 15 changes
+  ☐ Review Agent Framework changes
+  ☐ Connect changes to agent development
+  ☐ Write the report
+🔐 Run this plan?
+   [Y/n] y (rehearsal auto-approve)
+I’ll check the approved plan and current mode, then start with Microsoft’s .NET and C# documentation.
+→ mode_get()
+→ file_memory_ls()
+→ file_memory_grep(regexPattern: \.NET 11|Agent Framework|C# 15)
+→ file_memory_read(fileName: plan.md)
+The approved plan is available; I’ll review the two platform overviews first.
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/over…)
+→ fetch_url(url: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
+  ← 44 lines · [1] What's new in .NET 11 | Microsoft Learn
+  ← 73 lines · [2] What's new in C# 15 | Microsoft Learn
+The platform documentation highlights Runtime Async, JSON support, and C# union types; I’ll record those before moving to the framework. [1] [2]
+→ file_memory_write(fileName: notes.md, description: Source-indexed research notes on .NET 11, C# 15, and Agent Framework., content: - .NET 11 overview says GA; Runtime Async no longer needs EnablePrevie…)
+→ todos_complete(items: [{"id": 1, "reason": "Reviewed Microsoft Learn overviews for .NET 11 a…)
+Next I’ll compare the framework overview, the .NET release notes, and Microsoft’s agent-harness guidance.
+→ fetch_url(url: https://learn.microsoft.com/en-us/agent-framework/overview/agent-frame…)
+→ fetch_url(url: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.…)
+→ fetch_url(url: https://devblogs.microsoft.com/agent-framework/build-your-own-claw-and…)
+  ← 113 lines · [3] Microsoft Agent Framework Overview | Microsoft Learn
+  ← NOT FOUND: https://github.com/microsoft/agent-framework/releases/tag/dotnet-1.28.0. HTTP 404.
+  ← 58 lines · [4] Build your own claw and agent harness with Microsoft Agent Framework | Microsoft Agent Fram…
+The overview and harness guide are available, but the specified .NET 1.28.0 release page returned 404, so I can’t verify its release-specific changes. [3] [4]
+→ file_memory_write(fileName: notes.md, description: Source-indexed research notes on .NET 11, C# 15, and Agent Framework., content: - .NET 11 overview says GA; Runtime Async no longer needs EnablePrevie…)
+→ todos_complete(items: [{"id": 2, "reason": "Reviewed Agent Framework overview and Microsoft …)
+I’ll distinguish documented platform capabilities from framework changes and avoid attributing unverified features to version 1.28.0. [1] [3]
+→ todos_complete(items: [{"id":3,"reason":"Connected the documented async, JSON, language and …)
+The report will include a practical starting point and the release-note limitation. [3]
+→ todos_complete(items: [{"id":4,"reason":"Research and cited report are prepared; submitting …)
+→ write_report(title: .NET 11 and Agent Framework for C# agents, markdown: ## Bottom line  .NET 11 improves the runtime and language used to buil…)
+  ← Saved reports/what-changed-in-net-11-and-agent.md, citing 4 of 4 fetched sources.
+## Bottom line
+
+.NET 11 improves the runtime and language used to build agents; Microsoft Agent Framework supplies agent-specific orchestration, tools, state and a harness. They are complementary, not the same release. Microsoft describes .NET 11 as generally available. [1] [3]
+
+## .NET and C#
+
+- **Async execution:** Runtime Async no longer requires `EnablePreviewFeatures` for projects targeting `net11.0`. Microsoft reports cleaner stack traces and lower overhead, alongside improvements to common await paths. These are platform changes, not a guarantee of faster model calls. [1]
+- **Typed outcomes:** C# 15 adds union types with exhaustive switch checking and closed class hierarchies. These offer ways to model a fixed set of application outcomes or states. `System.Text.Json` also adds C# and F# union support and JSON Lines output. [1] [2]
+- **Other useful APIs:** .NET 11 adds asynchronous validation, process run-and-capture helpers, and built-in OpenTelemetry metrics for `MemoryCache`. Their applicability depends on what your agent application uses. [1]
+- **Defaults:** C# 15 is the default for projects targeting `net11.0` with the .NET 11 SDK. Of the features listed in the C# overview, only memory safety requires the preview language version. [2]
+
+## Agent Framework
+
+- **Framework direction:** Microsoft describes Agent Framework as the direct successor to Semantic Kernel and AutoGen. It combines agent abstractions with session state, middleware and telemetry, and adds graph-based workflows for explicit execution paths. Agents can call tools and MCP servers. [3]
+- **Harness:** The built-in harness assembles capabilities for long, multi-step work, including planning and todos, context compaction, file access and memory, tool approvals, and observability. Microsoft’s accompanying series demonstrates .NET and Python examples, including approval-sensitive actions. [3] [4]
+- **Getting started:** The overview’s C# sample installs `Microsoft.Agents.AI.Foundry` with `--prerelease`, creates an `AIAgent` through `AIProjectClient.AsAIAgent`, and invokes `RunAsync`. That is a prerelease example, not evidence that every framework package is prerelease. [3]
+
+## Release caveat
+
+The specified `dotnet-1.28.0` release-notes URL returned HTTP 404. The framework capabilities above therefore describe the available overview and guide, **not a verified 1.28.0 change list**; those sources do not establish which capabilities were introduced in that release. [3] [4]
+  ✔ Review .NET 11 and C# 15 changes
+  ✔ Review Agent Framework changes
+  ✔ Connect changes to agent development
+  ✔ Write the report
+── usage: gpt-6.1-terra · 13 model calls · 79,135 in / 2,765 out tokens · ≈ $0.000 · 21 tool calls · 57.0 s
+report: reports/what-changed-in-net-11-and-agent.md, trace: reports/what-changed-in-net-11-and-agent.trace.jsonl
+
+[rehearse] 04-research-harness: exit 0 in 57s

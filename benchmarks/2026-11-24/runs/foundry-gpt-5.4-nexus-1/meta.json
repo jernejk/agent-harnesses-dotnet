@@ -1,0 +1,15 @@
+{
+  "label": "foundry-gpt-5.4-nexus-1",
+  "provider": "foundry",
+  "models": [
+    "gpt-5.4"
+  ],
+  "endpoint_host": "*.openai.azure.com",
+  "api": "chat",
+  "reasoning_effort": "default",
+  "started_at": "2026-11-23T14:52:50Z",
+  "wall_s": 118,
+  "exit_code": 0,
+  "machine": "arm64 Apple M5 Max",
+  "note": "Azure AI Foundry, nexus resource, Global Standard deployment gpt-5.4"
+}

@@ -1,0 +1,2 @@
+- Add regression tests for null and arbitrary unmapped tiers to verify they receive zero discount.
+- Ensure API tests exercise the fixed build; if they target the deployed localhost service, redeploy before running them.

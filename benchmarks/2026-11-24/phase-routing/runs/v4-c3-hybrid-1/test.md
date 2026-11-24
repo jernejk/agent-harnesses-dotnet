@@ -1,0 +1,4 @@
+- **Root cause:** In the failing 1.4.0 build, `src/Orders.Api/Pricing.cs:16` directly indexed the discount table; the missing `standard` key caused a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `fallback-unknown-customer-tiers`: use `TryGetValue` only for non-null tiers and fall back to a zero discount, preserving the gold and silver discounts.
+- **Test result:** All 8 tests passed (0 failed). The running localhost API is still on 1.4.0; it was not redeployed.

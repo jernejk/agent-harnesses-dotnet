@@ -1,0 +1,1 @@
+- Add a runtime-null tier test: the existing tests do not verify the fix’s separate null-fallback path.

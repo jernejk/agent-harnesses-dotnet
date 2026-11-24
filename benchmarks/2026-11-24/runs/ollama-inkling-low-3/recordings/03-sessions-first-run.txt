@@ -1,0 +1,20 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(lines: 200, service: orders)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.…)
+  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.Pricing.Total (Pricing.cs:16) — pricing dictionary missing 'standard' key. Decision: hotfix the pricing lookup; do NOT restart the service.
+Investigation complete.
+
+- **Status:** health 200 (`ok`, v1.4.0) but canary `GET /orders/1001/total` → 500.
+- **Logs:** repeated unhandled `KeyNotFoundException: The given key 'standard' was not present in the dictionary` at `Orders.Api.Pricing.Total` (Pricing.cs:line 16), thrown on order total requests (e.g., 1001/1002/1003). Order 9999 correctly logs "not found" (not the failure).
+
+Root cause and decision pinned: **hotfix the pricing lookup (missing 'standard' key); do not restart.**
+history ███████████████████████████░░░░░ ≈ 2,554 tok · before compaction
+pinned  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.Pricing.Total (Pricing.cs:16) — pricing dictionary missing 'standard' key. Decision: hotfix the pricing lookup; do NOT restart the service.
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   232 tok · after compaction
+pinned  📌 Orders 500s root cause: KeyNotFoundException 'standard' in Orders.Api.Pricing.Total (Pricing.cs:16) — pricing dictionary missing 'standard' key. Decision: hotfix the pricing lookup; do NOT restart the service.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: inkling-2-mini · 3 model calls · 7,618 in / 366 out tokens · ≈ $0.000 · 3 tool calls · 13.1 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 14s

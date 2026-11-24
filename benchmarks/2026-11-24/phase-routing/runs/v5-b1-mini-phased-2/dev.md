@@ -1,0 +1,1 @@
+fix-standard-tier-total: changes `src/Orders.Api/Pricing.cs` to use `TierDiscounts.GetValueOrDefault(customer.Tier, 0m)` instead of indexing the dictionary directly.

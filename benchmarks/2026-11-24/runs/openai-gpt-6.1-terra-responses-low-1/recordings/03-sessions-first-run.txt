@@ -1,0 +1,17 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(service: orders, lines: 200)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders 500s root cause: Pricing.Total in Pricing.cs line 16 looks up m…)
+  📌 Orders 500s root cause: Pricing.Total in Pricing.cs line 16 looks up missing dictionary key 'standard', throwing an unhandled KeyNotFoundException. Decision: hotfix the pricing lookup; do not restart.
+- **Status:** Health check returns 200, but the order-total canary returns 500.
+- **Root cause:** `Pricing.Total` looks up a missing `standard` dictionary key, causing an unhandled `KeyNotFoundException`.
+- **Pinned decision:** Hotfix the pricing lookup; do not restart.
+history ██████████████████████████░░░░░░ ≈ 2,493 tok · before compaction
+pinned  📌 Orders 500s root cause: Pricing.Total in Pricing.cs line 16 looks up missing dictionary key 'standard', throwing an unhandled KeyNotFoundException. Decision: hotfix the pricing lookup; do not restart.
+history █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   171 tok · after compaction
+pinned  📌 Orders 500s root cause: Pricing.Total in Pricing.cs line 16 looks up missing dictionary key 'standard', throwing an unhandled KeyNotFoundException. Decision: hotfix the pricing lookup; do not restart.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: gpt-6.1-terra · 3 model calls · 5,608 in / 183 out tokens · ≈ $0.000 · 3 tool calls · 6.6 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 7s

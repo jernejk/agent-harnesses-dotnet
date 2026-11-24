@@ -1,0 +1,20 @@
+> Orders has been returning 500s since this morning. Is it Orders itself or its payments dependency? Find the cause, then restart Orders.
+→ get_service_status(service: orders)
+→ get_service_status(service: payments)
+→ get_recent_logs(service: orders, lines: 80)
+→ get_recent_logs(service: payments, lines: 80)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+  ← 80 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+  ← DENIED: payments. Outside this agent's scope (card data). Ask a human.
+🔐 approval needed: restart_service(service: orders)
+   approve? [y/N] n
+   ✖ rejected
+- It’s **Orders itself**, not payments: the canary on Orders says `health 200 ...; canary GET /orders/1001/total -> 500 in 0 ms`.
+- The Orders logs show the crash cause: `System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in the dictionary` at `Orders.Api.Pricing.Total(...)`.
+- That points to a missing pricing/customer tier entry in Orders code/data, not a payments failure.
+- I tried to restart Orders, but the action was **rejected by the approver**, so I can’t complete that step from here.
+- If you want, I can keep investigating the bad `"standard"` pricing lookup or help draft the fix.
+── usage: gpt-5.4-mini · 3 model calls · 4,631 in / 259 out tokens · ≈ $0.005 · 5 tool calls · 3.8 s
+
+[rehearse] 02-tools-and-approval: exit 0 in 5s

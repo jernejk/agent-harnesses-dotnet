@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:7–11,16` omits `standard` from the discount table, then directly indexes it, causing a `KeyNotFoundException`.
+- **Introducing commit:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix:** Applied `default-missing-tier-discount`; `Pricing.Total` now defaults missing tier discounts to zero.
+- **Test result:** Passed — 8 passed, 0 failed. The deployed live API was not used for verification.

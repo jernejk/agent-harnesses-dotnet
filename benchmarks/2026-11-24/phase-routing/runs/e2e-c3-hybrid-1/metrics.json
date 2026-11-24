@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "gpt-6-luna:high",
+    "plan": "gpt-6.1-terra:medium",
+    "dev": "gpt-6-luna:high",
+    "test": "gpt-6-luna:medium"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 32,
+      "modelCalls": 8,
+      "toolCalls": 19,
+      "inputTokens": 46214,
+      "outputTokens": 2928,
+      "reasoningTokens": 1468,
+      "cachedInputTokens": 39217,
+      "costUsd": 0.006085,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "gpt-6.1-terra",
+      "effort": "medium",
+      "seconds": 48.8,
+      "modelCalls": 8,
+      "toolCalls": 24,
+      "inputTokens": 59182,
+      "outputTokens": 1824,
+      "reasoningTokens": 368,
+      "cachedInputTokens": 41940,
+      "costUsd": 0.068302,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "gpt-6-luna",
+      "effort": "high",
+      "seconds": 12.3,
+      "modelCalls": 4,
+      "toolCalls": 4,
+      "inputTokens": 15392,
+      "outputTokens": 983,
+      "reasoningTokens": 588,
+      "cachedInputTokens": 10999,
+      "costUsd": 0.002031,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "gpt-6-luna",
+      "effort": "medium",
+      "seconds": 42.4,
+      "modelCalls": 7,
+      "toolCalls": 9,
+      "inputTokens": 32948,
+      "outputTokens": 1503,
+      "reasoningTokens": 729,
+      "cachedInputTokens": 29304,
+      "costUsd": 0.004046,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 135.5,
+    "modelCalls": 27,
+    "toolCalls": 56,
+    "inputTokens": 153736,
+    "outputTokens": 7238,
+    "reasoningTokens": 3153,
+    "cachedInputTokens": 121460,
+    "costUsd": 0.080464,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "restore-unknown-tier-zero-discount"
+  ]
+}

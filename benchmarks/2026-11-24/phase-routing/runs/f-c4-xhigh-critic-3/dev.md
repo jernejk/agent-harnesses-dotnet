@@ -1,0 +1,1 @@
+default-unknown-tier-discount-to-zero — defaults unlisted and null customer tiers to zero discount; the proposal is not applied.

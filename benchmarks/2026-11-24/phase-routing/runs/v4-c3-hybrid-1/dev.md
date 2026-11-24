@@ -1,0 +1,1 @@
+`fallback-unknown-customer-tiers` — proposes a zero-discount fallback for null or unmapped customer tiers in `Pricing.cs`; not applied.

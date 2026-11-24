@@ -1,0 +1,18 @@
+boundary tests, no model calls…
+✔ 00-boundaries                15s  exit 0
+model provider: lmstudio
+resetting target/ and starting the Orders service…
+✖ 01-chatbot                    0s  exit 2, wanted 0
+✖ 02-tools-and-approval         1s  exit 2, wanted 0, missing [approval needed: restart_service] [✖ rejected]
+✖ 03-sessions-first-run         1s  exit 2, wanted 0, missing [after compaction] [📌] [saved .sessions/incident.json]
+✖ 03 compaction did not halve the history: ? → ? tokens
+✖ 03-sessions-resume            0s  exit 2, wanted 0, missing [restored in a new process] [── usage]
+✖ 04-research-harness           1s  exit 2, wanted 0, missing [Run this plan?] [Saved reports/] [── usage]
+✖ 05-diagnose-harness           1s  exit 2, wanted 0, missing [✔ applied] [Passed!] [── usage]
+✔ 06-bisect-cli                 3s  exit 0
+✖ 06-cli-first                  1s  exit 2, wanted 0, missing [git bisect: 9bfbf7d] [CLI first (06)]
+forced failures, expected to fail with a clear message:
+✔ 90-bad-endpoint               0s  exit 2
+✔ 91-rehearsal-flag-guard       1s  exit 2
+model usage: 0 calls, 0 in / 0 out tokens, ≈ $0.000
+✖ 8 check(s) failed. Output is in recordings/.

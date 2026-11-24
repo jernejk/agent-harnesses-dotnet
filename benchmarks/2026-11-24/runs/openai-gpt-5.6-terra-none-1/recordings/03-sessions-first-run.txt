@@ -1,0 +1,21 @@
+→ get_service_status(service: orders)
+→ get_recent_logs(service: orders, lines: 200)
+  ← health 200 {"status":"ok","version":"1.4.0"}; canary GET /orders/1001/total -> 500 in 0 ms
+  ← 116 lines · System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in th…
+→ pin_fact(fact: Orders incident: service health endpoint is OK (version 1.4.0), but ca…)
+  📌 Orders incident: service health endpoint is OK (version 1.4.0), but canary GET /orders/1001/total returns HTTP 500. Root cause is an unhandled KeyNotFoundException for pricing key 'standard' in Orders.Api.Pricing.Total (Pricing.cs:16), repeatedly triggered by order 1001. Decision: hotfix the pricing lookup (handle/provide the 'standard' tier); do not restart the service.
+Investigated Orders:
+
+- Health endpoint: OK (`version 1.4.0`)
+- Canary `GET /orders/1001/total`: HTTP 500
+- Logs show repeated `KeyNotFoundException` for pricing key `standard` in `Orders.Api.Pricing.Total` (`Pricing.cs:16`), triggered by order 1001.
+
+Pinned root cause and decision: hotfix the pricing lookup to handle/provide `standard`; do not restart.
+history ███████████████████████████░░░░░ ≈ 2,560 tok · before compaction
+pinned  📌 Orders incident: service health endpoint is OK (version 1.4.0), but canary GET /orders/1001/total returns HTTP 500. Root cause is an unhandled KeyNotFoundException for pricing key 'standard' in Orders.Api.Pricing.Total (Pricing.cs:16), repeatedly triggered by order 1001. Decision: hotfix the pricing lookup (handle/provide the 'standard' tier); do not restart the service.
+history ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ≈   238 tok · after compaction
+pinned  📌 Orders incident: service health endpoint is OK (version 1.4.0), but canary GET /orders/1001/total returns HTTP 500. Root cause is an unhandled KeyNotFoundException for pricing key 'standard' in Orders.Api.Pricing.Total (Pricing.cs:16), repeatedly triggered by order 1001. Decision: hotfix the pricing lookup (handle/provide the 'standard' tier); do not restart the service.
+saved .sessions/incident.json. Run me again to resume it.
+── usage: gpt-5.6-terra · 3 model calls · 5,897 in / 260 out tokens · ≈ $0.000 · 3 tool calls · 5.8 s
+
+[rehearse] 03-sessions-first-run: exit 0 in 6s

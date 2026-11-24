@@ -1,0 +1,30 @@
+phase test         gpt-6-luna · high
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ test ═══
+I’ll apply the named proposal, then confirm its test result; the available HTTP tool is limited to the local Orders API, so it cannot check the external status page.
+→ todos_add(todos: [{"title":"Apply the missing-tier discount proposal","description":"Ap…)
+The fix plan is a one-line fallback change, preserving explicit gold/silver discounts while defaulting unlisted tiers to zero.
+🔐 approval needed: apply_proposal(name: default-missing-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-missing-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 76 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The proposal applied successfully and its test run shows 8 passed, 0 failed; I’ll also check the reported order-total endpoint directly.
+→ todos_complete(items: [{"id":1,"reason":"The named proposal was applied successfully; the hu…)
+→ http_get(path: /orders/1001/total)
+  ← GET /orders/1001/total -> 500 
+The test suite passes, but the local endpoint still returns 500, suggesting the running API may be stale; I’ll inspect its health/version before concluding.
+→ http_get(path: /health)
+  ← 2 lines · GET /health -> 200
+Health confirms the local process still reports 1.4.0; I’ll verify the source change, since that process’s 500 conflicts with the passing test run.
+→ run_command(command: git diff -- src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+The source diff matches the plan exactly; the unit/API test suite passed, although the separately running local 1.4.0 process still returns 500.
+→ todos_complete(items: [{"id":2,"reason":"The proposal's test run reports 8 passed and 0 fail…)
+- **Root cause:** `Pricing.cs` looked up `TierDiscounts[customer.Tier]` directly, but the table has no `standard` entry, causing a `KeyNotFoundException` and HTTP 500.
+- **Commit that introduced it:** `9bfbf7d` — “Move tier discounts into a lookup table and add silver tier”.
+- **Fix:** Applied `default-missing-tier-discount`, changing the lookup to `TierDiscounts.GetValueOrDefault(customer.Tier)` so unlisted tiers receive zero discount.
+- **Test result:** The proposal’s test run passed **8/8 tests**. However, a separate GET to the running local `/orders/1001/total` still returned **500** (health reports version 1.4.0); that runtime discrepancy remains unresolved. I could not check `status.example.com` with the available tools.
+── usage: phased · 8 model calls · 34,563 in / 1,712 out tokens · ≈ $0.004 · 7 tool calls · 32.1 s
+   test         gpt-6-luna · high      32.1 s   8 calls   34,563 in   1,712 out (996 reasoning) ≈ $0.0043 ok

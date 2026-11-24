@@ -1,0 +1,4 @@
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` indexed `TierDiscounts` directly; `standard` was absent, causing a `KeyNotFoundException` for order 1001.
+- **Introducing commit:** `9bfbf7d8d7d0d9ec64a4a703468b3004dd9849c0` — “Move tier discounts into a lookup table and add silver tier.”
+- **Fix applied:** Unknown or null customer tiers now receive a zero discount, preserving configured gold and silver discounts.
+- **Test result:** `dotnet test Orders.slnx` passed: **8 passed, 0 failed**. Note: the applied diff changes only `Pricing.cs`; it does not include the additional regression tests listed in the plan.
