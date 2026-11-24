@@ -1,0 +1,6 @@
+The fix is applied and verified via tests. The live API still returns 500, which is expected — the deployed 1.4.0 build is untouched by a repo patch and requires a redeploy (out of scope).
+
+- **Root cause** — `src/Orders.Api/Pricing.cs:16` in the 1.4.0 build: `var discount = TierDiscounts[customer.Tier];` threw `KeyNotFoundException` for any tier missing from the table (only `gold` and `silver` were present), so `standard`-tier customers (e.g. customer 2 / order 1001) 500'd.
+- **Commit that introduced it** — `9bfbf7d` ("Move tier discounts into a lookup table and add silver tier"), part of the 1.4.0 release (tag v1.3.0 predates it).
+- **Fix** — changed line 16 to `var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);`, restoring the 1.3.0 semantics (non-gold tiers pay full list price) while keeping the 1.4.0 lookup-table structure and gold/silver entries intact.
+- **Test result** — `dotnet test` now passes 8/8 (previously 3 failed / 5 passed): `Standard_customers_pay_list_price_plus_gst`, `Totals_round_to_cents`, and `Order_totals_are_available(1001)` all pass, with gold/silver pricing and `Unknown_orders_return_404` remaining green.

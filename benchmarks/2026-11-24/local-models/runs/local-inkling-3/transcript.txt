@@ -1,0 +1,214 @@
+phase investigate  inkling-2-mini · default
+phase plan         inkling-2-mini · default
+phase dev          inkling-2-mini · default
+phase test         inkling-2-mini · default
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+═══ investigate ═══
+I'll investigate this systematically. Let me set up a todo list first.
+→ todos_add(todos: [{"description":"Run the tests and/or call the local Orders API for /o…)
+→ file_access_ls(directory: )
+→ mode_get()
+I'll reproduce the failure first by running the tests and hitting the local API.
+→ run_command(command: dotnet test)
+→ http_get(path: /orders/1001/total)
+  ← exit 1 · [xUnit.net 00:00:00.13]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← GET /orders/1001/total -> 500 
+Reproduced — 500 on the API and 3 failing tests, all with `KeyNotFoundException: 'standard'` at `Pricing.cs:line 16`. Now let me check the status page (likely blocked) and the git history since v1.3.0.
+→ run_command(command: git log --oneline v1.3.0..HEAD)
+→ run_command(command: git tag --list)
+  ← exit 0 · 9bfbf7d Move tier discounts into a lookup table and add silver tier
+  ← exit 0 · v1.4.0
+→ run_command(command: git diff v1.3.0..HEAD)
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+The diff was truncated. Let me read the key files directly.
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ run_command(command: git diff v1.3.0..HEAD -- src/Orders.Api/Pricing.cs src/Orders.Api/Orde…)
+  ← exit 0 · }
+I have the root cause. Let me check the remaining pieces — the OrderStore and the test for order 1001 — and attempt the status page (no internet available, so I'll note that).
+→ file_access_read(fileName: src/Orders.Api/OrderStore.cs)
+→ run_command(command: git log --oneline v1.3.0..HEAD --stat)
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+→ todos_complete(items: [{"id":1,"reason":"dotnet test: 3 failures (PricingTests x2, OrdersApi…)
+→ file_access_read(fileName: tests/Orders.Tests/OrdersApiTests.cs)
+→ todos_complete(items: [{"id":2,"reason":"No internet access/curl available in this environme…)
+I have everything needed. Note the system instructions for this phase: investigate and report — not fix. Here are my findings.
+
+**Status page:** I could not open https://status.example.com — this environment has no internet access and no curl, so I could not check it.
+
+## Findings
+
+**Symptom**
+`GET /orders/{id}/total` returns HTTP 500 since the 1.4.0 deploy. Specifically `/orders/1001/total` → 500, and `dotnet test` fails 3 tests (`PricingTests.Totals_round_to_cents`, `PricingTests.Standard_customers_pay_list_price_plus_gst`, `OrdersApiTests.Order_totals_are_available(orderId: 1001)`), all with `System.Collections.Generic.KeyNotFoundException: The given key 'standard' was not present in the dictionary`.
+
+**Reproduction**
+- `dotnet test` → 3 failed, 5 passed (shown above).
+- `http_get /orders/1001/total` → `500`.
+- 1.3.0 was fine (tag exists; failures introduced in 1.4.0).
+
+**Change that caused it**
+Commit `9bfbf7d` — "Move tier discounts into a lookup table and add silver tier" (part of the 1.4.0 release, tagged `f1812c8` "Release 1.4.0"). The diff changed `Pricing.cs` to a `Dictionary<string, decimal>` with only `["gold"]` and `["silver"]` entries, and changed `OrderStore.cs` so customer 3 (Mia Chen) is now `"silver"` instead of `"standard"`.
+
+**Root cause (file:line)**
+`src/Orders.Api/Pricing.cs:16` — `var discount = TierDiscounts[customer.Tier];`. The new lookup table omits `"standard"`, so any order whose customer is `standard` (e.g. order 1001 → customer 2, Noah Patel) throws `KeyNotFoundException`, which the API surfaces as HTTP 500. The silver-tier change added a `"silver"` entry and re-tiered customer 3, but no `"standard"` (0%) entry was added — previously `customer.Tier == "gold" ? 0.05m : 0m` handled the standard case implicitly.
+
+**Evidence**
+- Test failure stack trace: `at Orders.Api.Pricing.Total(Order order, Customer customer) in /_/src/Orders.Api/Pricing.cs:line 16` (`Dictionary.get_Item`).
+- `http_get /orders/1001/total` → 500.
+- `git diff v1.3.0..HEAD` shows the table and the missing `"standard"` key.
+- `OrderStore.cs`: customer 2 (`"standard"`) is still mapped, and order 1001 belongs to customer 2 — so the 500 is reproducible for that order.
+- `OrdersApiTests.Order_totals_are_available(1001)` fails with `Expected: OK / Actual: InternalServerError`, while `1002` (gold) and `1003` (silver) pass — confirming the failure is specific to `standard` customers.
+
+**Confidence**
+High. The exception, the diff, and the API response all point to the same single-line cause. (I did not apply any fix, per the investigation-phase instructions.)
+
+A likely fix for the engineer to plan: add `["standard"] = 0.00m` to `TierDiscounts` (and ideally a fallback/default so an unknown tier fails gracefully rather than 500s), then re-run `dotnet test`. I have not made that change.
+↻ loop: You still have incomplete todo items. Continue working until every item is complete, marking each item as comp…
+→ todos_complete(items: [{"id":5,"reason":"Findings reported in the previous message: Symptom …)
+All todo items are now complete. The investigation is finished and the findings have been reported above.
+
+**Summary of what was done:**
+- Reproduced the failure: `dotnet test` (3 failures) and `GET /orders/1001/total` → HTTP 500.
+- Confirmed the change since v1.3.0: commit `9bfbf7d` ("Move tier discounts into a lookup table and add silver tier"), released in 1.4.0.
+- Root cause: `src/Orders.Api/Pricing.cs:16` — the new `TierDiscounts` dictionary omits the `"standard"` key, so `TierDiscounts[customer.Tier]` throws `KeyNotFoundException` for standard-tier customers (e.g. order 1001 → customer 2).
+- Noted the status page could not be checked (no internet access in this environment).
+
+No code was changed, per the investigation-phase instructions — the findings are ready for the engineer to plan the fix (add `["standard"] = 0.00m` to the lookup table, ideally with a fallback for unknown tiers).
+═══ plan ═══
+→ file_access_ls(directory: .)
+→ mode_get()
+  ✖ tool failed: Invalid path: '.'. Paths must not contain '.' or '..' segments. (Parameter 'path')
+I'll start by checking the repo layout and running the tests to verify the findings before planning.
+→ run_command(command: git log --oneline -5)
+→ run_command(command: git status)
+  ← exit 0 · f3419f7 Give gold customers 5% off
+  ← exit 0 · nothing to commit, working tree clean
+→ run_command(command: git diff v1.3.0..HEAD -- src/Orders.Api/Pricing.cs)
+→ run_command(command: git diff v1.3.0..HEAD -- src/Orders.Api/OrderStore.cs)
+  ← exit 0 · }
+  ← exit 0 · readonly Dictionary<int, Order> _orders = new()
+The diff matches the findings. Now let me run the tests and read the relevant files.
+→ run_command(command: dotnet test)
+  ← exit 1 · [xUnit.net 00:00:00.13]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+The failures match the findings. Let me read the exact lines I'll plan to change.
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ file_access_read(fileName: src/Orders.Api/OrderStore.cs)
+The findings check out. Let me look at the tests and the API endpoint to understand the full picture before planning.
+→ file_access_ls(directory: src/Orders.Api)
+→ run_command(command: git diff v1.3.0..HEAD -- src/Orders.Api/Pricing.cs src/Orders.Api/Orde…)
+  ← exit 0 · }
+→ file_access_read(fileName: src/Orders.Api/Program.cs)
+→ file_access_read(fileName: tests/Orders.Tests/PricingTests.cs)
+→ file_access_read(fileName: tests/Orders.Tests/OrdersApiTests.cs)
+→ run_command(command: git show v1.3.0:src/Orders.Api/Pricing.cs)
+  ← exit 0 · }
+I have everything I need. Let me do one final check that `TierDiscounts` isn't referenced anywhere else, then write the plan.
+→ run_command(command: git grep -n "TierDiscounts" -- .)
+  ← exit 0 · src/Orders.Api/Pricing.cs:16:        var discount = TierDiscounts[customer.Tier];
+The findings check out: the diff, the failing tests, and the code all agree. I've now read the exact line I'll plan to change (`src/Orders.Api/Pricing.cs:16`) and confirmed the `TierDiscounts` table is only used there. Here is the plan.
+
+## Plan: restore last-good total behavior for non-gold/silver tiers
+
+**Root cause (file:line)**
+`src/Orders.Api/Pricing.cs:16` — `var discount = TierDiscounts[customer.Tier];`. Commit `9bfbf7d` replaced the 1.3.0 expression `customer.Tier == "gold" ? 0.05m : 0m` with a lookup table containing only `["gold"]` (0.05m) and `["silver"]` (0.02m). `standard` was omitted, so any standard-tier order (e.g. 1001 → customer 2, Noah Patel) throws `KeyNotFoundException`, which the API surfaces as HTTP 500. Note this also breaks every *other* non-gold/silver tier (e.g. an unknown/typo'd tier string): in 1.3.0 those got 0%, in 1.4.0 they throw. The intended 1.4.0 changes are the silver tier (0.02m) and customer 3 re-tiered to `"silver"` — both must be kept.
+
+**Change (the exact lines before and after)** — one find-and-replace in `src/Orders.Api/Pricing.cs`, line 16 only:
+
+Before:
+```csharp
+        var discount = TierDiscounts[customer.Tier];
+```
+After:
+```csharp
+        var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);
+```
+
+**Why this is the smallest safe fix**
+- One find-and-replace in one file, exactly as constrained; no new tests, no other edits.
+- Gold (0.05m) and silver (0.02m) entries are untouched, so the intended 1.4.0 behavior is preserved.
+- Every input the regression broke now behaves exactly as 1.3.0 did: any tier not in the table (standard, and any unknown tier) gets 0% discount — the same as 1.3.0's non-gold → 0m — instead of a 500. A standard-entry-only fix would leave unknown tiers still throwing, which is not "restore the last good release's behaviour for every input the regression broke."
+- Verified against the existing tests: standard cases (110.00, 21.89) now compute 0% → `100.00 * 1.10 = 110.00` and `19.90 * 1.10 = 21.89`; gold (104.50) and silver (107.80) are unchanged.
+
+**Verification**
+Run `dotnet test` (not the live API — a repo change does not reach the running 1.4.0 build without a redeploy, which is out of scope). After the fix, all 8 tests must pass (0 failed): the 3 currently failing tests — `PricingTests.Totals_round_to_cents`, `PricingTests.Standard_customers_pay_list_price_plus_gst`, `OrdersApiTests.Order_totals_are_available(1001)` — plus the 5 already-passing tests, including the silver-tier and gold-tier cases and the 404 case for unknown orders. No new tests should be added.
+
+**Risks**
+- An unknown/mis-tiered customer now silently gets 0% (rather than 500ing). This is the faithful restoration of 1.3.0 behavior, but it can mask a data-entry error — e.g. a tier spelled `"gold "` or `"Gold"` would compute at 0% instead of failing loudly. If loud failure on unknown tiers is preferred, the alternative single find-and-replace is to keep `TierDiscounts[customer.Tier]` and add an explicit `["standard"] = 0.00m,` entry to the table — but that alone does not restore last-good behavior for unknown tiers, so it is not the recommended plan.
+- Tier strings are case-sensitive; this is unchanged from 1.3.0 (only exact `"gold"` matched), so it is not a regression.
+- No other callers of `TierDiscounts` exist (verified by grep), so the change is contained to this one line.
+- The fix does not touch `OrderStore.cs`, the silver re-tier, or the API layer; the deployed 1.4.0 service will not reflect it until a redeploy (out of scope).
+
+Per the investigation-phase instructions, I have not written or applied this fix — it is the plan for the engineer to implement.
+═══ dev ═══
+I'll start by reviewing the current state of the repo and the exact lines the plan targets.
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ mode_get()
+I'm in execute mode. The plan is well-formed; let me read the exact line to change with `file_access_read_lines` first, as required.
+→ file_access_read_lines(endLine: 20, fileName: src/Orders.Api/Pricing.cs, startLine: 14)
+I've read the exact line. Let me quickly confirm `TierDiscounts` is only used on that one line, then write the proposal.
+→ file_access_grep(regexPattern: TierDiscounts)
+  ✂ tool output cut from 39,670 chars
+The grep confirms `TierDiscounts` only appears in `src/Orders.Api/Pricing.cs` (the other match is a compiled DLL, irrelevant). Now I'll write the proposal.
+→ write_proposal(file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, name: fix-tier-discount-lookup, rationale: Commit 9bfbf7d replaced the 1.3.0 expression `customer.Tier == "gold" …, replace:         var discount = TierDiscounts.GetValueOrDefault(customer.Tier, …)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..4645759 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -13,7 +13,7 @@ public static class Pricing
+         public static decimal Total(Order order, Customer customer)
+         {
+             var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+    -        var discount = TierDiscounts[customer.Tier];
+    +        var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);
+             var total = subtotal * (1 - discount) * (1 + GstRate);
+             return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+         }
+  ← 15 lines · Wrote proposals/fix-tier-discount-lookup.patch:
+The proposal was written. Let me verify the patch content.
+→ file_access_read(fileName: proposals/fix-tier-discount-lookup.patch)
+The tool reported success but the read failed. Let me check the proposals directory.
+→ file_access_ls(directory: proposals)
+The `write_proposal` tool reported success and returned the diff it wrote (`proposals/fix-tier-discount-lookup.patch`), even though the `file_access_*` tools can't read it back (the proposal store is separate from the file-access store). Per the task instructions, I must not apply the patch — a separate step applies and tests it. The proposal is in place as required.
+
+**Summary of what I did:**
+
+- Read `src/Orders.Api/Pricing.cs` and confirmed line 16 (`var discount = TierDiscounts[customer.Tier];`) is the exact line the plan targets.
+- Verified via grep that `TierDiscounts` is used only on that one line (the other match was a compiled DLL, irrelevant).
+- Wrote one proposal, `fix-tier-discount-lookup`, with a single find-and-replace on line 16:
+  - **Before:** `var discount = TierDiscounts[customer.Tier];`
+  - **After:** `var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);`
+
+This restores last-good (1.3.0) behavior for every input the 1.4.0 regression broke: any tier not in the table (standard and any unknown/typo'd tier) now gets 0% discount instead of throwing `KeyNotFoundException` (HTTP 500), while gold (0.05m) and silver (0.02m) entries — the intended 1.4.0 changes — are untouched. The patch was written, not applied, as required.
+
+The proposal `fix-tier-discount-lookup` changes `src/Orders.Api/Pricing.cs` line 16: `TierDiscounts[customer.Tier]` → `TierDiscounts.GetValueOrDefault(customer.Tier, 0m)`, restoring 0% discount for tiers missing from the table (standard and unknown) instead of throwing HTTP 500, while keeping gold/silver unchanged.
+═══ test ═══
+I'll verify the current state of the repo, then apply the proposal and check the test result.
+→ file_access_read_lines(endLine: 30, fileName: src/Orders.Api/Pricing.cs, startLine: 1)
+→ run_command(command: git status)
+  ← exit 0 · nothing to commit, working tree clean
+The repo matches the findings. Now I'll apply the proposal.
+🔐 approval needed: apply_proposal(name: fix-tier-discount-lookup)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied fix-tier-discount-lookup.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 72 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The proposal applied and all 8 tests passed. Let me confirm the change and diff.
+→ file_access_read_lines(endLine: 20, fileName: src/Orders.Api/Pricing.cs, startLine: 13)
+→ run_command(command: git diff)
+  ← exit 0 · }
+Let me confirm the commit that introduced the regression for the report.
+→ run_command(command: git log --oneline -3 -- src/Orders.Api/Pricing.cs)
+  ← exit 0 · 2ec9930 Add order totals with GST
+All done. Here's the summary:
+
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` — `var discount = TierDiscounts[customer.Tier];` threw `KeyNotFoundException` because the 1.4.0 `TierDiscounts` table only contained `["gold"]` and `["silver"]`, omitting `"standard"` (and any other unknown tier). Any standard-tier order (e.g. order 1001 → customer 2) therefore returned HTTP 500.
+- **Introducing commit:** `9bfbf7d` — "Move tier discounts into a lookup table and add silver tier" (part of the 1.4.0 release, tagged `f1812c8` "Release 1.4.0").
+- **Fix:** One find-and-replace on line 16 of `src/Orders.Api/Pricing.cs`: `TierDiscounts[customer.Tier]` → `TierDiscounts.GetValueOrDefault(customer.Tier, 0m)`. This restores 1.3.0 behavior for every tier missing from the table (standard and unknown) at 0% discount, while leaving the intended 1.4.0 gold (0.05m) and silver (0.02m) entries untouched.
+- **Test result after the fix:** `dotnet test` → **Passed: 8, Failed: 0, Skipped: 0, Total: 8** — including the 3 previously failing tests (`PricingTests.Totals_round_to_cents`, `PricingTests.Standard_customers_pay_list_price_plus_gst`, `OrdersApiTests.Order_totals_are_available(1001)`).
+
+Note: the fix is applied in the repo only; the live localhost service is still the deployed 1.4.0 build and will keep returning 500 for `/orders/1001/total` until a redeploy (out of scope).
+── usage: phased · 35 model calls · 260,095 in / 25,493 out tokens · ≈ $0.000 · 45 tool calls · 602.6 s
+   investigate  inkling-2-mini · default  118.9 s  13 calls  101,501 in   4,455 out (0 reasoning) ≈ $0.0000 ok
+   plan         inkling-2-mini · default  379.7 s  10 calls   70,815 in  17,405 out (0 reasoning) ≈ $0.0000 ok
+   dev          inkling-2-mini · default   66.4 s   7 calls   51,682 in   2,463 out (0 reasoning) ≈ $0.0000 ok
+   test         inkling-2-mini · default   37.6 s   5 calls   36,097 in   1,170 out (0 reasoning) ≈ $0.0000 ok

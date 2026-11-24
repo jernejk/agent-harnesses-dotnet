@@ -1,0 +1,3 @@
+The proposal was written successfully — the `write_proposal` tool confirmed it and returned the diff. The proposals directory isn't visible via the file-access tool, but the write tool's confirmation is the authoritative signal, and per the task I must not apply it (a separate step does that). I've completed the one-line change as a proposal without modifying the repo.
+
+Proposal: **fix-tier-discount-default** — in `src/Orders.Api/Pricing.cs` line 16, replaces `var discount = TierDiscounts[customer.Tier];` with `var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);`, restoring 1.3.0 behavior (non-listed tiers get 0% discount) while keeping the intended 1.4.0 gold (5%) / silver (2%) entries.

@@ -1,0 +1,38 @@
+{
+ "source": "Ollama 0.40.17 model inkling-2-mini:latest; counted from the safetensors header of every tensor blob in its manifest",
+ "config": {
+  "num_hidden_layers": 24,
+  "hidden_size": 2304,
+  "intermediate_size": 1152,
+  "n_routed_experts": 128,
+  "num_experts_per_tok": 8,
+  "n_shared_experts": 0,
+  "num_attention_heads": 24,
+  "num_key_value_heads": 8,
+  "head_dim": 128,
+  "vocab_size": 201024,
+  "sliding_window_size": 1024,
+  "n_layers_per_attn_res_block": 6,
+  "architectures": [
+   "Inkling2LoopForConditionalGeneration"
+  ]
+ },
+ "tensors": 1298,
+ "tensor_bytes_on_disk": 20161822624,
+ "tensor_GiB_on_disk": 18.78,
+ "expert_weight_tensors_by_precision": {
+  "4-bit": 40,
+  "8-bit": 8
+ },
+ "parameters": {
+  "draft (MTP)": 317897872,
+  "embed+unembed": 926318592,
+  "experts": 24461180928,
+  "text, other": 682885632,
+  "vision": 318256128
+ },
+ "parameters_total": 26706539152,
+ "text_model_total": 26070385152,
+ "active_per_token_text": 3138028032,
+ "quantization_metadata_elements_excluded": 1401426984
+}

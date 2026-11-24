@@ -1,0 +1,96 @@
+{
+ "setups": {
+  "inkling-2-mini": {
+   "runs": 5,
+   "fixed": 5,
+   "fixes": [
+    "var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);"
+   ],
+   "median_model_calls": 33,
+   "median_tool_calls": 42,
+   "median_seconds": 509.5,
+   "median_cost_usd": 0,
+   "blind_mean": 8.0,
+   "blind_by_reviewer": {
+    "opus": 8.4,
+    "sol": 8.2,
+    "neon": 7.4
+   },
+   "criteria_means": {
+    "correctness": 5,
+    "verification": 5,
+    "safety": 5,
+    "process": 3.27,
+    "report": 4.2
+   },
+   "judged_wrong": 1,
+   "judgements": 15
+  },
+  "gpt-6-luna": {
+   "runs": 5,
+   "fixed": 5,
+   "fixes": [
+    "var discount = TierDiscounts.GetValueOrDefault(customer.Tier ?? string.Empty);",
+    "var discount = TierDiscounts.GetValueOrDefault(customer.Tier);"
+   ],
+   "median_model_calls": 20,
+   "median_tool_calls": 27,
+   "median_seconds": 58.3,
+   "median_cost_usd": 0.0112,
+   "blind_mean": 8.67,
+   "blind_by_reviewer": {
+    "opus": 8.8,
+    "sol": 8.8,
+    "neon": 8.4
+   },
+   "criteria_means": {
+    "correctness": 5,
+    "verification": 4.67,
+    "safety": 5,
+    "process": 4.07,
+    "report": 4.67
+   },
+   "judged_wrong": 0,
+   "judgements": 15
+  },
+  "gpt-5.4-mini": {
+   "runs": 5,
+   "fixed": 5,
+   "fixes": [
+    "var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);",
+    "var discount = TierDiscounts.TryGetValue(customer.Tier, out var tierDiscount) ? tierDiscount : 0m;"
+   ],
+   "median_model_calls": 19,
+   "median_tool_calls": 23,
+   "median_seconds": 64.2,
+   "median_cost_usd": 0.0692,
+   "blind_mean": 8.27,
+   "blind_by_reviewer": {
+    "opus": 7.6,
+    "sol": 8.6,
+    "neon": 8.6
+   },
+   "criteria_means": {
+    "correctness": 5,
+    "verification": 4.67,
+    "safety": 5,
+    "process": 4.2,
+    "report": 3.87
+   },
+   "judged_wrong": 0,
+   "judgements": 15
+  }
+ },
+ "notes": "seconds are the harness's own run time from metrics.json; costs are list prices",
+ "reviewer_agreement_kendall_tau": {
+  "opus vs sol": 0.18,
+  "opus vs neon": -0.17,
+  "sol vs neon": 0.7
+ },
+ "luna_vs_inkling": {
+  "blind_mean_difference": 0.67,
+  "exact_permutation_p_two_sided": 0.04,
+  "luna_run_scored_higher_in_pairings": 22.5,
+  "pairings": 25
+ }
+}

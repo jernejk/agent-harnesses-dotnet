@@ -1,0 +1,6 @@
+Verification complete. The fix is applied and all tests pass; the live API still 500s as expected since the deployed 1.4.0 build requires a redeploy (out of scope).
+
+- **Root cause** — `src/Orders.Api/Pricing.cs:16`: `var discount = TierDiscounts[customer.Tier];` indexes a dictionary (lines 7–11) that only contains `gold` and `silver`, so any `standard`-tier customer (order 1001 / customer 2, and the standard-tier test fixtures) throws `KeyNotFoundException`, surfaced as HTTP 500.
+- **Commit** — `9bfbf7d` ("Move tier discounts into a lookup table and add silver tier"), which rewrote the discount logic and flipped customer 3 to `silver`, leaving `standard` unmapped.
+- **Fix** — applied proposal `fix-tier-discount-missing-key`: line 16 changed to `var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);`, restoring the 1.3.0 behaviour (standard/unknown tiers → 0%) while preserving the 1.4.0 gold (0.05) and silver (0.02) rates.
+- **Test result** — `dotnet test` after the fix: **8 passed, 0 failed** (previously 3 failed / 5 passed). The live `GET /orders/1001/total` still returns 500 until a redeploy, which is out of scope.

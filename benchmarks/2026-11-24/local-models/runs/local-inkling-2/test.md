@@ -1,0 +1,6 @@
+The fix is applied and verified. Here's the summary:
+
+- **Root cause** — `src/Orders.Api/Pricing.cs:16` in the failing 1.4.0 build: `var discount = TierDiscounts[customer.Tier];` threw `KeyNotFoundException` for any tier missing from the table (`"standard"`, plus any other unlisted tier), producing HTTP 500 on `GET /orders/{id}/total`. The 1.4.0 lookup table (only `"gold"` = 0.05m and `"silver"` = 0.02m) silently dropped the 1.3.0 default of 0% discount for non-gold tiers.
+- **Commit that introduced it** — `9bfbf7d` ("Move tier discounts into a lookup table and add silver tier", Priya Nair, 2026-11-13), part of the 1.4.0 release (`f1812c8`).
+- **Fix** — One-line change in `src/Orders.Api/Pricing.cs:16`: replaced the throwing indexer with `var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);`, restoring 1.3.0's "non-gold → 0%" behavior for every missing tier while leaving gold (0.05m) and silver (0.02m) unchanged.
+- **Test result after the fix** — `dotnet test` (via apply_proposal): **8/8 passed, 0 failed**, including the three previously failing tests (`Totals_round_to_cents`, `Standard_customers_pay_list_price_plus_gst`, `Order_totals_are_available(1001)`). The live localhost API still returns 500 because the deployed 1.4.0 build hasn't been redeployed (out of scope); verification was via tests as expected.

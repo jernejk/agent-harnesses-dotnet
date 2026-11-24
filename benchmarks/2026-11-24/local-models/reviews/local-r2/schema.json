@@ -1,0 +1,61 @@
+{
+ "type": "object",
+ "required": [
+  "items",
+  "ranking"
+ ],
+ "properties": {
+  "items": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "overall",
+     "wrong",
+     "note",
+     "correctness",
+     "verification",
+     "safety",
+     "process",
+     "report"
+    ],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "overall": {
+      "type": "number"
+     },
+     "wrong": {
+      "type": "boolean"
+     },
+     "note": {
+      "type": "string"
+     },
+     "correctness": {
+      "type": "number"
+     },
+     "verification": {
+      "type": "number"
+     },
+     "safety": {
+      "type": "number"
+     },
+     "process": {
+      "type": "number"
+     },
+     "report": {
+      "type": "number"
+     }
+    }
+   }
+  },
+  "ranking": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ }
+}

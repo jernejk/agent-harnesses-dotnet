@@ -1,0 +1,94 @@
+{
+  "spec": {
+    "investigate": "inkling-2-mini:default",
+    "plan": "inkling-2-mini:default",
+    "dev": "inkling-2-mini:default",
+    "test": "inkling-2-mini:default"
+  },
+  "only": null,
+  "phases": [
+    {
+      "phase": "investigate",
+      "model": "inkling-2-mini",
+      "effort": "default",
+      "seconds": 81.9,
+      "modelCalls": 10,
+      "toolCalls": 14,
+      "inputTokens": 64653,
+      "outputTokens": 3097,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 47104,
+      "costUsd": 0,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "plan",
+      "model": "inkling-2-mini",
+      "effort": "default",
+      "seconds": 355.7,
+      "modelCalls": 10,
+      "toolCalls": 13,
+      "inputTokens": 80099,
+      "outputTokens": 12897,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 57344,
+      "costUsd": 0,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "dev",
+      "model": "inkling-2-mini",
+      "effort": "default",
+      "seconds": 31.8,
+      "modelCalls": 4,
+      "toolCalls": 3,
+      "inputTokens": 21768,
+      "outputTokens": 840,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 12288,
+      "costUsd": 0,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    },
+    {
+      "phase": "test",
+      "model": "inkling-2-mini",
+      "effort": "default",
+      "seconds": 50.5,
+      "modelCalls": 8,
+      "toolCalls": 10,
+      "inputTokens": 61307,
+      "outputTokens": 1245,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 47104,
+      "costUsd": 0,
+      "status": "ok",
+      "text": "",
+      "ok": true
+    }
+  ],
+  "total": {
+    "phase": "total",
+    "model": "",
+    "effort": "",
+    "seconds": 519.9000000000001,
+    "modelCalls": 32,
+    "toolCalls": 40,
+    "inputTokens": 227827,
+    "outputTokens": 18079,
+    "reasoningTokens": 0,
+    "cachedInputTokens": 163840,
+    "costUsd": 0,
+    "status": "ok",
+    "text": "",
+    "ok": true
+  },
+  "proposals": [
+    "fix-tier-discount-missing-key"
+  ]
+}

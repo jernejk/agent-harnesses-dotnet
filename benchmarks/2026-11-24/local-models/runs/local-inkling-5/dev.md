@@ -1,0 +1,3 @@
+The write_proposal tool confirmed the patch was written (its output shows the diff); the proposals directory is managed by the tool system rather than the file-access store, so it isn't visible there. That's expected — the task only asks me to write the proposal, not apply it.
+
+Done. The proposal is `fix-tier-discount-lookup` — it changes `src/Orders.Api/Pricing.cs:16` from `var discount = TierDiscounts[customer.Tier];` to `var discount = TierDiscounts.GetValueOrDefault(customer.Tier, 0m);`, restoring the 1.3.0 behavior so any tier missing from the table (e.g. `standard`, or any future/unknown tier) gets 0% off instead of throwing `KeyNotFoundException` (HTTP 500), while keeping the 1.4.0 gold (0.05m) and silver (0.02m) entries intact.

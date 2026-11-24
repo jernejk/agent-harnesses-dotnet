@@ -1,0 +1,32 @@
+{
+ "v5-c1-conservative": {
+  "mean": 8.666666666666668,
+  "per_reviewer": {
+   "opus": 8.8,
+   "sol": 8.8,
+   "neon": 8.4
+  },
+  "wrong": 0,
+  "judged": 15
+ },
+ "v5-b1-mini-phased": {
+  "mean": 8.266666666666666,
+  "per_reviewer": {
+   "opus": 7.6,
+   "sol": 8.6,
+   "neon": 8.6
+  },
+  "wrong": 0,
+  "judged": 15
+ },
+ "local-inkling": {
+  "mean": 8.0,
+  "per_reviewer": {
+   "opus": 8.4,
+   "sol": 8.2,
+   "neon": 7.4
+  },
+  "wrong": 1,
+  "judged": 15
+ }
+}
