@@ -1,0 +1,62 @@
+[
+ {
+  "provider": "openai",
+  "call": 1,
+  "status": 200,
+  "ms": 287,
+  "input": 1926,
+  "cached": 0,
+  "cache_write": 1775,
+  "output": 0
+ },
+ {
+  "provider": "openai",
+  "call": 2,
+  "status": 200,
+  "ms": 220,
+  "input": 1926,
+  "cached": 1775,
+  "cache_write": 0,
+  "output": 0
+ },
+ {
+  "provider": "openai",
+  "call": 3,
+  "status": 200,
+  "ms": 212,
+  "input": 1926,
+  "cached": 1775,
+  "cache_write": 0,
+  "output": 0
+ },
+ {
+  "provider": "azure",
+  "call": 1,
+  "status": 200,
+  "ms": 1272,
+  "input": 1926,
+  "cached": 0,
+  "cache_write": 1775,
+  "output": 0
+ },
+ {
+  "provider": "azure",
+  "call": 2,
+  "status": 200,
+  "ms": 966,
+  "input": 1926,
+  "cached": 1775,
+  "cache_write": 0,
+  "output": 0
+ },
+ {
+  "provider": "azure",
+  "call": 3,
+  "status": 200,
+  "ms": 912,
+  "input": 1926,
+  "cached": 1775,
+  "cache_write": 0,
+  "output": 0
+ }
+]

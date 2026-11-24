@@ -1,0 +1,1089 @@
+[
+ {
+  "id": "E01",
+  "run": "v5-c1-conservative-2",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 9,
+   "sol": 9,
+   "neon": 8
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 198,
+   "usage": {
+    "input_tokens": 2332,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2332
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.05,
+   "overall": 2.86,
+   "process": 1.17
+  },
+  "azure": {
+   "status": 200,
+   "ms": 821,
+   "usage": {
+    "input_tokens": 2332,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2332
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.07,
+   "overall": 3.1,
+   "process": 1.29
+  }
+ },
+ {
+  "id": "E02",
+  "run": "v5-b1-mini-phased-4",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": false
+  },
+  "reviewers": {
+   "opus": 8,
+   "sol": 9,
+   "neon": 9
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 176,
+   "usage": {
+    "input_tokens": 2322,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2322
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.81,
+   "false_claim": 0.01,
+   "overall": 3.94,
+   "process": 2.22
+  },
+  "azure": {
+   "status": 200,
+   "ms": 833,
+   "usage": {
+    "input_tokens": 2322,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2322
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.7,
+   "false_claim": 0.01,
+   "overall": 3.97,
+   "process": 2.11
+  }
+ },
+ {
+  "id": "E03",
+  "run": "v5-b1-mini-phased-1",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": false
+  },
+  "reviewers": {
+   "opus": 8,
+   "sol": 9,
+   "neon": 9
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 204,
+   "usage": {
+    "input_tokens": 2330,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2330
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.72,
+   "false_claim": 0.0,
+   "overall": 3.9,
+   "process": 1.97
+  },
+  "azure": {
+   "status": 200,
+   "ms": 1096,
+   "usage": {
+    "input_tokens": 2330,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2330
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.86,
+   "false_claim": 0.0,
+   "overall": 3.96,
+   "process": 1.39
+  }
+ },
+ {
+  "id": "E04",
+  "run": "v5-b1-mini-phased-3",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": false
+  },
+  "reviewers": {
+   "opus": 7,
+   "sol": 9,
+   "neon": 9
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 178,
+   "usage": {
+    "input_tokens": 2340,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2340
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.67,
+   "false_claim": 0.0,
+   "overall": 3.95,
+   "process": 1.8
+  },
+  "azure": {
+   "status": 200,
+   "ms": 822,
+   "usage": {
+    "input_tokens": 2340,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2340
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 0.99,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.77,
+   "false_claim": 0.02,
+   "overall": 3.94,
+   "process": 1.78
+  }
+ },
+ {
+  "id": "E05",
+  "run": "v5-c1-conservative-1",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 9,
+   "sol": 9,
+   "neon": 9
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 217,
+   "usage": {
+    "input_tokens": 2299,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2299
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 0.99,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.02,
+   "overall": 3.98,
+   "process": 1.32
+  },
+  "azure": {
+   "status": 200,
+   "ms": 968,
+   "usage": {
+    "input_tokens": 2299,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2299
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.01,
+   "overall": 3.93,
+   "process": 1.22
+  }
+ },
+ {
+  "id": "E06",
+  "run": "v5-b1-mini-phased-5",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": false
+  },
+  "reviewers": {
+   "opus": 8,
+   "sol": 8,
+   "neon": 8
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 184,
+   "usage": {
+    "input_tokens": 2287,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2287
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.89,
+   "false_claim": 0.01,
+   "overall": 3.9,
+   "process": 1.77
+  },
+  "azure": {
+   "status": 200,
+   "ms": 869,
+   "usage": {
+    "input_tokens": 2287,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2287
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.91,
+   "false_claim": 0.0,
+   "overall": 3.95,
+   "process": 1.42
+  }
+ },
+ {
+  "id": "E07",
+  "run": "local-inkling-3",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 8,
+   "sol": 9,
+   "neon": 8
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 209,
+   "usage": {
+    "input_tokens": 2541,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 1185,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 1185,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2541
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.01,
+   "overall": 3.96,
+   "process": 1.09
+  },
+  "azure": {
+   "status": 200,
+   "ms": 2459,
+   "usage": {
+    "input_tokens": 2541,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 1185,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 1185,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2541
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.0,
+   "overall": 3.87,
+   "process": 0.82
+  }
+ },
+ {
+  "id": "E08",
+  "run": "v5-c1-conservative-3",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 9,
+   "sol": 9,
+   "neon": 8
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 199,
+   "usage": {
+    "input_tokens": 2373,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2373
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.03,
+   "overall": 2.99,
+   "process": 0.25
+  },
+  "azure": {
+   "status": 200,
+   "ms": 1085,
+   "usage": {
+    "input_tokens": 2373,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2373
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.01,
+   "overall": 3.49,
+   "process": 0.85
+  }
+ },
+ {
+  "id": "E09",
+  "run": "local-inkling-5",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 9,
+   "sol": 8,
+   "neon": 7
+  },
+  "reviewer_wrong": [
+   "sol"
+  ],
+  "openai": {
+   "status": 200,
+   "ms": 206,
+   "usage": {
+    "input_tokens": 2499,
+    "input_tokens_details": {
+     "cached_tokens": 410,
+     "cache_write_tokens": 733,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 733,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2499
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.01,
+   "overall": 3.68,
+   "process": 0.9
+  },
+  "azure": {
+   "status": 200,
+   "ms": 2749,
+   "usage": {
+    "input_tokens": 2499,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 1143,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 1143,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2499
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.01,
+   "overall": 3.51,
+   "process": 0.91
+  }
+ },
+ {
+  "id": "E10",
+  "run": "local-inkling-4",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 8,
+   "sol": 8,
+   "neon": 7
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 273,
+   "usage": {
+    "input_tokens": 2576,
+    "input_tokens_details": {
+     "cached_tokens": 410,
+     "cache_write_tokens": 810,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 810,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2576
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.05,
+   "overall": 3.58,
+   "process": 0.59
+  },
+  "azure": {
+   "status": 200,
+   "ms": 948,
+   "usage": {
+    "input_tokens": 2576,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 1220,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 1220,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2576
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.01,
+   "overall": 3.74,
+   "process": 0.36
+  }
+ },
+ {
+  "id": "E11",
+  "run": "v5-b1-mini-phased-2",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": false
+  },
+  "reviewers": {
+   "opus": 7,
+   "sol": 8,
+   "neon": 8
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 207,
+   "usage": {
+    "input_tokens": 2315,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2315
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.98,
+   "false_claim": 0.0,
+   "overall": 3.04,
+   "process": 1.86
+  },
+  "azure": {
+   "status": 200,
+   "ms": 759,
+   "usage": {
+    "input_tokens": 2315,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2315
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.94,
+   "false_claim": 0.0,
+   "overall": 2.94,
+   "process": 1.36
+  }
+ },
+ {
+  "id": "E12",
+  "run": "local-inkling-2",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 8,
+   "sol": 8,
+   "neon": 8
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 211,
+   "usage": {
+    "input_tokens": 2566,
+    "input_tokens_details": {
+     "cached_tokens": 410,
+     "cache_write_tokens": 800,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 800,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2566
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.06,
+   "overall": 3.91,
+   "process": 0.65
+  },
+  "azure": {
+   "status": 200,
+   "ms": 1006,
+   "usage": {
+    "input_tokens": 2566,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 1210,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 1210,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2566
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.05,
+   "overall": 3.88,
+   "process": 0.7
+  }
+ },
+ {
+  "id": "E13",
+  "run": "v5-c1-conservative-5",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 9,
+   "sol": 9,
+   "neon": 9
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 197,
+   "usage": {
+    "input_tokens": 2303,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2303
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.01,
+   "overall": 3.99,
+   "process": 1.48
+  },
+  "azure": {
+   "status": 200,
+   "ms": 1384,
+   "usage": {
+    "input_tokens": 2303,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2303
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.02,
+   "overall": 3.95,
+   "process": 1.31
+  }
+ },
+ {
+  "id": "E14",
+  "run": "v5-c1-conservative-4",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": false
+  },
+  "reviewers": {
+   "opus": 8,
+   "sol": 8,
+   "neon": 8
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 220,
+   "usage": {
+    "input_tokens": 2301,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2301
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.9,
+   "false_claim": 0.0,
+   "overall": 3.95,
+   "process": 1.65
+  },
+  "azure": {
+   "status": 200,
+   "ms": 831,
+   "usage": {
+    "input_tokens": 2301,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 0,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 0,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2301
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 0.99,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 0.79,
+   "false_claim": 0.01,
+   "overall": 3.85,
+   "process": 1.18
+  }
+ },
+ {
+  "id": "E15",
+  "run": "local-inkling-1",
+  "checks": {
+   "names_commit": true,
+   "names_line": true,
+   "general_fix": true,
+   "tests_green": true,
+   "redeploy_caveat": true
+  },
+  "reviewers": {
+   "opus": 9,
+   "sol": 8,
+   "neon": 7
+  },
+  "reviewer_wrong": [],
+  "openai": {
+   "status": 200,
+   "ms": 220,
+   "usage": {
+    "input_tokens": 2486,
+    "input_tokens_details": {
+     "cached_tokens": 410,
+     "cache_write_tokens": 720,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 720,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2486
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.01,
+   "overall": 3.64,
+   "process": 1.0
+  },
+  "azure": {
+   "status": 200,
+   "ms": 1065,
+   "usage": {
+    "input_tokens": 2486,
+    "input_tokens_details": {
+     "cached_tokens": 0,
+     "cache_write_tokens": 1130,
+     "cache_write_tokens_details": {
+      "ttl_30m_tokens": 1130,
+      "ttl_12h_tokens": 0
+     }
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 2486
+   },
+   "error": null,
+   "names_commit": 1.0,
+   "names_line": 1.0,
+   "general_fix": 1.0,
+   "tests_green": 1.0,
+   "redeploy_caveat": 1.0,
+   "false_claim": 0.02,
+   "overall": 3.65,
+   "process": 0.8
+  }
+ }
+]
