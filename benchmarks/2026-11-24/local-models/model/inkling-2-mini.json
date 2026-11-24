@@ -31,6 +31,10 @@
   "text, other": 682885632,
   "vision": 318256128
  },
+ "non_expert_parameters_by_dtype": {
+  "BF16": 2245115536,
+  "F32": 242688
+ },
  "parameters_total": 26706539152,
  "text_model_total": 26070385152,
  "active_per_token_text": 3138028032,

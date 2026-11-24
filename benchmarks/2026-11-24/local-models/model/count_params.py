@@ -30,7 +30,7 @@ for layer in man["layers"]:
 tc = cfg.get("text_config", cfg)
 H, I, E, K = tc["hidden_size"], tc["intermediate_size"], tc["n_routed_experts"], tc["num_experts_per_tok"]
 
-params, bits = collections.Counter(), collections.Counter()
+params, bits, dtypes = collections.Counter(), collections.Counter(), collections.Counter()
 meta_elems = disk = tensors = 0
 for layer in man["layers"]:
     if layer["mediaType"] != "application/vnd.ollama.image.tensor":
@@ -53,6 +53,8 @@ for layer in man["layers"]:
             fan_in = H if name.endswith("w13_weight") else I
             numel = experts * out * fan_in
             bits["4-bit" if fan_in // packed == 8 else "8-bit"] += 1
+        if ".experts." not in name:
+            dtypes[meta["dtype"]] += numel
         part = ("experts" if ".experts." in name else
                 "embed+unembed" if name in ("model.llm.embed.weight", "model.llm.unembed.weight") else
                 "text, other" if name.startswith("model.llm.") else
@@ -70,6 +72,7 @@ print(json.dumps({
     "tensors": tensors, "tensor_bytes_on_disk": disk, "tensor_GiB_on_disk": round(disk / 2**30, 2),
     "expert_weight_tensors_by_precision": dict(bits),  # two per layer: w13 and w2
     "parameters": {k: params[k] for k in sorted(params)},
+    "non_expert_parameters_by_dtype": dict(sorted(dtypes.items())),
     "parameters_total": total,
     "text_model_total": params["experts"] + params["embed+unembed"] + params["text, other"],
     "active_per_token_text": params["embed+unembed"] + params["text, other"] + params["experts"] * K // E,

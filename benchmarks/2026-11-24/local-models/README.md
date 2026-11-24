@@ -13,12 +13,12 @@ python3 -I benchmarks/2026-11-24/local-models/summarize.py
 - **The task:** demo 05's phased harness (`demos/05-diagnose-harness/phased.cs`) with the v5 phase
   prompts: investigate, plan, dev and test. The planted bug is commit `9bfbf7d`, at `Pricing.cs`
   line 16.
-- **Inkling:** `inkling-2-mini` in Ollama 0.40.17 (MLX, 32K context) on an M5 Max MacBook Pro, in
-  every phase, at the model's default reasoning (no effort sent). The runs were on 24 Nov 2026
-  between 16:56 and 22:30.
-  - For the local models the lab raised the wall-clock cap to 1,800 s per phase. The caps of 30
-    model calls and 40 tool calls per phase stayed the same.
-  - Inkling's longest phase took 380 s, so all five runs would also fit the stock 600 s cap.
+- **Inkling:** `inkling-2-mini` in Ollama, served the way `scripts/local-model.sh` starts it (32K
+  context), on the presenting Mac, in every phase, at the model's default reasoning (no effort sent).
+  - Every phase finished within 380 s (379.7 s at most, from the runs' `metrics.json`). That's
+    inside the per-phase budget in `phased.cs` line 61: 30 model calls, 40 tool calls and 600 s.
+  - Each run's `transcript.txt` is its terminal output. `metrics.json` has each phase's model,
+    calls, tokens and seconds.
 - **Luna:** the v5 "conservative" runs, `../phase-routing/runs/v5-c1-conservative-1` to `-5`.
   These are `gpt-6-luna` on OpenAI's Responses API at reasoning high (investigate and plan) and
   medium (dev and test).
@@ -70,8 +70,8 @@ every tensor in Ollama's copy of the model; they are not a vendor figure.
   - 0.32B in the draft (multi-token prediction) head.
 - **About 3.1B active per token:** each token uses 8 of the 128 experts. Without the embedding and
   output matrices, it's 2.2B.
-- **18.78 GiB on disk.** The experts are stored in 4-bit (20 layers) and 8-bit (4 layers), and the
-  rest in BF16.
+- **18.78 GiB on disk.** The experts are stored in 4-bit (20 layers) and 8-bit (4 layers). The other
+  weights are BF16 (2.25B parameters), apart from a few small F32 tensors (242,688 parameters).
 
 ## Files
 
