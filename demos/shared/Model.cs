@@ -9,7 +9,7 @@ using OpenAI;
 
 public static class Model
 {
-    public static string Name => Env("AGENT_MODEL", "gpt-5.4-mini");
+    public static string Name => Env("AGENT_MODEL", "gpt-6-luna");
 
     // Where the model runs, picked per run with -e AGENT_PROVIDER=…
     //   foundry        AGENT_ENDPOINT, AGENT_API_KEY and AGENT_MODEL as set: Azure AI Foundry's
@@ -115,6 +115,7 @@ public static class Model
         "AGENT_MODEL" => Raw("LOCAL_MODEL") ?? local.Model,
         "AGENT_API_KEY" => "local", // a cloud key is never sent to a server on this machine
         "AGENT_REASONING_EFFORT" => Raw("LOCAL_REASONING_EFFORT") ?? local.Effort,
+        "AGENT_API" => "chat", // the measured path; a cloud AGENT_API=responses stays with the cloud
         _ => Raw(name),
     };
 
@@ -150,7 +151,7 @@ public static class Model
                 case ClientResultException { Status: 401 or 403 } c:
                     return $"The endpoint {host} rejected the API key ({c.Status}).";
                 case ClientResultException { Status: 404 }:
-                    return $"Model '{Setting("AGENT_MODEL") ?? "gpt-5.4-mini"}' not found at {host}."
+                    return $"Model '{Setting("AGENT_MODEL") ?? "gpt-6-luna"}' not found at {host}."
                         + (local is null ? " Check AGENT_MODEL."
                             : $" Check LOCAL_MODEL, or start it with: {local.Start}");
                 case ClientResultException { Status: 429 }:

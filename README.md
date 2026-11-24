@@ -28,8 +28,8 @@ command beats the agent.
 ## Configure the model
 
 Every demo reads three variables: `AGENT_ENDPOINT`, `AGENT_API_KEY` and `AGENT_MODEL`.
-`.envrc` maps them from a local secrets profile when one exists. Otherwise put them in
-`.envrc.local`, which git ignores:
+`.envrc` maps them to OpenAI's gpt-6-luna when the macOS Keychain has an `OPENAI_API_KEY` item,
+or from a local Azure secrets profile. Otherwise put them in `.envrc.local`, which git ignores:
 
 ```bash
 # Azure OpenAI / Foundry, v1 API (the deployment name is the model)
