@@ -130,7 +130,7 @@ check 91-rehearsal-flag-guard 2 "is for scripts/rehearse.sh only" -- \
 python3 - "$ledger" "$ledger_start" <<'PY'
 import json, sys
 rows = [json.loads(l) for l in open(sys.argv[1]).read().splitlines()[int(sys.argv[2]):]]
-price = {"gpt-5.4-mini": (0.75, 4.5), "gpt-5.4": (2.5, 15), "gpt-5.4-nano": (0.2, 1.25)}
+price = {"gpt-5.4-mini": (0.75, 4.5), "gpt-5.4": (2.5, 15), "gpt-5.4-nano": (0.2, 1.25), "gpt-6-luna": (0.1, 0.5), "gpt-6.1-terra": (1, 5)}
 cost = sum(r["input"] * price.get(r["model"], (0, 0))[0] / 1e6
            + r["output"] * price.get(r["model"], (0, 0))[1] / 1e6 for r in rows)
 tokens_in = sum(r["input"] for r in rows)

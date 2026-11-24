@@ -27,6 +27,8 @@ public sealed class UsageMeter(
         ["gpt-5.4-mini"] = (0.75m, 4.5m),
         ["gpt-5.4"] = (2.5m, 15m),
         ["gpt-5.4-nano"] = (0.2m, 1.25m),
+        ["gpt-6-luna"] = (0.1m, 0.5m),
+        ["gpt-6.1-terra"] = (1m, 5m),
     };
 
     readonly Stopwatch _wall = Stopwatch.StartNew();

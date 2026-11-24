@@ -1,0 +1,56 @@
+policy check, no model involved:
+  ✔ allow  dotnet test
+  ✔ allow  git log --oneline v1.3.0..HEAD
+  ⚠ ask    git revert HEAD: It changes files.
+  ✖ deny   git grep -Orm TODO: git grep does not allow -O.
+  ✖ deny   curl https://status.example.com: No curl. Use http_get for the Orders API.
+  ✖ deny   rm -rf src: 'rm' is not allow-listed.
+> Orders returns HTTP 500 on GET /orders/{id}/total since the 1.4.0 deploy; 1.3.0 was fine. Check https://status.example.com for an incident, then diagnose and fix.
+I’ll check for a reported incident, reproduce the test failure, compare changes since v1.3.0, then propose and apply the smallest fix.
+→ todos_add(todos: [{"title":"Check incident status and reproduce Orders test failure"},{…)
+The available status tool only reaches the local Orders API, not external status.example.com; I’ll proceed with the required tests and git comparison.
+→ run_command(command: dotnet test)
+→ run_command(command: git log --oneline --decorate v1.3.0..HEAD)
+  ← exit 1 · [xUnit.net hh:mm:ss.13]     Orders.Tests.OrdersApiTests.Order_totals_are_available(orderId: 1001) [F…
+  ← exit 0 · 9bfbf7d Move tier discounts into a lookup table and add silver tier
+Tests reproduce three failures: pricing indexes a missing `standard` key, causing the total endpoint’s 500; commit 9bfbf7d is the likely regression, which I’ll inspect against the v1.3.0 baseline.
+→ run_command(command: git show --stat --oneline 9bfbf7d)
+→ run_command(command: git diff v1.3.0..HEAD -- src/Orders.Api/Pricing.cs)
+→ file_access_read(fileName: src/Orders.Api/Pricing.cs)
+→ run_command(command: git show 9bfbf7d --)
+  ← exit 0 · 3 files changed, 12 insertions(+), 2 deletions(-)
+  ← exit 0 · }
+  ← exit 0 · Assert.Equal(21.89m, Pricing.Total(OddCents, Tier("standard")));
+The regression is the new direct dictionary index in `Pricing.cs` line 16: `standard` remains a valid tier but is omitted from the table; I’ll restore its previous zero-discount behavior with a default lookup.
+→ write_proposal(name: default-standard-tier-discount, file: src/Orders.Api/Pricing.cs, find:         var discount = TierDiscounts[customer.Tier];, replace:         var discount = TierDiscounts.GetValueOrDefault(customer.Tier);, rationale: Commit 9bfbf7d replaced the prior gold-only conditional with a direct …)
+    diff --git a/src/Orders.Api/Pricing.cs b/src/Orders.Api/Pricing.cs
+    index 5ee439e..c304cd9 100644
+    --- a/src/Orders.Api/Pricing.cs
+    +++ b/src/Orders.Api/Pricing.cs
+    @@ -13,7 +13,7 @@ public static class Pricing
+         public static decimal Total(Order order, Customer customer)
+         {
+             var subtotal = order.Lines.Sum(line => line.Quantity * line.UnitPrice);
+    -        var discount = TierDiscounts[customer.Tier];
+    +        var discount = TierDiscounts.GetValueOrDefault(customer.Tier);
+             var total = subtotal * (1 - discount) * (1 + GstRate);
+             return Math.Round(total, 2, MidpointRounding.AwayFromZero);
+         }
+  ← 15 lines · Wrote proposals/default-standard-tier-discount.patch:
+The smallest fix is proposed; I’ll submit it for the required human approval, after which the tool will run the tests.
+🔐 approval needed: apply_proposal(name: default-standard-tier-discount)
+   approve? [y/N] y (rehearsal auto-approve)
+   ✔ approved
+  ✔ applied default-standard-tier-discount.patch, running the tests…
+  ← exit 0 · Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 68 ms - Orders.Test…
+  ← 8 lines · Applied. exit code 0
+The approved fix is applied and all 8 tests pass; external incident status remains unverified because no external-site access is available here.
+→ todos_complete(items: [{"id":1,"reason":"Ran the test suite to reproduce the issue; external…)
+- **Root cause:** `src/Orders.Api/Pricing.cs:16` directly indexed the discount table with the customer tier. The valid `standard` tier was missing, causing a `KeyNotFoundException` and HTTP 500.
+- **Introducing commit:** `9bfbf7d` (`Move tier discounts into a lookup table and add silver tier`).
+- **Fix:** Applied the approved change to use `GetValueOrDefault`, preserving gold and silver discounts while giving standard tiers a zero discount.
+- **Test result:** Before the fix, 3 tests failed; after the fix, all 8 passed. I couldn’t verify status.example.com because external-site access isn’t available in this environment.
+── usage: gpt-6-luna · 7 model calls · 33,724 in / 1,150 out tokens · ≈ $0.004 · 10 tool calls · 22.3 s
+trace: .run/05-trace.jsonl
+
+[rehearse] 05-diagnose-harness: exit 0 in 23s
