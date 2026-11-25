@@ -1,6 +1,6 @@
 # Beyond chatbots: agent harnesses with .NET
 
-Live demos for the talk *Beyond Chatbots: Building Agent Harnesses with .NET* ([slides](https://agent-harnesses-dotnet-20261125.surge.sh/v6/)),
+Live demos for the talk *Beyond Chatbots: Building Agent Harnesses with .NET* ([slides](https://agent-harnesses-dotnet-20261125.surge.sh/)),
 built on .NET 11, C# 15 and Microsoft Agent Framework 1.28.
 
 A chatbot answers; a harness finishes the job. The harness is the code around the model: a plan,
