@@ -4,8 +4,8 @@ Measured on 23–24 Nov 2026 (AEST) on the presenting Mac, a MacBook Pro with an
 128 GB, the night before the Global AI Nights talk. Each run is one full `scripts/rehearse.sh`:
 the 119 boundary tests, every demo, then the two forced failures, kept by `scripts/bench.sh`.
 
-The visual report, with charts and every number traced to these files:
-https://claude.ai/artifact/DHd9BzaE9hmnKonE6zsfkp (private until shared).
+Every number here traces to `results.json` and the raw output in each run's folder;
+`report/` has the per-run tables.
 
 ## Results
 

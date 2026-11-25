@@ -1,7 +1,7 @@
 # Beyond chatbots: agent harnesses with .NET
 
-Live demos for the talk *Beyond Chatbots: Building Agent Harnesses with .NET*, built on .NET 11,
-C# 15 and Microsoft Agent Framework 1.28.
+Live demos for the talk *Beyond Chatbots: Building Agent Harnesses with .NET* ([slides](https://agent-harnesses-dotnet-20261125.surge.sh/v6/)),
+built on .NET 11, C# 15 and Microsoft Agent Framework 1.28.
 
 A chatbot answers; a harness finishes the job. The harness is the code around the model: a plan,
 working memory, tools and clear boundaries. The demos build one up step by step, first for a
@@ -28,8 +28,8 @@ command beats the agent.
 ## Configure the model
 
 Every demo reads three variables: `AGENT_ENDPOINT`, `AGENT_API_KEY` and `AGENT_MODEL`.
-`.envrc` maps them to OpenAI's gpt-6-luna when the macOS Keychain has an `OPENAI_API_KEY` item,
-or from a local Azure secrets profile. Otherwise put them in `.envrc.local`, which git ignores:
+`.envrc` points them at OpenAI's gpt-6-luna when the macOS Keychain has an `OPENAI_API_KEY` item.
+Otherwise, or to override that, put them in `.envrc.local`, which git ignores:
 
 ```bash
 # Azure OpenAI / Foundry, v1 API (the deployment name is the model)
@@ -220,3 +220,7 @@ docs/           the spec, the presenter notes and the boundary lessons
 ```
 
 `target/` is a nested git repository, so it is generated rather than committed.
+
+## License
+
+[MIT](LICENSE). Copyright (c) 2026 Jernej Kavka.

@@ -30,8 +30,8 @@ plan, working memory, tools, boundaries. The model is the least interesting part
   .AsIChatClient().AsAIAgent(instructions:, tools: [AIFunctionFactory.Create(...)])` tool call,
   and a C# 15 `public union Outcome(Ok, Failed);` with an exhaustive switch. 18 s cold.
 - Model endpoint: an Azure OpenAI v1 endpoint with the deployments `gpt-5.4-mini` (default,
-  $0.75/$4.5 per 1M tokens), `gpt-5.4` ($2.5/$15) and `gpt-5.4-nano`. `.envrc` maps a local
-  secrets profile to the repo-neutral `AGENT_ENDPOINT`, `AGENT_API_KEY` and `AGENT_MODEL`, and
+  $0.75/$4.5 per 1M tokens), `gpt-5.4` ($2.5/$15) and `gpt-5.4-nano`. `.envrc` (now `.envrc.local`)
+  maps a local secrets profile to the repo-neutral `AGENT_ENDPOINT`, `AGENT_API_KEY` and `AGENT_MODEL`, and
   unsets the originals. Never print, log or write key values anywhere.
 - Docker runs the standalone Aspire dashboard (`mcr.microsoft.com/dotnet/aspire-dashboard`).
 
@@ -125,7 +125,7 @@ Stretch, only if 1–6 are solid: DevUI (preview) showing the harness in a brows
 - `README.md` (what this is, prerequisites, how to run each demo, provider config with an
   OpenAI-compatible local option such as LM Studio at `http://localhost:1234/v1` — do not download
   models), and a short README per demo with "what to notice" and two workshop exercise ideas.
-- `.envrc` committed with names only (sources the profile, maps names, sets the .NET 11 PATH);
+- `.envrc` committed with names only (`.envrc.local` first, else a Keychain `OPENAI_API_KEY`; .NET 11 on PATH when installed);
   `.gitignore` covers `.envrc.*`, `.sessions/`, `bin/`, `obj/`, `target/` git internals, caches
   that might contain anything private, and `*.local.*`.
 - `tests/BoundaryTests`: one xunit test per boundary hole, no model calls. Each test failed
